@@ -1,0 +1,209 @@
+{% extends 'base.html' %}
+
+{% block header %}
+<link rel="stylesheet" href="../static/styles.css">
+<!-- <style type="text/css">
+    .table-scrollable{
+        overflow: auto;
+    }
+</style> -->
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid d-flex justify-content-center">
+    <div class="text-muted">Drag and drop to align in order of priority.  <b>Note: Bowtie Analysis will only use orange or red responses.</b>
+    </div>
+</div>
+<br>
+<!-- <div class="container-fluid d-flex justify-content-center border-bottom">
+    <div class="text-muted"><i><br>&nbsp;</i></div>
+</div> -->
+
+<div class="container-fluid">
+    <form class="p-3" method="POST" id="hazard" action="/hazards" enctype="multipart/form-data">
+        <div class="row">
+            <div class="col-8">
+                <table class="table table-bordered table-responsive">
+                    <thead>
+                        <h4 class="justify-content-center">Impact</h4>
+                        <tr>
+                            <th scope="col"></th>
+                            <th scope="col">0 - Acceptable</th>
+                            <th scope="col">1 - Tolerable</th>
+                            <th scope="col">2 - Unacceptable</th>
+                            <th scope="col">3 - Intolerable</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th scope="row">Improbable</th>
+                            <td style="background-color:#74c365">
+                                <div class="dropzone"><input class="dropzone_value" type="hidden" name="acceptable_improbable"
+                                    value=""></div>
+                            </td>
+                            <td style="background-color:#ffd700">
+                                <div class="dropzone"><input class="dropzone_value" type="hidden" name="tolerable_improbable"
+                                    value=""></div>
+                            </td>
+                            <td style="background-color:#ffd700">
+                                <div class="dropzone"><input class="dropzone_value" type="hidden" name="unacceptable_improbable"
+                                    value=""></div>
+                            </td>
+                            <td style="background-color:#ffa500">
+                                <div class="dropzone"><input class="dropzone_value" type="hidden" name="bowtie_input[]"
+                                    value=""></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Possible</th>
+                            <td style="background-color:#74c365">
+                                <div class="dropzone"><input class="dropzone_value" type="hidden" name="acceptable_possible"
+                                    value=""></div>
+                            </td>
+                            <td style="background-color:#ffd700">
+                                <div class="dropzone"><input class="dropzone_value" type="hidden" name="tolerable_possible"
+                                    value=""></div>
+                            </td>
+                            <td style="background-color:#ffa500">
+                                <div class="dropzone"><input class="dropzone_value" type="hidden" name="bowtie_input[]"
+                                    value=""></div>
+                            </td>
+                            <td style="background-color:#ff4500">
+                                <div class="dropzone"><input class="dropzone_value" type="hidden" name="bowtie_input[]"
+                                    value=""></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Probable</th>
+                            <div class="form-group">
+                                <td style="background-color:#ffd700">
+                                    <div class="dropzone"><input class="dropzone_value" type="hidden" name="acceptable_probable"
+                                        value=""></div>
+                                </td>
+                            </div>
+                            <div class="form-group">
+                                <td style="background-color:#ffa500">
+                                    <div class="dropzone"><input class="dropzone_value" type="hidden" name="bowtie_input[]"
+                                        value=""></div>
+                                </td>
+                            </div>
+                            <div class="form-group">
+                                <td style="background-color:#ffa500">
+                                    <div class="dropzone"><input class="dropzone_value" type="hidden" name="bowtie_input[]"
+                                        value=""></div>
+                                </td>
+                            </div>
+                            <div class="form-group">
+                                <td style="background-color:#ff4500">
+                                    <div class="dropzone"><input class="dropzone_value" type="hidden" name="bowtie_input[]"
+                                        value=""></div>
+                                </td>
+                            </div>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-4">
+                <h4 class="justify-content-center">Hazards</h4>
+                <ul class="nav nav-tabs" id="hazard_tabs" role="tablist">
+                    <li class="nav-item">
+                        <a data-toggle="tab" class="active nav-link " href="#cyber_modules"><span>Cyber Hazards</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a data-toggle="tab" class="nav-link " href="#physical_modules"><span>Physical Hazards</span></a>
+                    </li>
+                </ul>
+                <div class="tab-content" id="hazard_content">
+                    <div class="tab-pane fade modules show active" id="cyber_modules" role="tabpanel" aria-labelledby="cy_haz_tab">
+                        <button class="btn btn-success btn-sm" type="button" data-toggle="collapse"
+                            aria-expanded="false" id="add_cysec_haz">Add</button><br>&nbsp;
+                        {% for elem in cyber_hazards %}
+                        <p class="drag"><a class="btn btn-default btn-sm">{{ elem }}</a></p>
+                        {% endfor %}
+                    </div>
+                    <div class="tab-pane fade modules" id="physical_modules" role="tabpanel" aria-labelledby="phys_haz_tab">
+                        <button class="btn btn-success btn-sm" type="button" data-toggle="collapse"
+                            aria-expanded="false" id="add_phys_haz">Add</button><br>&nbsp;
+                        {% for elem in physical_hazards %}
+                        <p class="drag"><a class="btn btn-default btn-sm">{{ elem }}</a></p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row d-flex justify-content-center">
+            <button type="submit" class="btn btn-outline-success" id="next_hazards_button">Next</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $(window).keydown(function (event) {
+            if (event.keyCode == 13) {
+                event.preventDefault();
+                return false;
+            }
+        });
+    });
+    
+    // delete
+    $('body').on('click', '.delete', function () {
+        $(this).closest('.list-item').remove();
+    });
+    
+    // add options
+    $("#add_cysec_haz").on('click', function () {
+        $("#cyber_modules").append('<p class="drag"><a class="btn btn-default btn-sm"><input type="text" name="cyber_val"></a></p>');
+        $('.drag').draggable({
+        appendTo: 'body',
+        helper: 'clone'
+    });
+
+    });
+    $("#add_phys_haz").on('click', function () {
+        $("#physical_modules").append('<p class="drag"><a class="btn btn-default btn-sm"><input type="text" name="physical_val"></a></p>');
+        $('.drag').draggable({
+        appendTo: 'body',
+        helper: 'clone'
+    });
+
+    });
+
+    // drag and drop
+    $(function () {
+        $(".sortable").sortable();
+        $(".sortable").disableSelection();
+    });
+    $('.drag').draggable({
+        appendTo: 'body',
+        helper: 'clone'
+    });
+
+    $('.dropzone').droppable({
+        activeClass: 'active',
+        hoverClass: 'hover',
+        accept: ":not(.ui-sortable-helper)", // Reject clones generated by sortable
+        drop: function (e, ui) {
+            var $el = $('<div class="drop-item"><b>' + ui.draggable.text() + '</b></div>');
+            $el.append($('<div class="card" style="border:none"><div class="card-body"><button type="button" class="btn btn-sm btn-outline-danger remove"><span data-feather="trash-2"></span></button></div></div>').click(function () { 
+                $(this).closest('td').find('.dropzone_value').val("");
+                $(this).parent().detach();
+            }));
+            $(this).append($el);
+            feather.replace();
+            // updates the value of the dropzone input to be communicated 
+            $(this).closest('td').find('.dropzone_value').val($(this).text());
+            // $(this).closest('td').find('.dropzone_value').val($(this).closest('td').find('.dropzone_value').val() + $(this).text() + $(this).closest('td').find('input').attr('value') + ', ');
+        }
+    }).sortable({
+        items: '.drop-item',
+        sort: function () {
+            // gets added unintentionally by droppable interacting with sortable
+            // using connectWithSortable fixes this, but doesn't allow you to customize active/hoverClass options
+            $(this).removeClass("active");
+        }
+    });
+</script>
+{% endblock %} 

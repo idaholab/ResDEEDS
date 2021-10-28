@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- Common Goals & Metrics Dropdown Forms-->
+<div class="container-fluid d-flex justify-content-center">
+    <div class="text-muted">Pick from the choices and/or add your own.</div>
+</div>
+<br>
+<div class="container-fluid d-flex justify-content-center border-bottom">
+    <div class="text-muted"><i>Click outside of text box after adding a goal or metric.<br>&nbsp;</i></div>
+</div>
+
+<form class="p-3" method="POST" id="goal" action="/goals" enctype="multipart/form-data">
+    <div class="d-flex justify-content-center">
+        <h4><u>Goals</u></h2> &nbsp; &nbsp;
+        <!-- Add button -->
+        <button class="btn btn-outline-success btn-sm" type="button" data-toggle="collapse" aria-expanded="false"
+            id="add_goal">+</button>
+    </div>
+    <div class="form-group d-flex justify-content-center container border-bottom">
+        <ul style="list-style-type: none;" id="goal_list">
+            <li><label for="reduce_fuel"><input type="checkbox" name="reduce_fuel_val" id="reduce_fuel"> Reduce fuel
+                    dependency</label></li>
+            <li><label for="power_qual"><input type="checkbox" name="power_qual_val" id="power_qual"> Improve power
+                    quality</label></li>
+            <li><label for="cysec_risk"><input type="checkbox" name="cysec_risk_val" id="cysec_risk"> Manage
+                    cybersecurity risk</label></li>
+        </ul>
+    </div>
+    <!-- preventing input text passing table box -->
+    <style>
+        input[type=text] {
+            max-width: 125px;
+        }
+    </style> 
+    <div class="d-flex justify-content-center">
+        <h4><u>Metrics</u></h2>
+            &nbsp; &nbsp;
+            <!-- Add button -->
+            <button class="btn btn-outline-success btn-sm" type="button" data-toggle="collapse" aria-expanded="false"
+                id="add_metric">+</button>
+    </div>
+    <div class="container-fluid d-flex justify-content-center">
+        <div class="text-muted"><i>Note that this is not an exhaustive list, but common metrics. Consider your entire system while evalutating.<br>&nbsp;</i></div>
+    </div>
+    <!-- CHANGE NAME AND ID -->
+    <div class="form-group d-flex justify-content-center container border-bottom">
+        <div class="form-group">
+            {% set list_names = ["Inputs", "Capacity", "Capability", "Performance", "Outcomes"] %}
+            {% set lists = [inputs_metrics, capacity_metrics, capabilities_metrics, performance_metrics, outcomes_metrics] %}
+            <div class="row">
+                {% for list in lists %} 
+                    <div class="col-2">
+                        <ul class="list-group">
+                            <h4>{{ list_names[loop.index-1] }}</h4>
+                            {% for elem in list %}    
+                                <li class="list-group-item"><input name="metric_use" type="checkbox">{{ elem }}</li>
+                                <!-- make list go to next column if too long -->
+                                <!-- {% if loop.index > 19 %}
+                                    <div class="col"> -->
+                                <!-- {% endif %} -->
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endfor %}
+                <!-- fix input out of bounds -->
+                <div class="col-2">
+                    <h4>Additional</h4>
+                    <ul class="list-group add_here"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-center">
+        <button type="submit" class="btn btn-outline-success" id="next_goal_button">Next</button>
+    </div>
+
+</form>
+
+<script>
+    // prevent enter key
+    $(document).ready(function () {
+        $(window).keydown(function (event) {
+            if (event.keyCode == 13) {
+                event.preventDefault();
+                return false;
+            }
+        });
+    });
+    // add goal or metric
+    $("#add_goal").on('click', function () {
+        $("#goal_list").append('<li><input type="text"></input>&nbsp;&nbsp;<button type="button" class="delete btn-xs"><span data-feather="trash-2"></span></button></li>');
+        feather.replace()
+    });
+    $("#add_metric").on('click', function () {
+        $(".add_here").append('<li class="list-group-item"><input name="metric_val" type="text" placeholder="Title: Details"/><button type="button" class="delete btn-xs"><span data-feather="trash-2"></span></button></li>');
+        feather.replace()
+    });
+    // when checkbox clicked, text input shows up
+    $('body').on('click', 'input[name="metric_use"]', function() {
+        if($(this.closest('input[name="metric_use"]')).prop('checked')){
+            $(this).closest('td').append('&nbsp;&nbsp;<input type="text" name="metric_val">');
+        }
+        else{
+            $(this).closest('td').find('input[name="metric_val"]').remove();
+        }
+    });
+    $('body').on('click', '.delete', function() {
+        $(this).closest('li').remove();
+        $(this).closest('tr').remove();
+    });
+</script>
+
+{% endblock %}

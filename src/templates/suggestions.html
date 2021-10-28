@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- Button trigger modal -->
+<button type="button" class="btn-default btn-sm btn-outline-primary float-right" data-toggle="modal" data-target="#suggModal"><span data-feather="info"></span></button>
+<!-- Modal (suggestions info popup) -->
+<div class="modal fade" id="suggModal" tabindex="-1" role="dialog" aria-labelledby="suggModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+        <h5 class="modal-title" id="suggModalLabel"> Suggestion Explanation</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        </div>
+        <div class="modal-body">
+          <p>
+            This step includes reassessing the planning stage again to model system improvements to understand new system characteristics, ensure that the 
+            goals and metrics are still appropriate, and prioritize any additional measures that should be implemented. The recursive quality of planning 
+            will help to track resilience of the system over time, but also safeguard against resilience degradation. A resilient system does not necessarily 
+            stay that way over time: risks shift, assets age, and people change.
+          </p>
+          <p>
+            This step also includes transitioning to the operational stage of resilience. As plans are made to improve resilience, these plans should 
+            be executed by making changes in the operational space. This should include implementation across processes, equipment, design standards, 
+            or labor resources. The transition may occur on different time scales. Some changes can be implemented immediately; others will require a 
+            longer construction or roll-out period.           
+          </p>
+        </div>
+    </div>
+    </div>
+</div>
+<br>
+
+<div class="d-flex justify-content-center"><h4>Suggestions</h4></div>
+<table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Hazard</th>
+        <th scope="col">Goals and Metrics</th>
+        <th scope="col">Operational</th>
+        <th scope="col">Additional Measures</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for elem in priority_hazards %}
+        {% if elem == "Fuel Shortage" %}
+          <tr>
+            <td> {{ elem }} </td>
+            <td>Reduce fuel dependency, improve power quality</td>
+            <td>Size and install a battery storage system</td>
+            <td>Implement a voluntary demand and response program to manage load spikes</td>
+          </tr>
+        {% elif elem == "Communication Outages" %}
+          <tr>
+            <td> {{ elem }} </td>
+            <td>Reduce fuel dependency, improve power quality</td>
+            <td>Build redundant communication: cellular channel for turbine to control center </td>
+            <td>N/A</td>
+          </tr>
+        {% elif elem|length > 1 %}
+          <tr>
+            <td> {{ elem }} </td>
+            <td>N/A</td>
+            <td>N/A</td>
+            <td>N/A</td>
+          </tr>
+        {% endif %}
+      {% endfor %}
+    </tbody>
+</table>
+<form action="/">
+    <div class="d-flex justify-content-center">
+        <button type="submit" class="btn btn-outline-success btn-lg" id="next_suggestions_button">Restart</button>
+    </div>
+</form>
+{% endblock %}

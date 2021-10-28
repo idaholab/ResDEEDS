@@ -1,0 +1,241 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- ALL MODELING COMMENTED OUT UNTIL FURTHER DEVELOPMENT -->
+
+<form class="p-3" method="POST" id="quality" action="/qualities" enctype="multipart/form-data">
+
+    <!-- Modeling checkbox -->
+    <div class="form-group hidden" >
+        <div class="container-fluid d-flex border-bottom">
+            <div class="float-right">
+                <!-- <input type="checkbox" id="model" name="model_val"></input><label for="model" style="font-size:23px;">&nbsp;&nbsp;Select for INL Modeling Option</label> -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Generation -->
+    <div class="d-flex justify-content-center">
+        <h4>Generation</h4>&nbsp; &nbsp;
+        <!-- Add button -->
+        <button class="btn btn-outline-success btn-sm" type="button" data-toggle="collapse" aria-expanded="false"
+            id="add_gen">+</button> 
+    </div>
+    <div class="form-group" id="generation" >
+        <table class="table" id="gen">
+            <thead>
+                <tr>
+                    <th scope="col"></th>
+                    <th scope="col">Generation Type</th>
+                    <th scope="col">Generation Capacity [kW]</th>
+                    <th scope="col">Description</th>
+                    <!-- <th scope="col" id="third">3rd Degree Polynomial Efficiency Curve Inputs</th>
+                    <th scope="col" id="second"></th>
+                    <th scope="col" id="first"></th>
+                    <th scope="col" id="zero"></th> -->
+                </tr>
+            </thead>
+            {% for elem in generation_types %}
+            <tr>
+                <td><input name="gen_use" type="checkbox"></td>
+                <td>{{ elem }}</td>
+                <td><input name="gen_cap" disabled type=text></td>
+                <td><input name="desc" placeholder="Cummins QSX15" disabled type=text></td>
+                <!-- <div class="form-group" id="model_inputs">
+                    <td><input name="x3_val" placeholder="x^3" disabled type=text></td>
+                    <td><input name="x2_val" placeholder="x^2" disabled type=text></td>
+                    <td><input name="x1_val" placeholder="x^1" disabled type=text></td>
+                    <td><input name="x0_val" placeholder="x^0" disabled type=text></td>
+                </div> -->
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <!-- Load -->
+    <div class="d-flex justify-content-center">
+        <h4>Load</h4>&nbsp;&nbsp;
+        <!-- Add button -->
+        <button class="btn btn-outline-success btn-sm" type="button" data-toggle="collapse" aria-expanded="false"
+            id="add_load">+</button>
+    </div>
+    <div class="form-group" id="loading">
+        <table class="table" id="load">
+            <thead>
+                <tr>
+                    <th scope="col"></th>
+                    <th scope="col">Load Type</th>
+                    <th scope="col">Load Min [kW]</th>
+                    <th scope="col">Load Max [kW]</th>
+                    <th scope="col">Load Avg. [kW]</th>
+                </tr>
+            </thead>
+            {% for elem in load_types %}
+            <tr>
+                <td><input name="load_use" type="checkbox"></td>
+                <td>{{ elem }}</td>
+                <td><input name="load_min" disabled type=text></td>
+                <td><input name="load_max" disabled type=text></td>
+                <td><input name="load_avg" disabled type=text></td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <!-- Connected Systems -->
+    <div class="d-flex justify-content-center border-bottom">
+        <h4>Connected Systems</h4>&nbsp; &nbsp;
+        <!-- Add button -->
+        <button class="btn btn-outline-success btn-sm" type="button" data-toggle="collapse" aria-expanded="false"
+            id="add_conn_sys">+</button>
+    </div>
+
+    <div class="form-group d-flex justify-content-center">
+        <ul style="list-style-type: none;" id="connect">
+            <li><label for="coop"><input type="checkbox" name="coop_val" id="coop"> Local Co-op</label></li>
+            <li><label for="rto"><input type="checkbox" name="rto_val" id="rto">Regional Transmission Operator</label></li>
+        </ul>
+    </div>
+
+    <!-- Communications Used -->
+    <div class="d-flex justify-content-center border-bottom">
+        <h4>Communications Used</h4>&nbsp; &nbsp;
+        <!-- Add button -->
+        <button class="btn btn-outline-success btn-sm" type="button" data-toggle="collapse" aria-expanded="false"
+            id="add_comm">+</button>
+    </div>
+    <div class="form-group d-flex justify-content-center">
+        <ul style="list-style-type: none;" id="comm">
+            <li><label for="cyber"><input type="checkbox" name="cyber_val" id="cyber">Cyber</label></li>
+            <li><label for="cell"><input type="checkbox" name="cell_val" id="cell">Dedicated Cellular</label></li>
+            <li><label for="wifi"><input type="checkbox" name="wifi_val" id="wifi">WiFi</label></li>
+            <li><label for="radio"><input type="checkbox" name="radio_val" id="radio">Radio</label></li>
+        </ul>
+    </div>
+
+    <!-- Market Parameters -->
+    <div class="d-flex justify-content-center border-bottom">
+        <h4>Relevant Market Parameters</h4>&nbsp;&nbsp;
+        <!-- Add button -->
+        <button class="btn btn-outline-success btn-sm" type="button" data-toggle="collapse" aria-expanded="false"
+            id="add_market">+</button>
+    </div>
+    <div class="form-group d-flex justify-content-center">
+        <ul style="list-style-type: none;" id="market">
+            <li><label for="gen_cost"> Generation Capital Cost&nbsp;</label><input type="text" name="gen_cost_val" id="gen_cost" class="float-right"></li>
+            <li><label for="kw_cost">Average Cost per KW&nbsp;</label><input type="text" name="kw_cost_val" id="kw_cost" class="float-right"></li>
+            <li><label for="main_cost">Average Maintenance Cost&nbsp;</label><input type="text" name="main_cost_val" id="main_cost" class="float-right"></li>
+            <li><label for="avg_consume_wint">Average Consumer Rates (Winter)&nbsp;</label><input type="text" name="avg_consume_wint_val" id="avg_consume_wint" class="float-right"></li>
+            <li><label for="avg_consume_summ">Average Consumer Rates (Summer)&nbsp;</label><input type="text" name="avg_consume_summ_val" id="avg_consume_summ" class="float-right"></li>
+        </ul>
+    </div>
+
+    <div class="d-flex justify-content-center"><button type="submit" class="btn btn-outline-success" id="next_qual_button">Next</button></div>
+</form>
+
+<script>
+    // disable enter key
+    $(document).ready(function() {
+        $(window).keydown(function(event){
+            if(event.keyCode == 13) {
+                event.preventDefault();
+                return false;
+            }
+        });
+    });
+
+
+    // enable/disable input for modeling option
+    //hide to begin
+    // $('#third').hide();
+    // $('#second').hide();
+    // $('#first').hide();
+    // $('#zero').hide();
+    // $('input[name="x3_val"]').hide();
+    // $('input[name="x2_val"]').hide();
+    // $('input[name="x1_val"]').hide();
+    // $('input[name="x0_val"]').hide();
+    // // hide or show based on model checkbox
+    // $('input[name="model_val"]').on('click', function() {
+    //     if($('#model').prop('checked') == true){
+    //         $('#third').show();
+    //         $('#second').show();
+    //         $('#first').show();
+    //         $('#zero').show();
+    //         $('input[name="x3_val"]').show();
+    //         $('input[name="x2_val"]').show();
+    //         $('input[name="x1_val"]').show();
+    //         $('input[name="x0_val"]').show();
+    //     }
+    //     else{
+    //         $('#third').hide();
+    //         $('#second').hide();
+    //         $('#first').hide();
+    //         $('#zero').hide();
+    //         $('input[name="x3_val"]').hide();
+    //         $('input[name="x2_val"]').hide();
+    //         $('input[name="x1_val"]').hide();
+    //         $('input[name="x0_val"]').hide();
+    //     }
+    // });
+    // enable/disable input on generation
+    $('input[name="gen_use"]').on('click', function() {
+        if($(this).closest('tr').find("input[type='text']").prop('disabled') == false){
+            $(this).closest('tr').find("input[type='text']").prop('disabled', true);
+        }
+        else{
+            $(this).closest('tr').find("input[type='text']").prop('disabled', false);
+        }
+    });
+    // enable/disable input on load
+    $('input[name="load_use"]').on('click', function() {
+        if($(this).closest('tr').find("input[type='text']").prop('disabled') == false){
+            $(this).closest('tr').find("input[type='text']").prop('disabled', true);
+        }
+        else{
+            $(this).closest('tr').find("input[type='text']").prop('disabled', false);
+        }
+    });
+    // add generation option
+    $("#add_gen").on('click', function () {
+        $("#gen").append('<tr id="gen"><td><input name="gen_use" type="checkbox" checked></td><td><input name="gen_type" type="text"></td><td><input name="gen_cap" type=text></td><td><input name="rel_param" type=text></td></div></tr>');
+        // <div class="form-group" id="model_inputs"><td><input name="x3_val" placeholder="x^3" type=text></td><td><input name="x2_val" placeholder="x^2" type=text></td><td><input name="x1_val" placeholder="x^1" type=text></td><td><input name="x0_val" placeholder="x^0" type=text></td>
+        // if($('#model').prop('checked') == false){
+        //     $('#third').hide();
+        //     $('#second').hide();
+        //     $('#first').hide();
+        //     $('#zero').hide();
+        //     $('input[name="x3_val"]').hide();
+        //     $('input[name="x2_val"]').hide();
+        //     $('input[name="x1_val"]').hide();
+        //     $('input[name="x0_val"]').hide();
+        // }
+    });
+    // add load option
+    $("#add_load").on('click', function () {
+        $("#load").append('<tr><td><input name="load_use" type="checkbox" checked></td><td><input name="load_type" type="text"></td><td><input name="load_min" type=text></td><td><input name="load_max" type=text></td><td><input name="load_avg" type=text></td></tr>');
+    });
+    // add connected system option
+    $("#add_conn_sys").on('click', function () {
+        $("#connect").append('<li><input type="text"></input><button type="button" class="delete btn-xs"><span data-feather="trash-2"></span></button></li>');
+        feather.replace()
+    });
+    // add communication option
+    $("#add_comm").on('click', function () {
+        $("#comm").append('<li><input type="text"></input><button type="button" class="delete btn-xs"><span data-feather="trash-2"></span></button></li>');
+        feather.replace()
+    });
+    // add relevant market parameters option
+    $("#add_market").on('click', function () {
+        $("#market").append('<li><div class="float-right"><input type="text"></input><button type="button" class="delete btn-xs"><span data-feather="trash-2"></span></button></div></li>');
+        feather.replace()
+    });
+    // delete button action
+    $('body').on('click', '.delete', function() {
+        $(this).closest('li').remove();
+    });
+</script>
+
+{% endblock %}
+
