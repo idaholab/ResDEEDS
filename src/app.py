@@ -1,7 +1,24 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, g, url_for, request, redirect
 from werkzeug.utils import redirect
+from flask_pymongo import PyMongo
+from flask_oidc import OpenIDConnect
+from okta import UsersClient
+
 
 app = Flask(__name__)
+# initialize mongo
+app.config["MONGO_URI"] = "mongodb://localhost:27017/miracl"
+mongo = PyMongo(app)
+
+#initialize okta
+app.config["OIDC_CLIENT_SECRETS"] = "client_secrets.json"
+app.config["OIDC_COOKIE_SECURE"] = False
+app.config["OIDC_CALLBACK_ROUTE"] = "/oidc/callback"
+app.config["OIDC_SCOPES"] = ["openid", "email", "profile"]
+app.secret_key = "f46cBXvh34ovp1lxCmfE"
+app.config["OIDC_ID_TOKEN_COOKIE_NAME"] = "oidc_token"
+oidc = OpenIDConnect(app)
+okta_client = UsersClient("dev-53761026.okta.com", "00nJcCJMZXtOWmdloatdx_SzvIwmRDi3LalZFeh6DG")
 
 # gloabal variables
 generation_types = ["Diesel Generator", "Wind", "Solar"]
@@ -32,6 +49,13 @@ performance_metrics = ["Coefficient of variation of the frequency index of sags"
 outcomes_metrics = ["Load loss damage index", "Annual price cap", "Annual allowed revenue", "Cost of interruption", "Impact factor on the population",
 "Noise", "Long distance transmission cost", "Performance based regulation regard/penalty structure", "Price of electricity", "Value of lost load"]
 priority_hazards = []
+
+@app.before_request
+def before_request():
+    if oidc.user_loggedin:
+        g.user = okta_client.get_user(oidc.user_getfield("sub"))
+    else:
+        g.user = None
 
 @app.route('/', methods=["GET", "POST"])
 def index():
@@ -88,6 +112,15 @@ def suggestions():
         return redirect("/")
     return render_template("suggestions.html", priority_hazards=priority_hazards)
 
+@app.route("/login")
+@oidc.require_login
+def login():
+    return redirect(url_for("base"))
 
+
+@app.route("/logout")
+def logout():
+    oidc.logout()
+    return redirect(url_for("base"))
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
