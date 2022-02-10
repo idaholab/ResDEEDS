@@ -1,7 +1,11 @@
 from flask import Flask, render_template, request
 from werkzeug.utils import redirect
+import backend.database as db
+
 
 app = Flask(__name__)
+
+db.initialize(drop_and_recreate=True)
 
 # gloabal variables
 generation_types = ["Diesel Generator", "Wind", "Solar"]
