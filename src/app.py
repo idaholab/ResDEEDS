@@ -3,6 +3,7 @@ from werkzeug.utils import redirect
 from flask_pymongo import PyMongo
 from flask_oidc import OpenIDConnect
 from okta import UsersClient
+import backend.database as db
 
 
 app = Flask(__name__)
@@ -19,6 +20,8 @@ app.secret_key = "f46cBXvh34ovp1lxCmfE"
 app.config["OIDC_ID_TOKEN_COOKIE_NAME"] = "oidc_token"
 oidc = OpenIDConnect(app)
 okta_client = UsersClient("dev-53761026.okta.com", "00nJcCJMZXtOWmdloatdx_SzvIwmRDi3LalZFeh6DG")
+
+db.initialize(drop_and_recreate=True)
 
 # gloabal variables
 generation_types = ["Diesel Generator", "Wind", "Solar"]
