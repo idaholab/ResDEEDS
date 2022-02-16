@@ -1,6 +1,8 @@
+from abc import abstractmethod
 from enum import Enum
 from mongoengine import *
-from database import MAX_NAME_LENGTH
+from backend import MAX_NAME_LENGTH
+from backend.impact import ImpactType
 
 
 class System(Document):
@@ -8,6 +10,10 @@ class System(Document):
     name = StringField(max_length=MAX_NAME_LENGTH)
 
     meta = {'allow_inheritance': True}
+
+    @abstractmethod
+    def apply_impact(self, impact):
+        ...
 
 class TransmissionLine(Document):
     name = StringField(max_length=MAX_NAME_LENGTH)
@@ -43,3 +49,14 @@ class DefaultSystem(System):
     transmission_lines = ListField(ReferenceField(TransmissionLine))
     loads = ListField(ReferenceField(Load))
     generators = ListField(ReferenceField(Generator))
+
+    def apply_impact(self, impact):
+        type = impact.type
+
+        if type is ImpactType.POWER_LINES:
+            pass
+
+        elif type is ImpactType.SUBSTATIONS:
+            pass
+
+        # Save self? Return a copy?

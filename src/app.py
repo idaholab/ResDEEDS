@@ -2,8 +2,8 @@ from flask import Flask, render_template, g, url_for, request, redirect
 from werkzeug.utils import redirect
 from flask_pymongo import PyMongo
 from flask_oidc import OpenIDConnect
-from okta import UsersClient
-import backend.database as db
+#from okta import UsersClient
+import backend.database as database
 
 
 app = Flask(__name__)
@@ -19,9 +19,9 @@ app.config["OIDC_SCOPES"] = ["openid", "email", "profile"]
 app.secret_key = "f46cBXvh34ovp1lxCmfE"
 app.config["OIDC_ID_TOKEN_COOKIE_NAME"] = "oidc_token"
 oidc = OpenIDConnect(app)
-okta_client = UsersClient("dev-53761026.okta.com", "00nJcCJMZXtOWmdloatdx_SzvIwmRDi3LalZFeh6DG")
+okta_client = None#UsersClient("dev-53761026.okta.com", "00nJcCJMZXtOWmdloatdx_SzvIwmRDi3LalZFeh6DG")
 
-db.initialize(drop_and_recreate=True)
+db = database.get_instance(drop_and_recreate=True)
 
 # gloabal variables
 generation_types = ["Diesel Generator", "Wind", "Solar"]
@@ -53,12 +53,12 @@ outcomes_metrics = ["Load loss damage index", "Annual price cap", "Annual allowe
 "Noise", "Long distance transmission cost", "Performance based regulation regard/penalty structure", "Price of electricity", "Value of lost load"]
 priority_hazards = []
 
-@app.before_request
-def before_request():
-    if oidc.user_loggedin:
-        g.user = okta_client.get_user(oidc.user_getfield("sub"))
-    else:
-        g.user = None
+# @app.before_request
+# def before_request():
+#     if oidc.user_loggedin:
+#         g.user = okta_client.get_user(oidc.user_getfield("sub"))
+#     else:
+#         g.user = None
 
 @app.route('/', methods=["GET", "POST"])
 def index():
