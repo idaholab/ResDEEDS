@@ -1,15 +1,48 @@
 from flask import Flask, render_template, g, url_for, request, redirect
+from matplotlib.font_manager import json_load
 from werkzeug.utils import redirect
-from flask_pymongo import PyMongo
 from flask_oidc import OpenIDConnect
 #from okta import UsersClient
-import backend.database as database
+from backend import db
+from flask_sqlalchemy import SQLAlchemy
+from backend.impact import ImpactType, Impact
+from backend.system import SpineSystem, System
+from backend.hazard import Hazard, HazardToHazardLink, HazardType, HazardToImpactLink
+import json
 
+with open("config.json", "r") as config_file:
+    config = json.load(config_file)
 
 app = Flask(__name__)
-# initialize mongo
-app.config["MONGO_URI"] = "mongodb://localhost:27017/miracl"
-mongo = PyMongo(app)
+app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql://{config["database"]["db_user"]}:{config["database"]["db_pass"]}@localhost/{config["database"]["db_name"]}'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db.init_app(app)
+
+if config["database"]["drop_and_recreate"]:
+    with app.app_context():
+        db.drop_all()
+        db.create_all()
+        system = SpineSystem(name='Test Spine system', spine_dir="")
+        db.session.add(system)
+        system = System(name='Test base system')
+        db.session.add(system)
+        impact = Impact(name='Test impact', type=ImpactType.SUBSTATIONS, severity=0.75)
+        db.session.add(impact)
+        hazard = Hazard(is_template=True, name='Test template hazard', type=HazardType.RANSOMWARE, impacts=[impact])
+        db.session.add(hazard)
+        link = HazardToHazardLink(this_type=HazardType.RANSOMWARE, that_type=HazardType.DENIAL_OF_SERVICE)
+        db.session.add(link)
+        link = HazardToImpactLink(this_type=HazardType.RANSOMWARE, that_type=ImpactType.SUBSTATIONS)
+        db.session.add(link)
+
+        db.session.commit()
+
+        for h in Hazard.templates():
+            print(h.name)
+
+        for t in HazardToHazardLink.all_for_type(HazardType.RANSOMWARE):
+            print(t)
+            
 
 #initialize okta
 app.config["OIDC_CLIENT_SECRETS"] = "client_secrets.json"
@@ -20,8 +53,6 @@ app.secret_key = "f46cBXvh34ovp1lxCmfE"
 app.config["OIDC_ID_TOKEN_COOKIE_NAME"] = "oidc_token"
 oidc = OpenIDConnect(app)
 okta_client = None#UsersClient("dev-53761026.okta.com", "00nJcCJMZXtOWmdloatdx_SzvIwmRDi3LalZFeh6DG")
-
-db = database.get_instance(drop_and_recreate=True)
 
 # gloabal variables
 generation_types = ["Diesel Generator", "Wind", "Solar"]

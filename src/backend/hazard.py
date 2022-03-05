@@ -1,8 +1,7 @@
 from enum import Enum
-from mongoengine import *
+from backend import *
 from backend.impact import ImpactType
-from backend import MAX_NAME_LENGTH
-from backend.template import Template
+from backend.link import Link
 
 class HazardType(Enum):
     RANSOMWARE = 'Ransomware'
@@ -17,9 +16,19 @@ class HazardSecondaryCategory(Enum):
     CYBERATTACK = 'Cyberattack'
     UNINTENTIONAL = 'Unintentional'
 
-class Hazard(Template):
+class Hazard(db.Model, Templatable):
+    hazard_id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(MAX_NAME_LENGTH), nullable=False)
+    type = db.Column(db.Enum(HazardType), nullable=False)
+    type_other = db.Column(db.String(MAX_OTHER_LENGTH), nullable=True)
+    primary_category = db.Column(db.Enum(HazardPrimaryCategory), nullable=True)
+    secondary_category = db.Column(db.Enum(HazardSecondaryCategory), nullable=True)
+    impacts = db.relationship('Impact', backref='hazard', lazy=True)
 
-    name = StringField(max_length=MAX_NAME_LENGTH)
+class HazardToHazardLink(db.Model, Link):
+    this_type = db.Column(db.Enum(HazardType))
+    that_type = db.Column(db.Enum(HazardType))
 
-    associated_hazard_types = ListField(ReferenceField(HazardType))
-    associated_impact_types = ListField(ReferenceField(ImpactType))
+class HazardToImpactLink(db.Model, Link):
+    this_type = db.Column(db.Enum(HazardType))
+    that_type = db.Column(db.Enum(ImpactType))

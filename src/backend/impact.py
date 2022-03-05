@@ -1,27 +1,18 @@
 from abc import ABC, abstractmethod
 from enum import Enum
-from mongoengine import *
-from backend import MAX_NAME_LENGTH
+from backend import *
 from enum import Enum
 
-MAX_SEVERITY = 10
 
 class ImpactType(Enum):
     POWER_LINES = 'Power lines'
     SUBSTATIONS = 'Substations'
+    OTHER = 'Other'
 
-class Impact(Document):
-    type = EnumField(ImpactType)
-    severity = IntField(min_value=0, max_value=MAX_SEVERITY)
-
-    @abstractmethod
-    def apply(self, system):
-        ...
-
-    meta = {'allow_inheritance': True}
-
-# class PowerLinesImpact(Impact):
-
-#     def apply(self, system):
-#         # Degrade power lines of the system
-#         pass
+class Impact(db.Model, Templatable):
+    impact_id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(MAX_NAME_LENGTH), nullable=False)
+    type = db.Column(db.Enum(ImpactType), nullable=False)
+    type_other = db.Column(db.String(MAX_OTHER_LENGTH), nullable=True)
+    severity = db.Column(db.Numeric(precision=5, scale=4), nullable=False)
+    hazard_id = db.Column(db.Integer, db.ForeignKey('hazard.hazard_id'), nullable=False)
