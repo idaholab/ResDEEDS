@@ -5,8 +5,13 @@ from flask_oidc import OpenIDConnect
 from okta import UsersClient
 import backend.database as db
 
+# importing backend classes
+from backend.system import *
+
 
 app = Flask(__name__)
+# app.config['SERVER_NAME'] = 'localhost:5000'
+
 # initialize mongo
 app.config["MONGO_URI"] = "mongodb://localhost:27017/miracl"
 mongo = PyMongo(app)
@@ -19,12 +24,12 @@ app.config["OIDC_SCOPES"] = ["openid", "email", "profile"]
 app.secret_key = "f46cBXvh34ovp1lxCmfE"
 app.config["OIDC_ID_TOKEN_COOKIE_NAME"] = "oidc_token"
 oidc = OpenIDConnect(app)
-okta_client = UsersClient("dev-53761026.okta.com", "00nJcCJMZXtOWmdloatdx_SzvIwmRDi3LalZFeh6DG")
+okta_client = UsersClient("https://dev-53761026.okta.com", "00nJcCJMZXtOWmdloatdx_SzvIwmRDi3LalZFeh6DG")
 
 db.initialize(drop_and_recreate=True)
 
-# gloabal variables
-generation_types = ["Diesel Generator", "Wind", "Solar"]
+# global variables
+generation_types = ["Diesel Generator", "Wind", "PV Solar"]
 load_types = ["Commercial", "Single Home", "Community Residential"]
 physical_hazards = ["Hurricanes", "High Wind", "Lightning Storms", "Fires", "Deep Freezes", "Ice", "Floods", 
                     "Earthquakes", "Geomagnetic Disturbances", "Vandalism", "Substation Attacks", "Fuel Shortage", "Severe Winter Weather"]
@@ -62,13 +67,23 @@ def before_request():
 
 @app.route('/', methods=["GET", "POST"])
 def index():
+    system = []
+    if g.user != None:
+        system = System.objects(user = g.user.profile.email)
     if request.method == "POST":
+        if system.count() == 0:
+            sysName = request.form["sysNameVal"]
+            print(sysName)
+            System(name=sysName, user=g.user.profile.email).save()
         return redirect("/qualities")
-    return render_template("base.html")
+    return render_template("base.html", system=system)
 
 @app.route('/qualities', methods=["GET", "POST"])
 def qualities():
+    system = System.objects(user = g.user.profile.email)
     if request.method == "POST":
+        generators = request.form.getlist('gen_use')
+        print(generators)
         return redirect("/goals")
     return render_template("qualities.html", generation_types=generation_types, load_types=load_types)
 
@@ -118,12 +133,12 @@ def suggestions():
 @app.route("/login")
 @oidc.require_login
 def login():
-    return redirect(url_for("base"))
+    return redirect(url_for("index"))
 
 
 @app.route("/logout")
 def logout():
     oidc.logout()
-    return redirect(url_for("base"))
+    return redirect(url_for("index"))
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0')
+    app.run(debug=True)

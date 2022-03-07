@@ -38,7 +38,11 @@
             </thead>
             {% for elem in generation_types %}
             <tr>
-                <td><input name="gen_use" type="checkbox"></td>
+                {% if elem in generators %}
+                <td><input name="gen_use" type="checkbox" value={{elem}} checked></td>
+                {% else %}
+                <td><input name="gen_use" type="checkbox" value={{elem}}></td>
+                {% endif %}
                 <td>{{ elem }}</td>
                 <td><input name="gen_cap" disabled type=text></td>
                 <td><input name="desc" placeholder="Cummins QSX15" disabled type=text></td>
@@ -131,7 +135,7 @@
         </ul>
     </div>
 
-    <div class="d-flex justify-content-center"><button type="submit" class="btn btn-outline-success" id="next_qual_button">Next</button></div>
+    <div class="d-flex justify-content-center"><button type="submit" class="btn btn-outline-success" id="next_qual_button">Save and Continue</button></div>
 </form>
 
 <script>
