@@ -22,9 +22,9 @@ if config["database"]["drop_and_recreate"]:
     with app.app_context():
         db.drop_all()
         db.create_all()
-        system = SpineSystem(name='Test Spine system', spine_dir="")
+        system = SpineSystem(name='Test Spine system', spine_dir="", user="Test user")
         db.session.add(system)
-        system = System(name='Test base system')
+        system = System(name='Test base system', user="Test user")
         db.session.add(system)
         impact = Impact(name='Test impact', type=ImpactType.SUBSTATIONS, severity=0.75)
         db.session.add(impact)
@@ -54,8 +54,8 @@ app.config["OIDC_ID_TOKEN_COOKIE_NAME"] = "oidc_token"
 oidc = OpenIDConnect(app)
 okta_client = None#UsersClient("dev-53761026.okta.com", "00nJcCJMZXtOWmdloatdx_SzvIwmRDi3LalZFeh6DG")
 
-# gloabal variables
-generation_types = ["Diesel Generator", "Wind", "Solar"]
+# global variables
+generation_types = ["Diesel Generator", "Wind", "PV Solar"]
 load_types = ["Commercial", "Single Home", "Community Residential"]
 physical_hazards = ["Hurricanes", "High Wind", "Lightning Storms", "Fires", "Deep Freezes", "Ice", "Floods", 
                     "Earthquakes", "Geomagnetic Disturbances", "Vandalism", "Substation Attacks", "Fuel Shortage", "Severe Winter Weather"]
@@ -84,22 +84,37 @@ outcomes_metrics = ["Load loss damage index", "Annual price cap", "Annual allowe
 "Noise", "Long distance transmission cost", "Performance based regulation regard/penalty structure", "Price of electricity", "Value of lost load"]
 priority_hazards = []
 
-# @app.before_request
-# def before_request():
-#     if oidc.user_loggedin:
-#         g.user = okta_client.get_user(oidc.user_getfield("sub"))
-#     else:
-#         g.user = None
+@app.before_request
+def before_request():
+    if oidc.user_loggedin:
+        g.user = okta_client.get_user(oidc.user_getfield("sub"))
+    else:
+        g.user = None
 
 @app.route('/', methods=["GET", "POST"])
 def index():
+    system = []
+    if g.user is not None:
+        system = System.get_all_for_user(g.user.profile.email)
     if request.method == "POST":
+        if system.count() == 0:
+            sysName = request.form["sysNameVal"]
+            print(sysName)
+            #System(name=sysName, user=g.user.profile.email).save()
+            sys = System(name=sysName, user=g.user.profile.email)
+            db.session.add(sys)
+            db.session.commit()
+            g.system_id = sys
         return redirect("/qualities")
-    return render_template("base.html")
+    return render_template("base.html", system=system)
 
 @app.route('/qualities', methods=["GET", "POST"])
 def qualities():
+    #system = System.objects(user = g.user.profile.email)
+    system = System.get_by_id(g.system_id)
     if request.method == "POST":
+        generators = request.form.getlist('gen_use')
+        print(generators)
         return redirect("/goals")
     return render_template("qualities.html", generation_types=generation_types, load_types=load_types)
 
@@ -149,12 +164,12 @@ def suggestions():
 @app.route("/login")
 @oidc.require_login
 def login():
-    return redirect(url_for("base"))
+    return redirect(url_for("index"))
 
 
 @app.route("/logout")
 def logout():
     oidc.logout()
-    return redirect(url_for("base"))
+    return redirect(url_for("index"))
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0')
+    app.run(debug=True)

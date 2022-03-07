@@ -39,23 +39,20 @@
 </head>
 
 <body>
-	<div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom box-shadow">
-		<nav class="my-2 my-md-0 mr-md-3">
-			{% if not g.user %}
-			<a class="p-2 text-dark" href="/login">Log In / Register</a>
-			{% else %}
-			<a class="p-2 text-dark" href="/logout">Logout</a>
-			{% endif %}
-		</nav>
-	</div>
 	<div class="container-fluid">
 
 		<div class="row">
 			<nav class="navbar navbar-dark bg-dark shadow">
 				<a class="navbar-brand col-sm-3 col-md-2 mr-0 nav-link" href="/">Idaho National Laboratory - Resilience
 					Calculator</a>
+				{% if not g.user %}
+				<a class="p-2 text-light" href="/login">Log In / Register</a>
+				{% else %}
+				<a class="p-2 text-light" href="/logout">Hi, {{ g.user.profile.firstName }}! Logout?</a>
+				{% endif %}
 			</nav>
 		</div>
+		{% if g.user %}
 		<div class="row">
 			<nav class="col-md-2 d-none d-md-block bg-light sidebar">
 				<div class="sidebar-sticky">
@@ -114,76 +111,73 @@
 				<div>
 					{% block content %}
 					<div class="container-fluid d-flex justify-content-center">
-						<h3>INL Resilience Calculator</h3>
+						{% if system %}
+						<h3>Your System: <u>{{system[0].name}}</u></h3>
+						{% else %}
+						<h3>No systems saved <br>Enter a name to create a new system:</h3>
+						<br><form id="systemName">
+							<input type="text" id="sysName" name="sysNameVal">
+						</form>
+						{% endif %}
 					</div>
-					<div class="container-fluid d-flex justify-content-center border-bottom text-muted">
-						<h5>Measure your system's resilience and receive suggestions for improvement.</h5>
-					</div>
-					<br>
-					<!-- Button trigger modal -->
-					<div class="container-fluid d-flex float-right">
-						<button type="button" class="btn-default btn-sm btn-outline-primary float-right"
-							data-toggle="modal" data-target="#baseModal"><span data-feather="info"></span></button>
-						<!-- Modal (risks info popup) -->
-						<div class="modal fade" id="baseModal" tabindex="-1" role="dialog"
-							aria-labelledby="baseModalLabel" aria-hidden="true">
-							<div class="modal-dialog" role="document">
-								<div class="modal-content">
-									<div class="modal-header">
-										<h5 class="modal-title" id="baseModalLabel">What is this?</h5>
-										<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-											<span aria-hidden="true">&times;</span>
-										</button>
-									</div>
-									<div class="modal-body">
-										<ul style="list-style-type: none;">
-											<li>Access to reliable, resilient power systems is important in 21st century
-												now more than ever. Terrestrial weather events exacerbated by climate
-												change and extreme weather conditions
-												are happening with greater frequency and intensity. Cyberattacks are
-												seen at an increasing frequency against the power grid, and the attacks
-												are becoming more
-												sophisticated and targeted towards electric energy systems. The Idaho
-												National Laboratory (INL), as part of the multi-laboratory Microgrids,
-												Infrastructure Resilience, and Advanced
-												Controls Launchpad (MIRACL) project, has developed a resilience
-												framework for electric energy delivery systems (EEDS).
-												The framework provides detailed steps for evaluating resiliency in the
-												planning, operational, and future stages, and
-												encompasses five core functions of resilience. It allows users to
-												evaluate the resilience of distributed wind, taking
-												into consideration the resilience of the wind systems themselves, as
-												well as the effect they have on the resiliency of
-												any systems they are connected to. This application follows the
-												frameowork to allow stakeholders to evaluate their current position,
-												create resiliency goals, compare different investment options,
-												and decide which metrics are most appropriate for their system</li>
-										</ul>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-					<!-- Graphic -->
-					<div class="container-fluid d-flex justify-content-center">
-						<img src="../static/planning_stage.png" alt="Framework Description"
-							class="img-thumbnail border-0" height="300px" width="600px">
-					</div>
-					<!-- Link -->
-					<div class="container-fluid d-flex justify-content-center">
-						<a href="https://resilience.inl.gov/miracl/"><span
-								data-feather="link"></span>https://resilience.inl.gov/miracl/</a>
-					</div>
+					<ol>
+					</ol>
 					<br>
 					<form action="/qualities">
 						<div class="d-flex justify-content-center">
-							<button type="submit" class="btn btn-outline-success" id="next_base_button">Begin</button>
+							<button type="submit" class="btn btn-outline-success" id="next_base_button">Continue</button>
 						</div>
 					</form>
 					{% endblock %}
 				</div>
 			</main>
 		</div>
+		{% else %}
+		<main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+			<div
+				class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+			</div>
+			<div>
+				<div class="container-fluid d-flex justify-content-center">
+					<h3>INL Resilience Calculator</h3>
+				</div>
+				<div class="container-fluid d-flex justify-content-center border-bottom text-muted">
+					<h5>Measure your system's resilience and receive suggestions for improvement.</h5>
+				</div>
+				<div class="container-fluid d-flex justify-content-center border-bottom text-muted">
+					<p>Access to reliable, resilient power systems is important in 21st century
+						now more than ever. Terrestrial weather events exacerbated by climate
+						change and extreme weather conditions
+						are happening with greater frequency and intensity. Cyberattacks are
+						seen at an increasing frequency against the power grid, and the attacks
+						are becoming more
+						sophisticated and targeted towards electric energy systems. The Idaho
+						National Laboratory (INL), as part of the multi-laboratory Microgrids,
+						Infrastructure Resilience, and Advanced
+						Controls Launchpad (MIRACL) project, has developed a resilience
+						framework for electric energy delivery systems (EEDS).
+						The framework provides detailed steps for evaluating resiliency in the
+						planning, operational, and future stages, and
+						encompasses five core functions of resilience. It allows users to
+						evaluate the resilience of distributed wind, taking
+						into consideration the resilience of the wind systems themselves, as
+						well as the effect they have on the resiliency of
+						any systems they are connected to. This application follows the
+						frameowork to allow stakeholders to evaluate their current position,
+						create resiliency goals, compare different investment options,
+						and decide which metrics are most appropriate for their system</p>
+				</div>
+				<!-- Graphic -->
+				<div class="container-fluid d-flex justify-content-center">
+					<img src="../static/planning_stage.png" alt="Framework Description"
+						class="img-thumbnail border-0" height="300px" width="600px">
+				</div>
+				<!-- Link -->
+				<div class="container-fluid d-flex justify-content-center">
+					<a href="https://resilience.inl.gov/miracl/"><span
+							data-feather="link"></span>https://resilience.inl.gov/miracl/</a>
+				</div>
+		{% endif %}
 	</div>
 
 	<!-- Icons -->
