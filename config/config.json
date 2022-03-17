@@ -2,7 +2,7 @@
     "database": {
         "db_name": "resilience_calculator",
         "db_user": "resilience_calculator",
-        "db_pass": "<your_password>",
+        "db_pass": "password1",
         "drop_and_recreate": true
     }
 }

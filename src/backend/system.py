@@ -1,21 +1,14 @@
 from abc import abstractmethod
 from enum import Enum
 from backend import *
-from backend.impact import ImpactType
 
 
-class System(db.Model):
-    system_id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(MAX_NAME_LENGTH), nullable=False)
+class System(db.Model, BackendBase):
     user = db.Column(db.String(MAX_NAME_LENGTH), nullable=False)
 
     @classmethod
     def get_all_for_user(cls, user):
         return [s for s in cls.query.filter_by(user=user)]
-
-    @classmethod
-    def get_by_id(cls, system_id):
-        return cls.query.filter_by(system_id=system_id)
 
     @abstractmethod
     def apply_impact(self, impact):
