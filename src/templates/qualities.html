@@ -39,9 +39,9 @@
             {% for elem in generation_types %}
             <tr>
                 {% if elem in generators %}
-                <td><input name="gen_use" type="checkbox" value={{elem}} checked></td>
+                <td><input name="gen_use" type="checkbox" value="{{elem}}" checked></td>
                 {% else %}
-                <td><input name="gen_use" type="checkbox" value={{elem}}></td>
+                <td><input name="gen_use" type="checkbox" value="{{elem}}"></td>
                 {% endif %}
                 <td>{{ elem }}</td>
                 <td><input name="gen_cap" disabled type=text></td>

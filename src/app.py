@@ -1,11 +1,11 @@
-from flask import Flask, render_template, g, url_for, request, redirect
+from flask import Flask, render_template, g, url_for, request, redirect, session
 from werkzeug.utils import redirect
 from flask_oidc import OpenIDConnect
 #from okta import UsersClient
 from backend import db
 from flask_sqlalchemy import SQLAlchemy
 from backend.impact import Impact
-from backend.system import SpineSystem, System
+from backend.system import *
 from backend.hazard import Hazard, HazardToHazardLink, HazardToImpactLink
 import json
 import csv
@@ -23,10 +23,10 @@ if config["database"]["drop_and_recreate"]:
     with app.app_context():
         db.drop_all()
         db.create_all()
-        system = SpineSystem(name='Test Spine system', spine_dir="", user="Test user")
-        db.session.add(system)
-        system = System(name='Test base system', user="Test user")
-        db.session.add(system)
+        # system = SpineSystem(name='Test Spine system', spine_dir="", user="Test user")
+        # db.session.add(system)
+        # system = DefaultSystem(name='Test base system', user="Test user")
+        # db.session.add(system)
 
 
         with open("config/hazards.csv", "r", encoding="utf-8-sig") as csvfile:
@@ -128,7 +128,13 @@ def before_request():
     if oidc.user_loggedin:
         g.user = okta_client.get_user(oidc.user_getfield("sub"))
     else:
-        g.user = None
+        #Temporary for testing
+        class Object:
+            pass
+        g.user = Object()
+        g.user.profile = Object()
+        g.user.profile.email = "someone@example.com"
+        g.user.profile.firstName = "Someone"
 
 @app.route('/', methods=["GET", "POST"])
 def index():
@@ -136,24 +142,48 @@ def index():
     if g.user is not None:
         system = System.get_all_for_user(g.user.profile.email)
     if request.method == "POST":
-        if system.count() == 0:
+        if len(system) == 0:
             sysName = request.form["sysNameVal"]
-            print(sysName)
             #System(name=sysName, user=g.user.profile.email).save()
-            sys = System(name=sysName, user=g.user.profile.email)
+            sys = DefaultSystem(name=sysName, user=g.user.profile.email)
             db.session.add(sys)
             db.session.commit()
-            g.system_id = sys
+            session["system_id"] = sys.obj_id
         return redirect("/qualities")
+
+    #Temporary - for testing without okta
+    # if g.user is None:
+    #     sys = System(name='Test system', user='someone@example.com')
+    #     db.session.add(sys)
+    #     db.session.commit()
+    #     session['system_id'] = sys.obj_id
+    #     print('Goodbye')
+    #     return redirect("/qualities")
+    #####
+
     return render_template("base.html", system=system)
 
 @app.route('/qualities', methods=["GET", "POST"])
 def qualities():
     #system = System.objects(user = g.user.profile.email)
-    system = System.get_by_id(g.system_id)
+    system_id = session["system_id"]
+    system = System.get_by_id(system_id)
+    print(system_id, system)
     if request.method == "POST":
         generators = request.form.getlist('gen_use')
         print(generators)
+        caps = request.form.getlist('gen_cap')
+        print(caps)
+        descs = request.form.getlist('desc')
+        print(descs)
+        new_gens = []
+        for (gen, cap, desc) in zip(generators, caps, descs):
+            print(gen, cap, desc)
+            new_gen = Generation(name=gen, generation_type=gen, capacity_kw=cap, description=desc, system_id=system_id)
+            db.session.add(new_gen)
+            new_gens.append(new_gen)
+        system.generation = new_gens
+        db.session.commit()
         return redirect("/goals")
     return render_template("qualities.html", generation_types=generation_types, load_types=load_types)
 

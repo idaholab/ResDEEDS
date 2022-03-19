@@ -19,8 +19,8 @@ class BackendBase():
 
     @classmethod
     def get_by_name(cls, name):
-        return cls.query.filter_by(name=name)
+        return cls.query.filter_by(name=name).first()
 
     @classmethod
     def get_by_id(cls, obj_id):
-        return cls.query.filter_by(obj_id=obj_id)
+        return cls.query.filter_by(obj_id=obj_id).first()
