@@ -2,7 +2,7 @@ from flask import Flask, render_template, g, url_for, request, redirect
 from matplotlib.font_manager import json_load
 from werkzeug.utils import redirect
 from flask_oidc import OpenIDConnect
-#from okta import UsersClient
+from okta import UsersClient
 from backend import db
 from flask_sqlalchemy import SQLAlchemy
 from backend.impact import ImpactType, Impact
@@ -10,7 +10,7 @@ from backend.system import SpineSystem, System
 from backend.hazard import Hazard, HazardToHazardLink, HazardType, HazardToImpactLink
 import json
 
-with open("config.json", "r") as config_file:
+with open("../config.json", "r") as config_file:
     config = json.load(config_file)
 
 app = Flask(__name__)
@@ -45,14 +45,14 @@ if config["database"]["drop_and_recreate"]:
             
 
 #initialize okta
-app.config["OIDC_CLIENT_SECRETS"] = "client_secrets.json"
+app.config["OIDC_CLIENT_SECRETS"] = "../client_secrets.json"
 app.config["OIDC_COOKIE_SECURE"] = False
 app.config["OIDC_CALLBACK_ROUTE"] = "/oidc/callback"
 app.config["OIDC_SCOPES"] = ["openid", "email", "profile"]
 app.secret_key = "f46cBXvh34ovp1lxCmfE"
 app.config["OIDC_ID_TOKEN_COOKIE_NAME"] = "oidc_token"
 oidc = OpenIDConnect(app)
-okta_client = None#UsersClient("dev-53761026.okta.com", "00nJcCJMZXtOWmdloatdx_SzvIwmRDi3LalZFeh6DG")
+okta_client = UsersClient("https://dev-53761026.okta.com", "00nJcCJMZXtOWmdloatdx_SzvIwmRDi3LalZFeh6DG")
 
 # global variables
 generation_types = ["Diesel Generator", "Wind", "PV Solar"]
@@ -111,10 +111,10 @@ def index():
 @app.route('/qualities', methods=["GET", "POST"])
 def qualities():
     #system = System.objects(user = g.user.profile.email)
-    system = System.get_by_id(g.system_id)
+    # system = System.get_by_id(g.system_id)
     if request.method == "POST":
         generators = request.form.getlist('gen_use')
-        print(generators)
+        # print(generators)
         return redirect("/goals")
     return render_template("qualities.html", generation_types=generation_types, load_types=load_types)
 
