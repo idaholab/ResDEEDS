@@ -110,20 +110,20 @@
 				</div>
 				<div>
 					{% block content %}
+					<form id="systemName" action="/" method="POST">
 					<div class="container-fluid d-flex justify-content-center">
 						{% if system %}
 						<h3>Your System: <u>{{system[0].name}}</u></h3>
 						{% else %}
 						<h3>No systems saved <br>Enter a name to create a new system:</h3>
-						<br><form id="systemName">
+						<br>
 							<input type="text" id="sysName" name="sysNameVal">
-						</form>
 						{% endif %}
 					</div>
 					<ol>
 					</ol>
 					<br>
-					<form action="/qualities">
+					
 						<div class="d-flex justify-content-center">
 							<button type="submit" class="btn btn-outline-success" id="next_base_button">Continue</button>
 						</div>

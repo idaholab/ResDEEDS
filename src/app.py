@@ -1,16 +1,17 @@
-from flask import Flask, render_template, g, url_for, request, redirect
-from matplotlib.font_manager import json_load
+from flask import Flask, render_template, g, url_for, request, redirect, session
 from werkzeug.utils import redirect
 from flask_oidc import OpenIDConnect
 from okta import UsersClient
 from backend import db
 from flask_sqlalchemy import SQLAlchemy
-from backend.impact import ImpactType, Impact
-from backend.system import SpineSystem, System
-from backend.hazard import Hazard, HazardToHazardLink, HazardType, HazardToImpactLink
+from backend.impact import Impact
+from backend.system import *
+from backend.hazard import Hazard, HazardToHazardLink, HazardToImpactLink
 import json
+import csv
+import logging
 
-with open("../config.json", "r") as config_file:
+with open("config/config.json", "r") as config_file:
     config = json.load(config_file)
 
 app = Flask(__name__)
@@ -22,30 +23,68 @@ if config["database"]["drop_and_recreate"]:
     with app.app_context():
         db.drop_all()
         db.create_all()
-        system = SpineSystem(name='Test Spine system', spine_dir="", user="Test user")
-        db.session.add(system)
-        system = System(name='Test base system', user="Test user")
-        db.session.add(system)
-        impact = Impact(name='Test impact', type=ImpactType.SUBSTATIONS, severity=0.75)
-        db.session.add(impact)
-        hazard = Hazard(is_template=True, name='Test template hazard', type=HazardType.RANSOMWARE, impacts=[impact])
-        db.session.add(hazard)
-        link = HazardToHazardLink(this_type=HazardType.RANSOMWARE, that_type=HazardType.DENIAL_OF_SERVICE)
-        db.session.add(link)
-        link = HazardToImpactLink(this_type=HazardType.RANSOMWARE, that_type=ImpactType.SUBSTATIONS)
-        db.session.add(link)
+        # system = SpineSystem(name='Test Spine system', spine_dir="", user="Test user")
+        # db.session.add(system)
+        # system = DefaultSystem(name='Test base system', user="Test user")
+        # db.session.add(system)
+
+
+        with open("config/hazards.csv", "r", encoding="utf-8-sig") as csvfile:
+            header_line = csvfile.readline()
+            reader = csv.reader(csvfile, delimiter=',', skipinitialspace=True)
+            NAME = 0
+            PRIMARY_CAT = 1
+            SECONDARY_CAT = 2
+            ASSOC_HAZARDS = 3
+            IMPACTS = 4
+            METRICS = 5
+            for row in reader:
+                name = row[NAME]
+                primary_cat = row[PRIMARY_CAT]
+                secondary_cat = row[SECONDARY_CAT]
+                impacts = row[IMPACTS].split(';')
+                
+                new_impacts = []
+                for impact in [i.lstrip() for i in impacts if i != '']:
+                    if impact not in Impact.TYPES:
+                        logging.warning(f'Impact type {impact} not found while loading templates.')
+                    new_impact = Impact(is_template=True, impact_type=impact, severity=0.5)
+                    # print(Impact.get_by_name(impact))
+                    # if Impact.get_by_name(impact) is not None:
+                    #     try:
+                    #         type = ImpactType(impact)
+                    #         new_impact = Impact(name=impact, type=ImpactType(impact), severity=0.5)
+                    #     except ValueError as e:
+                    #         new_impact = Impact(name=impact, type=ImpactType.OTHER, type_other=impact, severity=0.5)  
+                    db.session.add(new_impact)
+                    new_impacts.append(new_impact)
+
+                    link = HazardToImpactLink(this_type=name, that_type=impact)
+                    db.session.add(link)
+
+                hazard = Hazard(is_template=True, name=name, hazard_type=name, impacts=new_impacts,
+                            primary_category=primary_cat, secondary_category=secondary_cat)
+                db.session.add(hazard)
+
+                assoc_hazards = row[ASSOC_HAZARDS].split(';')
+                for assoc_hazard in [h.lstrip() for h in assoc_hazards if h != '']:
+                    link = HazardToHazardLink(this_type=name, that_type=assoc_hazard)
+                    db.session.add(link)
+
+        # impact = Impact(name='Test impact', type=ImpactType.SUBSTATIONS, severity=0.75)
+        # db.session.add(impact)
+        # hazard = Hazard(is_template=True, name='Test template hazard', type=HazardType.RANSOMWARE, impacts=[impact])
+        # db.session.add(hazard)
+        # link = HazardToHazardLink(this_type=HazardType.RANSOMWARE, that_type=HazardType.DENIAL_OF_SERVICE)
+        # db.session.add(link)
+        # link = HazardToImpactLink(this_type=HazardType.RANSOMWARE, that_type=ImpactType.SUBSTATIONS)
+        # db.session.add(link)
 
         db.session.commit()
-
-        for h in Hazard.templates():
-            print(h.name)
-
-        for t in HazardToHazardLink.all_for_type(HazardType.RANSOMWARE):
-            print(t)
             
 
 #initialize okta
-app.config["OIDC_CLIENT_SECRETS"] = "../client_secrets.json"
+app.config["OIDC_CLIENT_SECRETS"] = "config/client_secrets.json"
 app.config["OIDC_COOKIE_SECURE"] = False
 app.config["OIDC_CALLBACK_ROUTE"] = "/oidc/callback"
 app.config["OIDC_SCOPES"] = ["openid", "email", "profile"]
@@ -89,7 +128,13 @@ def before_request():
     if oidc.user_loggedin:
         g.user = okta_client.get_user(oidc.user_getfield("sub"))
     else:
-        g.user = None
+        #Temporary for testing
+        class Object:
+            pass
+        g.user = Object()
+        g.user.profile = Object()
+        g.user.profile.email = "someone@example.com"
+        g.user.profile.firstName = "Someone"
 
 @app.route('/', methods=["GET", "POST"])
 def index():
@@ -97,24 +142,48 @@ def index():
     if g.user is not None:
         system = System.get_all_for_user(g.user.profile.email)
     if request.method == "POST":
-        if system.count() == 0:
+        if len(system) == 0:
             sysName = request.form["sysNameVal"]
-            print(sysName)
             #System(name=sysName, user=g.user.profile.email).save()
-            sys = System(name=sysName, user=g.user.profile.email)
+            sys = DefaultSystem(name=sysName, user=g.user.profile.email)
             db.session.add(sys)
             db.session.commit()
-            g.system_id = sys
+            session["system_id"] = sys.obj_id
         return redirect("/qualities")
+
+    #Temporary - for testing without okta
+    # if g.user is None:
+    #     sys = System(name='Test system', user='someone@example.com')
+    #     db.session.add(sys)
+    #     db.session.commit()
+    #     session['system_id'] = sys.obj_id
+    #     print('Goodbye')
+    #     return redirect("/qualities")
+    #####
+
     return render_template("base.html", system=system)
 
 @app.route('/qualities', methods=["GET", "POST"])
 def qualities():
     #system = System.objects(user = g.user.profile.email)
-    # system = System.get_by_id(g.system_id)
+    system_id = session["system_id"]
+    system = System.get_by_id(system_id)
+    print(system_id, system)
     if request.method == "POST":
         generators = request.form.getlist('gen_use')
-        # print(generators)
+        print(generators)
+        caps = request.form.getlist('gen_cap')
+        print(caps)
+        descs = request.form.getlist('desc')
+        print(descs)
+        new_gens = []
+        for (gen, cap, desc) in zip(generators, caps, descs):
+            print(gen, cap, desc)
+            new_gen = Generation(name=gen, generation_type=gen, capacity_kw=cap, description=desc, system_id=system_id)
+            db.session.add(new_gen)
+            new_gens.append(new_gen)
+        system.generation = new_gens
+        db.session.commit()
         return redirect("/goals")
     return render_template("qualities.html", generation_types=generation_types, load_types=load_types)
 

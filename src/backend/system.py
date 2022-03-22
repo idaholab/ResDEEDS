@@ -1,21 +1,14 @@
 from abc import abstractmethod
 from enum import Enum
 from backend import *
-from backend.impact import ImpactType
 
 
-class System(db.Model):
-    system_id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(MAX_NAME_LENGTH), nullable=False)
+class System(db.Model, BackendBase):
     user = db.Column(db.String(MAX_NAME_LENGTH), nullable=False)
 
     @classmethod
     def get_all_for_user(cls, user):
-        return [s for s in cls.query.filter_by(user=user)]
-
-    @classmethod
-    def get_by_id(cls, system_id):
-        return cls.query.filter_by(system_id=system_id)
+        return cls.query.filter_by(user=user).all()
 
     @abstractmethod
     def apply_impact(self, impact):
@@ -37,10 +30,13 @@ class SpineSystem(System):
 #     COMMERCIAL = 'commercial'
 #     OTHER = 'other'
 
-# class Load(Document):
-#     name = StringField(max_length=MAX_NAME_LENGTH)
-#     max_kw = FloatField(min_value=0)
-#     type = EnumField(LoadType)
+class Load(db.Model, BackendBase):
+    load_type = db.Column(db.String(MAX_NAME_LENGTH), nullable=True)
+    min_kw = db.Column(db.Float, nullable=False)
+    max_kw = db.Column(db.Float, nullable=False)
+    avg_kw = db.Column(db.Float, nullable=False)
+    
+    system_id = db.Column(db.Integer, db.ForeignKey('system.obj_id'), nullable=False)
 
 # class GeneratorType(Enum):
 #     GAS = 'gas'
@@ -52,23 +48,39 @@ class SpineSystem(System):
 #     HYDRO = 'hydro'
 #     OTHER = 'other'
 
-# class Generator(Document):
-#     name = StringField(max_length=MAX_NAME_LENGTH)
-#     max_kw = FloatField(min_value=0)
-#     type = EnumField(GeneratorType)
+class Generation(db.Model, BackendBase):
+    generation_type = db.Column(db.String(MAX_NAME_LENGTH), nullable=True)
+    capacity_kw = db.Column(db.Float, nullable=False)
+    description = db.Column(db.String(MAX_NAME_LENGTH), nullable=True)
 
-# class DefaultSystem(System):
-#     transmission_lines = ListField(ReferenceField(TransmissionLine))
-#     loads = ListField(ReferenceField(Load))
-#     generators = ListField(ReferenceField(Generator))
+    system_id = db.Column(db.Integer, db.ForeignKey('system.obj_id'), nullable=False)
 
-#     def apply_impact(self, impact):
-#         type = impact.type
+class ConnectedSystem(db.Model, BackendBase):
+    system_id = db.Column(db.Integer, db.ForeignKey('system.obj_id'), nullable=True)
 
-#         if type is ImpactType.POWER_LINES:
-#             pass
+class Communications(db.Model, BackendBase):
+    system_id = db.Column(db.Integer, db.ForeignKey('system.obj_id'), nullable=True)
 
-#         elif type is ImpactType.SUBSTATIONS:
-#             pass
+class DefaultSystem(System):
 
-#         # Save self? Return a copy?
+    generation = db.relationship('Generation', backref='system', lazy=True)
+    load = db.relationship('Load', backref='system', lazy=True)
+    connected_systems = db.relationship('ConnectedSystem', backref='system', lazy=True)
+    communications = db.relationship('Communications', backref='system', lazy=True)
+
+    market_generation_capital_cost = db.Column(db.Numeric(scale=2), nullable=True)
+    market_avg_cost_per_kw = db.Column(db.Numeric(scale=2), nullable=True)
+    market_avg_maintenance_cost = db.Column(db.Numeric(scale=2), nullable=True)
+    market_avg_consumer_rate_winter = db.Column(db.Numeric(scale=2), nullable=True)
+    market_avg_consumer_rate_summer = db.Column(db.Numeric(scale=2), nullable=True)
+
+    def apply_impact(self, impact):
+        type = impact.type
+
+        if type is ImpactType.POWER_LINES:
+            pass
+
+        elif type is ImpactType.SUBSTATIONS:
+            pass
+
+        # Save self? Return a copy?
