@@ -1,11 +1,14 @@
 from flask import Flask, render_template, g, url_for, request, redirect, session
 from werkzeug.utils import redirect
 from flask_oidc import OpenIDConnect
-#from okta import UsersClient
+from okta.client import Client as UsersClient
+import asyncio
 from backend import db
 from flask_sqlalchemy import SQLAlchemy
+from backend import project
 from backend.impact import Impact
 from backend.system import *
+from backend.project import *
 from backend.hazard import Hazard, HazardToHazardLink, HazardToImpactLink
 import json
 import csv
@@ -91,15 +94,16 @@ app.config["OIDC_SCOPES"] = ["openid", "email", "profile"]
 app.secret_key = "f46cBXvh34ovp1lxCmfE"
 app.config["OIDC_ID_TOKEN_COOKIE_NAME"] = "oidc_token"
 oidc = OpenIDConnect(app)
-okta_client = None#UsersClient("dev-53761026.okta.com", "00nJcCJMZXtOWmdloatdx_SzvIwmRDi3LalZFeh6DG")
+okta_client = UsersClient({ "orgUrl": "https://dev-53761026.okta.com", 
+                            "token": "00nJcCJMZXtOWmdloatdx_SzvIwmRDi3LalZFeh6DG"})
 
 # global variables
 generation_types = ["Diesel Generator", "Wind", "PV Solar"]
 load_types = ["Commercial", "Single Home", "Community Residential"]
-physical_hazards = ["Hurricanes", "High Wind", "Lightning Storms", "Fires", "Deep Freezes", "Ice", "Floods", 
-                    "Earthquakes", "Geomagnetic Disturbances", "Vandalism", "Substation Attacks", "Fuel Shortage", "Severe Winter Weather"]
-cyber_hazards = ["Ransomware", "APT (Advanced Persistent Threats)", "Insider Threats", "Communication Outages", 
-                 "Denial of Service"]
+# physical_hazards = ["Hurricanes", "High Wind", "Lightning Storms", "Fires", "Deep Freezes", "Ice", "Floods", 
+#                     "Earthquakes", "Geomagnetic Disturbances", "Vandalism", "Substation Attacks", "Fuel Shortage", "Severe Winter Weather"]
+# cyber_hazards = ["Ransomware", "APT (Advanced Persistent Threats)", "Insider Threats", "Communication Outages", 
+#                  "Denial of Service"]
 inputs_metrics = ["Energy feedstock", "Energy not supplied", "Energy storage", "Generators available", 
 "Key replacement equipment stockpile", "Redundant power lines", "Reinforced concrete vs wood", "Siting infrastructures",
 "Underground, overhead, & undersea lines", "Unique encrypted passwords for utility smart distribution", "Workers employed",
@@ -126,75 +130,144 @@ priority_hazards = []
 @app.before_request
 def before_request():
     if oidc.user_loggedin:
-        g.user = okta_client.get_user(oidc.user_getfield("sub"))
+        async def f():
+            user, resp, err = await okta_client.get_user(oidc.user_getfield("sub"))
+            g.user = user
+        asyncio.run(f())
+        #g.user = okta_client.get_user(oidc.user_getfield("sub"))
     else:
-        #Temporary for testing
-        class Object:
-            pass
-        g.user = Object()
-        g.user.profile = Object()
-        g.user.profile.email = "someone@example.com"
-        g.user.profile.firstName = "Someone"
+        g.user = None
+    #     #Temporary for testing
+    #     class Object:
+    #         pass
+    #     g.user = Object()
+    #     g.user.profile = Object()
+    #     g.user.profile.email = "someone@example.com"
+    #     g.user.profile.firstName = "Someone"
 
 @app.route('/', methods=["GET", "POST"])
 def index():
-    system = []
+    projects = []
     if g.user is not None:
-        system = System.get_all_for_user(g.user.profile.email)
+        projects = Project.get_all_for_user(g.user.profile.email)
     if request.method == "POST":
-        if len(system) == 0:
+        if len(projects) == 0:
             sysName = request.form["sysNameVal"]
             #System(name=sysName, user=g.user.profile.email).save()
-            sys = DefaultSystem(name=sysName, user=g.user.profile.email)
-            db.session.add(sys)
+            sys = DefaultSystem(name=sysName)
+            project = Project(name=sysName, system=sys, user=g.user.profile.email)
+            db.session.add(project)
             db.session.commit()
-            session["system_id"] = sys.obj_id
+            session["project_id"] = project.obj_id
         return redirect("/qualities")
 
-    #Temporary - for testing without okta
-    # if g.user is None:
-    #     sys = System(name='Test system', user='someone@example.com')
-    #     db.session.add(sys)
-    #     db.session.commit()
-    #     session['system_id'] = sys.obj_id
-    #     print('Goodbye')
-    #     return redirect("/qualities")
-    #####
-
-    return render_template("base.html", system=system)
+    return render_template("base.html", system=projects)
 
 @app.route('/qualities', methods=["GET", "POST"])
 def qualities():
     #system = System.objects(user = g.user.profile.email)
-    system_id = session["system_id"]
-    system = System.get_by_id(system_id)
-    print(system_id, system)
+    project = Project.get_by_id(session["project_id"])
+    system = project.system
     if request.method == "POST":
+        #TODO: delete existing rows
         generators = request.form.getlist('gen_use')
-        print(generators)
         caps = request.form.getlist('gen_cap')
-        print(caps)
         descs = request.form.getlist('desc')
-        print(descs)
         new_gens = []
         for (gen, cap, desc) in zip(generators, caps, descs):
-            print(gen, cap, desc)
-            new_gen = Generation(name=gen, generation_type=gen, capacity_kw=cap, description=desc, system_id=system_id)
-            db.session.add(new_gen)
+            new_gen = Generation(name=gen, generation_type=gen, capacity_kw=cap, description=desc)
             new_gens.append(new_gen)
         system.generation = new_gens
+
+        load_uses = request.form.getlist('load_use')
+        load_mins = request.form.getlist('load_min')
+        load_maxs = request.form.getlist('load_max')
+        load_avgs = request.form.getlist('load_avg')
+        new_loads = []
+        for (type, min, max, avg) in zip(load_uses, load_mins, load_maxs, load_avgs):
+            new_load = Load(name=type, load_type=type, min_kw=min, max_kw=max, avg_kw=avg)
+            new_loads.append(new_load)
+        system.load = new_loads
+
+        coop = request.form.get('coop_val')
+        rto = request.form.get('rto_val')
+        conn_syss = []
+        if coop:
+            conn_sys = ConnectedSystem(name='Coop')
+            conn_syss.append(conn_sys)
+        if rto:
+            conn_sys = ConnectedSystem(name='RTO')
+            conn_syss.append(conn_sys)
+        system.connected_systems = conn_syss
+
+        cyber = request.form.get('cyber_val')
+        cell = request.form.get('cell_val')
+        wifi = request.form.get('wifi_val')
+        radio = request.form.get('radio_val')
+        comms = []
+        if cyber:
+            comm = Communications(name='Cyber')
+            comms.append(comm)
+        if cell:
+            comm = Communications(name='Cellular')
+            comms.append(comm)
+        if wifi:
+            comm = Communications(name='WiFi')
+            comms.append(comm)
+        if radio:
+            comm = Communications(name='Radio')
+            comms.append(comm)
+        system.communications = comms
+
+        cap_cost = request.form.get('gen_cost_val')
+        kw_cost = request.form.get('kw_cost_val')
+        maint_cost = request.form.get('main_cost_val')
+        winter_rate = request.form.get('avg_consume_wint_val')
+        summer_rate = request.form.get('avg_consume_summ_val')
+        if cap_cost:
+            system.market_generation_capital_cost = cap_cost
+        if kw_cost:
+            system.market_avg_cost_per_kw = kw_cost
+        if maint_cost:
+            system.market_avg_maintenance_cost = maint_cost
+        if winter_rate:
+            system.market_avg_consumer_rate_winter = winter_rate
+        if summer_rate:
+            system.market_avg_consumer_rate_summer = summer_rate
+
         db.session.commit()
         return redirect("/goals")
     return render_template("qualities.html", generation_types=generation_types, load_types=load_types)
 
 @app.route('/goals', methods=["GET", "POST"])
 def goals():
+    project = Project.get_by_id(session["project_id"])
     if request.method == "POST":
+        fuel = request.form.get('reduce_fuel_val')
+        power_qual = request.form.get('power_qual_val')
+        cysec = request.form.get('cysec_risk_val')
+        #TODO: actually delete existing goals
+        project.goals = []
+        if fuel:
+            goal = Goal(name='Reduce fuel dependency', project=project)
+        if power_qual:
+            goal = Goal(name='Improve power quality', project=project)
+        if cysec:
+            goal = Goal(name='Manage cybersecurity risk', project=project)
+
+        metric_uses = request.form.getlist('metric_use')
+        #TODO: delete existing metrics
+        for m in metric_uses:
+            metric = Metric(name=m, project=project)
+
+        db.session.commit()
         return redirect("/hazards")
     return render_template("goals.html", inputs_metrics=inputs_metrics, capacity_metrics=capacity_metrics, capabilities_metrics=capabilities_metrics, performance_metrics=performance_metrics, outcomes_metrics=outcomes_metrics)
 
 @app.route('/hazards', methods=["GET", "POST"])
 def hazards():
+    project = Project.get_by_id(session["project_id"])
+
     # clear variable if refreshed
     global priority_hazards
     priority_hazards = []
@@ -202,8 +275,29 @@ def hazards():
     if request.method == "POST":
         #red
         if "bowtie_input[]" in request.form:
-            priority_hazards = request.form.getlist("bowtie_input[]")
+            priority_hazards = [h for h in request.form.getlist("bowtie_input[]") if h != '']
+            if len(priority_hazards) > 0:
+                for h in project.hazards:
+                    db.session.delete(h)
+                template_hazards = Hazard.templates()
+                for h in priority_hazards:
+                    try:
+                        template_hazard = [x for x in template_hazards if x.name == h][0]
+                        new_hazard = Hazard.clone(template_hazard)
+                        other_hazards = [x.name for x in HazardToHazardLink.all_for_type(new_hazard.hazard_type)]
+                        print(f'Hazards explicitly related to {new_hazard.name}: {other_hazards}')
+                        other_hazards = [x.name for x in Hazard.get_all_for_category(new_hazard.primary_category)]
+                        print(f'Other hazards with category {new_hazard.primary_category}: {other_hazards}')
+                        other_hazards = [x.name for x in Hazard.get_all_for_category(new_hazard.secondary_category)]
+                        print(f'Other hazards with category {new_hazard.secondary_category}: {other_hazards}')
+                    except IndexError as e:
+                        new_hazard = Hazard(name=h, hazard_type=h, is_template=False)
+                    project.hazards.append(new_hazard)
+
+            db.session.commit()
         return redirect("/bowtie")
+    cyber_hazards = [x.name for x in Hazard.get_all_for_category('Cyber Hazard')]
+    physical_hazards = [x.name for x in Hazard.get_all_for_category('Physical Hazard')]
     return render_template("hazards.html", physical_hazards=physical_hazards, cyber_hazards=cyber_hazards, priority_hazards=priority_hazards)
 
 @app.route('/bowtie', methods=["GET", "POST"])
@@ -240,5 +334,6 @@ def login():
 def logout():
     oidc.logout()
     return redirect(url_for("index"))
+
 if __name__ == '__main__':
     app.run(debug=True)

@@ -77,7 +77,7 @@
             </thead>
             {% for elem in load_types %}
             <tr>
-                <td><input name="load_use" type="checkbox"></td>
+                <td><input name="load_use" type="checkbox" value="{{elem}}"></td>
                 <td>{{ elem }}</td>
                 <td><input name="load_min" disabled type=text></td>
                 <td><input name="load_max" disabled type=text></td>

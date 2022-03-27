@@ -54,7 +54,7 @@
                         <ul class="list-group">
                             <h4>{{ list_names[loop.index-1] }}</h4>
                             {% for elem in list %}    
-                                <li class="list-group-item"><input name="metric_use" type="checkbox">{{ elem }}</li>
+                                <li class="list-group-item"><input name="metric_use" type="checkbox" value="{{ elem }}">{{ elem }}</li>
                                 <!-- make list go to next column if too long -->
                                 <!-- {% if loop.index > 19 %}
                                     <div class="col"> -->
