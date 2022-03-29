@@ -11,7 +11,7 @@ import json
 import csv
 import logging
 
-with open("config/config.json", "r") as config_file:
+with open("../config/config.json", "r") as config_file:
     config = json.load(config_file)
 
 app = Flask(__name__)
@@ -29,7 +29,7 @@ if config["database"]["drop_and_recreate"]:
         # db.session.add(system)
 
 
-        with open("config/hazards.csv", "r", encoding="utf-8-sig") as csvfile:
+        with open("../config/hazards.csv", "r", encoding="utf-8-sig") as csvfile:
             header_line = csvfile.readline()
             reader = csv.reader(csvfile, delimiter=',', skipinitialspace=True)
             NAME = 0
@@ -84,7 +84,7 @@ if config["database"]["drop_and_recreate"]:
             
 
 #initialize okta
-app.config["OIDC_CLIENT_SECRETS"] = "config/client_secrets.json"
+app.config["OIDC_CLIENT_SECRETS"] = "../config/client_secrets.json"
 app.config["OIDC_COOKIE_SECURE"] = False
 app.config["OIDC_CALLBACK_ROUTE"] = "/oidc/callback"
 app.config["OIDC_SCOPES"] = ["openid", "email", "profile"]
@@ -129,12 +129,13 @@ def before_request():
         g.user = okta_client.get_user(oidc.user_getfield("sub"))
     else:
         #Temporary for testing
-        class Object:
-            pass
-        g.user = Object()
-        g.user.profile = Object()
-        g.user.profile.email = "someone@example.com"
-        g.user.profile.firstName = "Someone"
+        # class Object:
+        #     pass
+        # g.user = Object()
+        # g.user.profile = Object()
+        # g.user.profile.email = "someone@example.com"
+        # g.user.profile.firstName = "Someone"
+        g.user = None
 
 @app.route('/', methods=["GET", "POST"])
 def index():
