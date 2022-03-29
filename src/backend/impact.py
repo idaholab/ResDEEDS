@@ -30,3 +30,10 @@ class Impact(db.Model, Templatable):
             name = row[NAME]
             if name != '' and name not in TYPES:
                 TYPES.append(name)
+
+    @classmethod
+    def clone(cls, i):
+        return Impact(
+                name=i.name,
+                impact_type=i.impact_type,
+                severity=i.severity)

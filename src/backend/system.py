@@ -4,21 +4,28 @@ from backend import *
 
 
 class System(db.Model, BackendBase):
-    user = db.Column(db.String(MAX_NAME_LENGTH), nullable=False)
+    project_id = db.Column(db.Integer, db.ForeignKey('project.obj_id'), nullable=False)
+    system_type = db.Column(db.String(MAX_NAME_LENGTH))
 
-    @classmethod
-    def get_all_for_user(cls, user):
-        return cls.query.filter_by(user=user).all()
+    __mapper_args__ = {
+        'polymorphic_identity': 'system',
+        'polymorphic_on': system_type
+    }
 
     @abstractmethod
     def apply_impact(self, impact):
         ...
 
 class SpineSystem(System):
+    system_id = db.Column(db.Integer, db.ForeignKey('system.obj_id'), primary_key=True)
     spine_dir = db.Column(db.String(MAX_DIR_LENGTH))
 
     def apply_impact(self, impact):
         pass
+
+    __mapper_args__ = {
+        'polymorphic_identity': 'spine',
+    }
 
 # class TransmissionLine(Document):
 #     name = StringField(max_length=MAX_NAME_LENGTH)
@@ -62,7 +69,7 @@ class Communications(db.Model, BackendBase):
     system_id = db.Column(db.Integer, db.ForeignKey('system.obj_id'), nullable=True)
 
 class DefaultSystem(System):
-
+    system_id = db.Column(db.Integer, db.ForeignKey('system.obj_id'), primary_key=True)
     generation = db.relationship('Generation', backref='system', lazy=True)
     load = db.relationship('Load', backref='system', lazy=True)
     connected_systems = db.relationship('ConnectedSystem', backref='system', lazy=True)
@@ -73,6 +80,10 @@ class DefaultSystem(System):
     market_avg_maintenance_cost = db.Column(db.Numeric(scale=2), nullable=True)
     market_avg_consumer_rate_winter = db.Column(db.Numeric(scale=2), nullable=True)
     market_avg_consumer_rate_summer = db.Column(db.Numeric(scale=2), nullable=True)
+
+    __mapper_args__ = {
+        'polymorphic_identity': 'default',
+    }
 
     def apply_impact(self, impact):
         type = impact.type
