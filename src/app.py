@@ -183,55 +183,51 @@ def qualities():
     print(system.generation)
     print(system)
     if request.method == "POST":
-        #TODO: delete existing rows
+        # Delete existing generation
+        for g in system.generation:
+            db.session.delete(g)
+
         generators = request.form.getlist('gen_use')
         caps = request.form.getlist('gen_cap')
         descs = request.form.getlist('desc')
-        new_gens = []
         for (gen, cap, desc) in zip(generators, caps, descs):
-            new_gen = Generation(name=gen, generation_type=gen, capacity_kw=cap, description=desc)
-            new_gens.append(new_gen)
-        system.generation = new_gens
+            new_gen = Generation(name=gen, generation_type=gen, capacity_kw=cap, description=desc, system=system)
+
+        for l in system.load:
+            db.session.delete(l)
 
         load_uses = request.form.getlist('load_use')
         load_mins = request.form.getlist('load_min')
         load_maxs = request.form.getlist('load_max')
         load_avgs = request.form.getlist('load_avg')
-        new_loads = []
         for (type, min, max, avg) in zip(load_uses, load_mins, load_maxs, load_avgs):
-            new_load = Load(name=type, load_type=type, min_kw=min, max_kw=max, avg_kw=avg)
-            new_loads.append(new_load)
-        system.load = new_loads
+            new_load = Load(name=type, load_type=type, min_kw=min, max_kw=max, avg_kw=avg, system=system)
+
+        for s in system.connected_systems:
+            db.session.delete(s)
 
         coop = request.form.get('coop_val')
         rto = request.form.get('rto_val')
-        conn_syss = []
         if coop:
-            conn_sys = ConnectedSystem(name='Coop')
-            conn_syss.append(conn_sys)
+            conn_sys = ConnectedSystem(name='Coop', system=system)
         if rto:
-            conn_sys = ConnectedSystem(name='RTO')
-            conn_syss.append(conn_sys)
-        system.connected_systems = conn_syss
+            conn_sys = ConnectedSystem(name='RTO', system=system)
+
+        for c in system.communications:
+            db.session.delete(c)
 
         cyber = request.form.get('cyber_val')
         cell = request.form.get('cell_val')
         wifi = request.form.get('wifi_val')
         radio = request.form.get('radio_val')
-        comms = []
         if cyber:
-            comm = Communications(name='Cyber')
-            comms.append(comm)
+            comm = Communications(name='Cyber', system=system)
         if cell:
-            comm = Communications(name='Cellular')
-            comms.append(comm)
+            comm = Communications(name='Cellular', system=system)
         if wifi:
-            comm = Communications(name='WiFi')
-            comms.append(comm)
+            comm = Communications(name='WiFi', system=system)
         if radio:
-            comm = Communications(name='Radio')
-            comms.append(comm)
-        system.communications = comms
+            comm = Communications(name='Radio', system=system)
 
         cap_cost = request.form.get('gen_cost_val')
         kw_cost = request.form.get('kw_cost_val')
