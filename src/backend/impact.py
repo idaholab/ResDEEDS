@@ -21,7 +21,7 @@ class Impact(db.Model, Templatable):
 
     TYPES = []
 
-    with open("../config/impacts.csv", "r", encoding="utf-8-sig") as csvfile:
+    with open("config/impacts.csv", "r", encoding="utf-8-sig") as csvfile:
         header_line = csvfile.readline()
         reader = csv.reader(csvfile, delimiter=',', skipinitialspace=True)
         NAME = 0

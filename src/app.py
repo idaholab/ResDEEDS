@@ -14,7 +14,7 @@ import json
 import csv
 import logging
 
-with open("../config/config.json", "r") as config_file:
+with open("config/config.json", "r") as config_file:
     config = json.load(config_file)
 
 app = Flask(__name__)
@@ -32,7 +32,7 @@ if config["database"]["drop_and_recreate"]:
         # db.session.add(system)
 
 
-        with open("../config/hazards.csv", "r", encoding="utf-8-sig") as csvfile:
+        with open("config/hazards.csv", "r", encoding="utf-8-sig") as csvfile:
             header_line = csvfile.readline()
             reader = csv.reader(csvfile, delimiter=',', skipinitialspace=True)
             NAME = 0
@@ -87,7 +87,7 @@ if config["database"]["drop_and_recreate"]:
             
 
 #initialize okta
-app.config["OIDC_CLIENT_SECRETS"] = "../config/client_secrets.json"
+app.config["OIDC_CLIENT_SECRETS"] = "config/client_secrets.json"
 app.config["OIDC_COOKIE_SECURE"] = False
 app.config["OIDC_CALLBACK_ROUTE"] = "/oidc/callback"
 app.config["OIDC_SCOPES"] = ["openid", "email", "profile"]
@@ -159,6 +159,18 @@ def index():
             db.session.add(project)
             db.session.commit()
             session["project_id"] = project.obj_id
+        elif request.form["sysNameValAdd"] != "":
+            sysNameAdd = request.form["sysNameValAdd"]
+            #System(name=sysName, user=g.user.profile.email).save()
+            sys = DefaultSystem(name=sysNameAdd)
+            project = Project(name=sysNameAdd, system=sys, user=g.user.profile.email)
+            db.session.add(project)
+            db.session.commit()
+            session["project_id"] = project.obj_id
+        else:
+            # grabs id of whatever project "edit" was clicked
+            sysIdEdit = request.form["edit"]
+            session["project_id"] = sysIdEdit
         return redirect("/qualities")
 
     return render_template("base.html", system=projects)
@@ -168,6 +180,8 @@ def qualities():
     #system = System.objects(user = g.user.profile.email)
     project = Project.get_by_id(session["project_id"])
     system = project.system
+    print(system.generation)
+    print(system)
     if request.method == "POST":
         #TODO: delete existing rows
         generators = request.form.getlist('gen_use')
@@ -237,7 +251,7 @@ def qualities():
 
         db.session.commit()
         return redirect("/goals")
-    return render_template("qualities.html", generation_types=generation_types, load_types=load_types)
+    return render_template("qualities.html", generation_types=generation_types, load_types=load_types, system=system)
 
 @app.route('/goals', methods=["GET", "POST"])
 def goals():

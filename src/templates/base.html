@@ -111,13 +111,52 @@
 				<div>
 					{% block content %}
 					<form id="systemName" action="/" method="POST">
-					<div class="container-fluid d-flex justify-content-center">
+						<!-- Systems exist -->
 						{% if system %}
-						<h3>Your System: <u>{{system[0].name}}</u></h3>
+						<div class="container-fluid d-flex justify-content-center border-bottom">
+							<div class="row">
+								<h2>Your systems:</h2>
+							</div>
+						</div>
+						<div class="container-fluid d-flex justify-content-center">
+							<div class="row">
+							{% for sys in system %}
+								<!-- <div class="col"> -->
+									<div class="card" style="width: 18rem;">
+										<div class="card-body">
+										<h5 class="card-title">{{sys.name}}</h5>
+										<button class="btn btn-link" type="submit" name="edit" value={{sys.obj_id}}>Edit</button>
+										<button class="btn btn-link" type="submit" name="delete" value={{sys.obj_id}}>Delete</button>
+										</div>
+									</div>
+								<!-- </div> -->
+							</div>
+						</div>
+							{% endfor %}
+						<div class="container-fluid d-flex justify-content-center">
+							<div class="row">
+								<div class="card" style="width: 18rem;">
+									<div class="card-body">
+									<h5 class="card-title">Add a new system</h5>
+									<h6 class="card-subtitle mb-2 text-muted">Enter a name and click continue to create a new system: </h6>
+									<p class="card-text"><input type="text" id="sysName1" name="sysNameValAdd"></p>
+									</div>
+								</div>
+							</div>
+						</div>
+						<!-- No existing systems -->
 						{% else %}
-						<h3>No systems saved <br>Enter a name to create a new system:</h3>
-						<br>
-							<input type="text" id="sysName" name="sysNameVal">
+						<div class="container-fluid d-flex justify-content-center">
+							<div class="row">
+								<div class="card" style="width: 18rem;">
+									<div class="card-body">
+									<h5 class="card-title">No systems saved.</h5>
+									<h6 class="card-subtitle mb-2 text-muted">Enter a name and click continue to create a new system: </h6>
+									<p class="card-text"><input type="text" id="sysName2" name="sysNameVal"></p>
+									</div>
+								</div>
+							</div>
+						</div>
 						{% endif %}
 					</div>
 					<ol>
