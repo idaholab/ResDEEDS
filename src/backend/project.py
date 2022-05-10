@@ -1,3 +1,4 @@
+from datetime import datetime
 from backend import *
 
 class Project(db.Model, BackendBase):
@@ -6,6 +7,9 @@ class Project(db.Model, BackendBase):
     goals = db.relationship('Goal', backref='project', lazy=True)
     metrics = db.relationship('Metric', backref='project', lazy=True)
     hazards = db.relationship('Hazard', backref='project', lazy=True)
+
+    dir = db.Column(db.String(MAX_DIR_LENGTH), nullable=False)
+
 
     @classmethod
     def get_all_for_user(cls, user):

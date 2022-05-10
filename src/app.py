@@ -1,5 +1,6 @@
+import shutil
 from flask import Flask, render_template, g, url_for, request, redirect, session
-from werkzeug.utils import redirect
+from werkzeug.utils import redirect, secure_filename
 from flask_oidc import OpenIDConnect
 from okta.client import Client as UsersClient
 import asyncio
@@ -13,9 +14,15 @@ from backend.hazard import Hazard, HazardToHazardLink, HazardToImpactLink
 import json
 import csv
 import logging
+from datetime import datetime
+import os
 
 with open("config/config.json", "r") as config_file:
     config = json.load(config_file)
+
+ALLOWED_EXTENSIONS = { 'xslx', 'xsl', 'csv' }
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql://{config["database"]["db_user"]}:{config["database"]["db_pass"]}@localhost/{config["database"]["db_name"]}'
@@ -151,19 +158,18 @@ def index():
     if g.user is not None:
         projects = Project.get_all_for_user(g.user.profile.email)
     if request.method == "POST":
-        if len(projects) == 0:
-            sysName = request.form["sysNameVal"]
+        if len(projects) == 0 or request.form["sysNameValAdd"] != "":
+            if len(projects) > 0:
+                sysName = request.form["sysNameValAdd"]
+            else:
+                sysName = request.form["sysNameVal"]
             #System(name=sysName, user=g.user.profile.email).save()
             sys = DefaultSystem(name=sysName)
-            project = Project(name=sysName, system=sys, user=g.user.profile.email)
-            db.session.add(project)
-            db.session.commit()
-            session["project_id"] = project.obj_id
-        elif request.form["sysNameValAdd"] != "":
-            sysNameAdd = request.form["sysNameValAdd"]
-            #System(name=sysName, user=g.user.profile.email).save()
-            sys = DefaultSystem(name=sysNameAdd)
-            project = Project(name=sysNameAdd, system=sys, user=g.user.profile.email)
+            d = datetime.now()
+            directory = f'spine/projects/{sysName.replace(" ", "_")}_{d.strftime("%Y%m%d%H%M%S")}'
+            #os.makedirs(directory)
+            shutil.copytree('spine/template', directory)
+            project = Project(name=sysName, system=sys, user=g.user.profile.email, dir=directory)
             db.session.add(project)
             db.session.commit()
             session["project_id"] = project.obj_id
@@ -183,6 +189,13 @@ def qualities():
     print(system.generation)
     print(system)
     if request.method == "POST":
+        if 'system_spreadsheet' in request.files:
+            file = request.files['system_spreadsheet']
+            if allowed_file(file.filename):
+                #filename = secure_filename(file.filename)
+                filename = 'system.xslx'
+                file.save(os.path.join(project.dir, filename))
+
         # Delete existing generation
         for g in system.generation:
             db.session.delete(g)
@@ -289,7 +302,10 @@ def hazards():
             if len(priority_hazards) > 0:
                 for h in project.hazards:
                     db.session.delete(h)
+                print(priority_hazards)
                 template_hazards = Hazard.templates()
+                print(f'Template hazards: {template_hazards}')
+                print(f'Project hazards: {project.hazards}')
                 for h in priority_hazards:
                     try:
                         template_hazard = [x for x in template_hazards if x.name == h][0]
@@ -310,11 +326,26 @@ def hazards():
     physical_hazards = [x.name for x in Hazard.get_all_for_category('Physical Hazard')]
     return render_template("hazards.html", physical_hazards=physical_hazards, cyber_hazards=cyber_hazards, priority_hazards=priority_hazards)
 
+@app.route('/spineopt', methods=["GET", "POST"])
+def spineopt():
+    project = Project.get_by_id(session["project_id"])
+
+    if request.method == "POST":
+        import subprocess
+        #spine_cmd = '. ../Spine-Toolbox/.venv/Scripts/activate; spinetoolbox --execute-only ./spine/projects/test'
+        spine_cmd = ['spine/Spine-Toolbox/.venv/Scripts/python', 'spine/Spine-Toolbox/spinetoolbox.py', '--execute-only', project.dir]
+        completed = subprocess.run(spine_cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)#, env={ 'PATH': '../Spine-Toolbox/.venv/Scripts:$PATH', 'VIRTUAL_ENV': '../Spine-Toolbox/.venv'})
+        print(completed)
+        session["spine_output"] = completed.stdout.decode().split('\n')
+        print(session["spine_output"])
+        return redirect("/bowtie")
+    return render_template("spineopt.html")
+
 @app.route('/bowtie', methods=["GET", "POST"])
 def bowtie():
     if request.method == "POST":
         return redirect("/vulnerabilities")
-    return render_template("bowtie.html", priority_hazards=priority_hazards)
+    return render_template("bowtie.html", priority_hazards=priority_hazards, spine_output=session["spine_output"])
 
 @app.route('/vulnerabilities', methods=["GET", "POST"])
 def vulnerabilities():
