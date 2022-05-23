@@ -1,0 +1,29 @@
+{
+    "project": {
+        "version": 7,
+        "name": "test",
+        "description": "",
+        "specifications": {
+            "Tool": [
+                {
+                    "type": "path",
+                    "relative": true,
+                    "path": ".spinetoolbox/specifications/Tool/hello_world.json"
+                }
+            ]
+        },
+        "connections": [],
+        "jumps": []
+    },
+    "items": {
+        "hello_world 1": {
+            "type": "Tool",
+            "description": "",
+            "x": -115.78125,
+            "y": -60.9375,
+            "specification": "hello_world",
+            "execute_in_work": true,
+            "cmd_line_args": []
+        }
+    }
+}

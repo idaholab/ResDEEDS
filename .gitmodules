@@ -1,0 +1,3 @@
+[submodule "spine/Spine-Toolbox"]
+	path = spine/Spine-Toolbox
+	url = https://github.com/Spine-project/Spine-Toolbox

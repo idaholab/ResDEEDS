@@ -15,6 +15,11 @@
         </div>
     </div>
 
+    <div class="form-group">
+        <h4>Upload System</h4>
+        <input name="system_spreadsheet" type="file">
+    </div>
+
     <!-- Generation -->
     <div class="d-flex justify-content-center">
         <h4>Generation</h4>&nbsp; &nbsp;
@@ -30,18 +35,30 @@
                     <th scope="col">Generation Type</th>
                     <th scope="col">Generation Capacity [kW]</th>
                     <th scope="col">Description</th>
+                    <!-- Modeling -->
                     <!-- <th scope="col" id="third">3rd Degree Polynomial Efficiency Curve Inputs</th>
                     <th scope="col" id="second"></th>
                     <th scope="col" id="first"></th>
                     <th scope="col" id="zero"></th> -->
                 </tr>
             </thead>
-            {% for elem in generation_types %}
             <tr>
-                <td><input name="gen_use" type="checkbox"></td>
+                <!-- Prints out saved generation information -->
+            {% if system.generation|length > 0 %}
+                {% for gen in system.generation %}
+                    <td><input name="gen_use" type="checkbox" value="{{gen.generation_type}}" checked></td>
+                    <td>{{ gen.generation_type }}</td>
+                    <td><input name="gen_cap" type=text value="{{gen.capacity_kw}}"></td>
+                    <td><input name="desc" type=text value="{{gen.description}}"></td>
+                </tr>
+                {% endfor %}
+            {% else %}
+            {% for elem in generation_types %}
+                <td><input name="gen_use" type="checkbox" value="{{elem}}"></td>
                 <td>{{ elem }}</td>
                 <td><input name="gen_cap" disabled type=text></td>
-                <td><input name="desc" placeholder="Cummins QSX15" disabled type=text></td>
+                <td><input name="desc" placeholder="Make, Model, etc." disabled type=text></td>
+                <!-- Modeling -->
                 <!-- <div class="form-group" id="model_inputs">
                     <td><input name="x3_val" placeholder="x^3" disabled type=text></td>
                     <td><input name="x2_val" placeholder="x^2" disabled type=text></td>
@@ -50,6 +67,7 @@
                 </div> -->
             </tr>
             {% endfor %}
+            {% endif %}
         </table>
     </div>
 
@@ -71,18 +89,34 @@
                     <th scope="col">Load Avg. [kW]</th>
                 </tr>
             </thead>
-            {% for elem in load_types %}
-            <tr>
-                <td><input name="load_use" type="checkbox"></td>
-                <td>{{ elem }}</td>
-                <td><input name="load_min" disabled type=text></td>
-                <td><input name="load_max" disabled type=text></td>
-                <td><input name="load_avg" disabled type=text></td>
-            </tr>
-            {% endfor %}
+    
+            <!-- Prints out saved load information -->
+            {% if system.load|length > 0 %}
+                {% for load in system.load %}
+                <tr>
+                <td><input name="load_use" type="checkbox" value="{{load.load_type}}" checked></td>
+                <td>{{ load.load_type }}</td>
+                <td><input name="load_min" type=text value="{{load.min_kw}}"></td>
+                <td><input name="load_max" type=text value="{{load.max_kw}}"></td>
+                <td><input name="load_avg" type=text value="{{load.avg_kw}}"></td>
+                </tr>
+                {% endfor %}
+            {% else %}
+                {% for elem in load_types %}
+                <tr>
+                    <td><input name="load_use" type="checkbox" value="{{elem}}"></td>
+                    <td>{{ elem }}</td>
+                    <td><input name="load_min" disabled type=text></td>
+                    <td><input name="load_max" disabled type=text></td>
+                    <td><input name="load_avg" disabled type=text></td>
+                </tr>
+                {% endfor %}
+            {% endif %}
         </table>
     </div>
 
+    <div class="row">
+    <div class="col-sm">
     <!-- Connected Systems -->
     <div class="d-flex justify-content-center border-bottom">
         <h4>Connected Systems</h4>&nbsp; &nbsp;
@@ -91,13 +125,15 @@
             id="add_conn_sys">+</button>
     </div>
 
-    <div class="form-group d-flex justify-content-center">
+    <div class="form-group justify-content-left d-flex">
         <ul style="list-style-type: none;" id="connect">
             <li><label for="coop"><input type="checkbox" name="coop_val" id="coop"> Local Co-op</label></li>
             <li><label for="rto"><input type="checkbox" name="rto_val" id="rto">Regional Transmission Operator</label></li>
         </ul>
     </div>
+    </div>
 
+    <div class="col-sm">
     <!-- Communications Used -->
     <div class="d-flex justify-content-center border-bottom">
         <h4>Communications Used</h4>&nbsp; &nbsp;
@@ -105,15 +141,23 @@
         <button class="btn btn-outline-success btn-sm" type="button" data-toggle="collapse" aria-expanded="false"
             id="add_comm">+</button>
     </div>
-    <div class="form-group d-flex justify-content-center">
+    <div class="form-group d-flex justify-content-left">
         <ul style="list-style-type: none;" id="comm">
+            <!-- TODO -->
+            {% if system.con_syss|length > 0 %}
+                {% for con_syss in system.con_syss %}
+                    <li><label for="cyber"><input type="checkbox" name="cyber_val" id="cyber" checked>Cyber</label></li>
+                {% endfor %}
+            {% endif %}
             <li><label for="cyber"><input type="checkbox" name="cyber_val" id="cyber">Cyber</label></li>
             <li><label for="cell"><input type="checkbox" name="cell_val" id="cell">Dedicated Cellular</label></li>
             <li><label for="wifi"><input type="checkbox" name="wifi_val" id="wifi">WiFi</label></li>
             <li><label for="radio"><input type="checkbox" name="radio_val" id="radio">Radio</label></li>
         </ul>
     </div>
+    </div>
 
+    <div class="col-5">
     <!-- Market Parameters -->
     <div class="d-flex justify-content-center border-bottom">
         <h4>Relevant Market Parameters</h4>&nbsp;&nbsp;
@@ -121,17 +165,19 @@
         <button class="btn btn-outline-success btn-sm" type="button" data-toggle="collapse" aria-expanded="false"
             id="add_market">+</button>
     </div>
-    <div class="form-group d-flex justify-content-center">
+    <div class="form-group d-flex justify-content-left">
         <ul style="list-style-type: none;" id="market">
             <li><label for="gen_cost"> Generation Capital Cost&nbsp;</label><input type="text" name="gen_cost_val" id="gen_cost" class="float-right"></li>
-            <li><label for="kw_cost">Average Cost per KW&nbsp;</label><input type="text" name="kw_cost_val" id="kw_cost" class="float-right"></li>
-            <li><label for="main_cost">Average Maintenance Cost&nbsp;</label><input type="text" name="main_cost_val" id="main_cost" class="float-right"></li>
-            <li><label for="avg_consume_wint">Average Consumer Rates (Winter)&nbsp;</label><input type="text" name="avg_consume_wint_val" id="avg_consume_wint" class="float-right"></li>
-            <li><label for="avg_consume_summ">Average Consumer Rates (Summer)&nbsp;</label><input type="text" name="avg_consume_summ_val" id="avg_consume_summ" class="float-right"></li>
+            <li><label for="kw_cost">Mean Cost per kW&nbsp;</label><input type="text" name="kw_cost_val" id="kw_cost" class="float-right"></li>
+            <li><label for="main_cost">Mean Maintenance Cost&nbsp;</label><input type="text" name="main_cost_val" id="main_cost" class="float-right"></li>
+            <li><label for="avg_consume_wint">Mean Consumer Rate (Winter)&nbsp;</label><input type="text" name="avg_consume_wint_val" id="avg_consume_wint" class="float-right"></li>
+            <li><label for="avg_consume_summ">Mean Consumer Rate (Summer)&nbsp;</label><input type="text" name="avg_consume_summ_val" id="avg_consume_summ" class="float-right"></li>
         </ul>
     </div>
+    </div>
+    </div>
 
-    <div class="d-flex justify-content-center"><button type="submit" class="btn btn-outline-success" id="next_qual_button">Next</button></div>
+    <div class="d-flex justify-content-center"><button type="submit" class="btn btn-outline-success" id="next_qual_button">Save and Continue</button></div>
 </form>
 
 <script>

@@ -27,6 +27,12 @@
 </div>
 <br>
 
+<div class="p-3">
+    {% for line in spine_output %}
+        {{ line | striptags }}<br>
+    {% endfor %} 
+</div>
+
 <form class="p-3" method="POST" id="quality" action="/bowtie" enctype="multipart/form-data">
     <ul class="list-group">
         <!-- Hazards List to Analyze -->
@@ -53,7 +59,7 @@
 
     <br>
     <div class="d-flex justify-content-center">
-        <button type="submit" class="btn btn-outline-success" id="next_bowtie_button">Next</button>
+        <button type="submit" class="btn btn-outline-success" id="next_bowtie_button">Save and Continue</button>
     </div>
 </form>
 
