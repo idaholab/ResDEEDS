@@ -45,10 +45,12 @@
 			<nav class="navbar navbar-dark bg-dark shadow">
 				<a class="navbar-brand col-sm-3 col-md-2 mr-0 nav-link" href="/">Idaho National Laboratory - Resilience
 					Calculator</a>
-				{% if not g.user %}
-				<a class="p-2 text-light" href="/login">Log In / Register</a>
-				{% else %}
-				<a class="p-2 text-light" href="/logout">Hi, {{ g.user.profile.firstName }}! Logout?</a>
+				{% if g.user.use_okta is not defined or g.user.use_okta %}
+					{% if not g.user %}
+					<a class="p-2 text-light" href="/login">Log In / Register</a>
+					{% else %}
+					<a class="p-2 text-light" href="/logout">Hi, {{ g.user.profile.firstName }}! Logout?</a>
+					{% endif %}
 				{% endif %}
 			</nav>
 		</div>
@@ -60,50 +62,44 @@
 					<ul class="nav flex-column">
 						<li class="nav-item">
 							<a class="nav-link navButton" href="/qualities">
-								<span data-feather="target"></span>
+								<span data-feather="edit-2"></span>
 								Identify System Qualities
 							</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link navButton" href="/goals">
-								<span data-feather="edit-2"></span>
-								Define Goals and Metrics
+							<a class="nav-link navButton" href="/initial-system">
+								<span data-feather="database"></span>
+								View Baseline System
 							</a>
 						</li>
 						<li class="nav-item">
 							<a class="nav-link navButton" href="/hazards">
 								<span data-feather="alert-circle"></span>
-								Prioritize Physical and Cyber Hazards
+								Prioritize Hazards
+							</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link navButton" href="/goals">
+								<span data-feather="target"></span>
+								Define Goals
 							</a>
 						</li>
 						<li class="nav-item">
 							<a class="nav-link navButton" href="/spineopt">
+								<span data-feather="tool"></span>
+								Run SpineOpt
+							</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link navButton" href="/results">
 								<span data-feather="bar-chart-2"></span>
-								SpineOpt
+								View Results
 							</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link navButton" href="/bowtie">
-								<span data-feather="bar-chart-2"></span>
-								Bow-tie Analysis
-							</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link navButton" href="/vulnerabilities">
-								<span data-feather="alert-triangle"></span>
-								Prioritize Risk Mitigation Measures
-							</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link navButton" href="/risks">
+							<a class="nav-link navButton" href="/changes">
 								<span data-feather="layers"></span>
-								Evaluate Against Risks
-							</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link navButton" href="/suggestions">
-								<span data-feather="clipboard"></span>
-								Suggested Changes
+								Summarize Changes
 							</a>
 						</li>
 					</ul>
@@ -116,49 +112,49 @@
 				</div>
 				<div>
 					{% block content %}
-					<form id="systemName" action="/" method="POST">
-						<!-- Systems exist -->
-						{% if system %}
+					<form id="projectName" action="/" method="POST">
+						<!-- Projects exist -->
+						{% if projects %}
 						<div class="container-fluid d-flex justify-content-center border-bottom">
 							<div class="row">
-								<h2>Your systems:</h2>
+								<h2>Your projects:</h2>
 							</div>
 						</div>
 						<div class="container-fluid d-flex justify-content-center">
 							<div class="row">
-							{% for sys in system %}
+							{% for proj in projects %}
 								<!-- <div class="col"> -->
 									<div class="card" style="width: 18rem;">
 										<div class="card-body">
-										<h5 class="card-title">{{sys.name}}</h5>
-										<button class="btn btn-link" type="submit" name="edit" value={{sys.obj_id}}>Edit</button>
-										<button class="btn btn-link" type="submit" name="delete" value={{sys.obj_id}}>Delete</button>
+										<h5 class="card-title">{{proj.name}}</h5>
+										<button class="btn btn-link" type="submit" name="edit" value={{proj.id}}>Edit</button>
+										<button class="btn btn-link" type="submit" name="delete" value={{proj.id}}>Delete</button>
 										</div>
 									</div>
 								<!-- </div> -->
+							{% endfor %}
 							</div>
 						</div>
-							{% endfor %}
 						<div class="container-fluid d-flex justify-content-center">
 							<div class="row">
 								<div class="card" style="width: 18rem;">
 									<div class="card-body">
-									<h5 class="card-title">Add a new system</h5>
-									<h6 class="card-subtitle mb-2 text-muted">Enter a name and click continue to create a new system: </h6>
-									<p class="card-text"><input type="text" id="sysName1" name="sysNameValAdd"></p>
+									<h5 class="card-title">Add a new project</h5>
+									<h6 class="card-subtitle mb-2 text-muted">Enter a name and click continue to create a new project: </h6>
+									<p class="card-text"><input type="text" id="projectName1" name="projNameValAdd"></p>
 									</div>
 								</div>
 							</div>
 						</div>
-						<!-- No existing systems -->
+						<!-- No existing projects -->
 						{% else %}
 						<div class="container-fluid d-flex justify-content-center">
 							<div class="row">
 								<div class="card" style="width: 18rem;">
 									<div class="card-body">
-									<h5 class="card-title">No systems saved.</h5>
-									<h6 class="card-subtitle mb-2 text-muted">Enter a name and click continue to create a new system: </h6>
-									<p class="card-text"><input type="text" id="sysName2" name="sysNameVal"></p>
+									<h5 class="card-title">No projects saved.</h5>
+									<h6 class="card-subtitle mb-2 text-muted">Enter a name and click continue to create a new project: </h6>
+									<p class="card-text"><input type="text" id="projName2" name="projNameVal"></p>
 									</div>
 								</div>
 							</div>

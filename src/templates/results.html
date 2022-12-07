@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container-fluid d-flex justify-content-center">
+    <div class="text-muted">Does your proposed system meet your goals? Check below.</div>
+</div>
+
+<form class="p-3" method="POST" id="goal" action="/goals" enctype="multipart/form-data">
+    <div class="card mb-3 pb-1">
+        <div class="card-body">
+        <h4 class="card-title">Base goals</h4>
+        <div class="row">
+            <div class="col-sm font-weight-bold"></div>
+            <div class="col-md font-weight-bold">Name</div>
+            <div class="col-sm font-weight-bold"></div>
+            <div class="col font-weight-bold">Goal</div>
+            <div class="col font-weight-bold">Calculated Value</div>
+            <div class="col font-weight-bold">Delta</div>
+            <div class="col-sm font-weight-bold"></div>
+        </div>
+        {% for goal in base_hazard.goals %}
+            <div class="row">
+                <div class="col-sm">
+                    {% if goal.get_comparison().compare(goal.metric.final_value, goal.target_value) %}
+                    <span class="text-success" data-feather="check-circle"></span>
+                    {% else %}
+                    <span class="text-danger" data-feather="x-circle"></span>
+                    {% endif %}
+                </div>
+                <div class="col-md">
+                    <p>{{ goal.metric.name }}</p>
+                </div>
+                <div class="col-sm">
+                    <p>{{ goal.comparison.value|safe }}</p>
+                </div>
+                <div class="col">
+                    <p>{{ goal.target_value }}</p>
+                </div>
+                <div class="col">
+                    <p>{{ goal.metric.final_value }}</p>
+                </div>
+                <div class="col">
+                    <p>
+                        {% if goal.metric.get_delta() >= 0 %}
+                        +
+                        {% endif %}
+                        {{ goal.metric.get_delta() }}
+                    </p>
+                </div>
+                <div class="col-sm"><p>{{ goal.metric.unit.value }}</p></div>
+            </div>
+        {% endfor %}
+        </div>
+    </div>
+    {% for hazard in hazards %}
+    <div class="card mb-3 pb-1" style="background-color: {{ colors[hazard.get_risk_level().value] }}">
+        <div class="card-body">
+        <h4 class="card-title">Goals for {{ hazard.name }}</h4>
+        <div class="row">
+            <div class="col-sm font-weight-bold"></div>
+            <div class="col-md font-weight-bold">Name</div>
+            <div class="col-sm font-weight-bold"></div>
+            <div class="col font-weight-bold">Goal</div>
+            <div class="col font-weight-bold">Calculated Value</div>
+            <div class="col font-weight-bold">Delta</div>
+            <div class="col-sm font-weight-bold"></div>
+        </div>
+        {% for goal in hazard.goals %}
+            <div class="row">
+                <div class="col-sm">
+                    {% if goal.get_comparison().compare(goal.metric.final_value, goal.get_target_value()) %}
+                    <span class="text-success" data-feather="check-circle"></span>
+                    {% else %}
+                    <span class="text-danger" data-feather="x-circle"></span>
+                    {% endif %}
+                </div>
+                <div class="col-md">
+                    <p>{{ goal.metric.name }}</p>
+                </div>
+                <div class="col-sm">
+                    <p>{{ goal.get_comparison().value|safe }}</p>
+                </div>
+                <div class="col">
+                    <p>{{ goal.get_target_value() }}</p>
+                </div>
+                <div class="col">
+                    <p>{{ goal.metric.final_value }}</p>
+                </div>
+                <div class="col">
+                    <p>
+                        {% if goal.metric.get_delta() >= 0 %}
+                        +
+                        {% endif %}
+                        {{ goal.metric.get_delta() }}
+                    </p>
+                </div>
+                <div class="col-sm"><p>{{ goal.metric.unit.value }}</p></div>
+            </div>
+        {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+
+    <div class="d-flex justify-content-center mt-3">
+        <a role="button" class="btn btn-outline-secondary mr-3" href="/spineopt">Edit Proposed System</a>
+        <a role="button" class="btn btn-outline-success" href="/changes">Continue</a>
+    </div>
+</form>
+
+<script>
+    // prevent enter key
+    $(document).ready(function () {
+        $(window).keydown(function (event) {
+            if (event.keyCode == 13) {
+                event.preventDefault();
+                return false;
+            }
+        });
+    });
+</script>
+
+{% endblock %}

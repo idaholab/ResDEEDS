@@ -1,10 +1,109 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<div class="container-fluid d-flex justify-content-center">
+    <div class="text-muted">Your proposed system is shown below.</div>
+</div>
+<br>
+<div class="container-fluid d-flex justify-content-center">
+    <div class="text-muted"><i>Run SpineOpt to evaluate resilience metrics, upload a new spreadsheet, or edit values and click Save.<br>&nbsp;</i></div>
+</div>
 
 <form class="p-3" method="POST" id="spineopt" action="/spineopt" enctype="multipart/form-data">
+    <div class="card-deck">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Upload Spreadsheet</h5>
+                <p class="card-text">Upload a new system spreadsheet to update the proposed system. Uploading a 
+                    spreadsheet will overwrite the current proposed system.<br />
+                <input name="system_spreadsheet" type="file">
+                </p>
+                <p class="card-text"><button type="submit" class="btn btn-outline-primary" id="update_button">Upload</button></p>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Run SpineOpt</h5>
+                <p class="card-text">Run SpineOpt simulations to evaluate resilience metrics of the proposed system.</p>
+                <p class="card-text"><a href="/run-spineopt" role="button" class="btn btn-outline-success">Run SpineOpt</a></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid d-flex justify-content-center">
+        <table class="table" id="sys">
+            <thead>
+                <tr>
+                    <th scope="col">Object Name</th>
+                    <th scope="col">Object Class</th>
+                    <th scope="col">Parameters</th>
+                </tr>
+            </thead>
+            {% for obj in system %}
+            <tr>
+                <td>{{ obj.object_name }}</td>
+                <td>{{ obj.object_class_name }}</td>
+                <td>
+                    <table>
+                        <tr>
+                            {% for param_name, param_id_and_val in obj.parameters.items() %}
+                            {% if loop.index0 != 0 and loop.index0 % 3 == 0 %} </tr><tr> {% endif %}
+                            <td class="border-0">
+                                <label for="obj.{{ obj.object_id }}.{{ param_name }}">
+                                    <input type="text" value="{{ param_id_and_val[1] }}" id="obj.{{ obj.object_id }}.{{ param_name }}" name="obj.{{ obj.object_id }}.{{ param_name }}" />
+                                    <br />
+                                    {{ param_name }}
+                                </label>
+                            </td>
+                            {% endfor %}
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    <div class="container-fluid d-flex justify-content-center">
+        <table class="table" id="relationships">
+            <thead>
+                <tr>
+                    <th scope="col">Relationship Name</th>
+                    <th scope="col">Object 1</th>
+                    <th scope="col">Object 2</th>
+                </tr>
+            </thead>
+            {% for rel in relationships %}
+            <tr>
+                <td class="align-middle">{{ rel.name }}</td>
+                {% for obj in rel.objects %}
+                    <td class="align-middle">
+                        <label for="rel.obj.{{ rel.id }}.{{ loop.index0 }}">
+                            <input type="text" value="{{ obj.object_name }}" id="rel.obj.{{ rel.id }}.{{ loop.index0 }}" name="rel.obj.{{ rel.id }}.{{ loop.index0 }}" />
+                        </label>
+                    </td>
+                {% endfor %}
+                <!--<td>
+                    <table>
+                        <tr>
+                            {% for param_name, param_id_and_val in rel.parameters.items() %}
+                            {% if loop.index0 != 0 and loop.index0 % 3 == 0 %} </tr><tr> {% endif %}
+                            <td class="border-0">
+                                <label for="rel.param.{{ rel.id }}.{{ param_name }}">
+                                    <input type="text" value="{{ param_id_and_val[1] }}" id="rel.param.{{ rel.id }}.{{ param_name }}" name="rel.param.{{ rel.id }}.{{ param_name }}" />
+                                    <br />
+                                    {{ param_name }}
+                                </label>
+                            </td>
+                            {% endfor %}
+                        </tr>
+                    </table>
+                <td>-->
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
     <div class="d-flex justify-content-center">
-        <button type="submit" class="btn btn-outline-success" id="next_bowtie_button">Run SpineOpt</button>
+        <button type="submit" class="btn btn-success" id="update_button">Save</button>
     </div>
 </form>
 
