@@ -1,11 +1,15 @@
-from abc import abstractmethod
-from backend import *
 
 
-class Link():
-    link_id = db.Column(db.Integer, primary_key=True)
-    this_type = db.Column(db.String(MAX_NAME_LENGTH), nullable=False)
-    that_type = db.Column(db.String(MAX_NAME_LENGTH), nullable=False)
+
+from typing import List
+from sqlalchemy import Column, String
+
+from backend import MAX_NAME_LENGTH, Base, DBSession
+
+
+class Link(Base):
+    this_type = Column(String(MAX_NAME_LENGTH), nullable=False)
+    that_type = Column(String(MAX_NAME_LENGTH), nullable=False)
 
     # @property
     # @classmethod
@@ -20,5 +24,5 @@ class Link():
     #     ...
 
     @classmethod
-    def all_for_type(cls, type):
-        return [l.that_type for l in cls.query.filter_by(this_type=type)]
+    def all_for_type(cls, session: DBSession, type: str) -> List[str]:
+        return [l.that_type for l in session.query(cls).filter_by(this_type=type)]

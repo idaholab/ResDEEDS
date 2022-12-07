@@ -6,3 +6,7 @@ __pycache__
 .DS_Store
 
 spine/projects/*
+spine/Spine-Database-API
+spine/Spine-Toolbox
+
+.vscode

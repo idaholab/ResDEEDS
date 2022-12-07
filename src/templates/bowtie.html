@@ -37,7 +37,7 @@
     <ul class="list-group">
         <!-- Hazards List to Analyze -->
         {% for elem in priority_hazards %}
-            {% if elem|length > 1 %}
+            {% if elem %}
                 <a href="#" class="list-group-item list-group-item-action flex-column align-items-start active">
                     <div class="d-flex w-100 justify-content-between">
                         <h5 class="mb-1">{{ elem }}</h5>

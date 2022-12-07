@@ -1,5 +1,5 @@
 # Running the app
-Navigate into the project folder and run `python src/app.py`
+Navigate into the project folder and run `python src/app.py` (or possibly `py src/app.py` on Windows)
 
 # Installing from Source
 ## Prerequisites
@@ -16,6 +16,18 @@ Navigate into the project folder and run `python src/app.py`
 1. Clone the project and submodules
 
     `git clone --recurse-submodules https://gitlab.software.inl.gov/miracle/resilience_calculator`
+
+1. Install Spine Database API
+
+    `cd resilience_calculator/spine/`
+
+    `git clone https://github.com/Spine-project/Spine-Database-API.git`
+
+1. Install Spine Toolbox
+
+    `cd resilience_calculator/spine/`
+
+    `git clone https://github.com/Spine-project/Spine-Toolbox.git`
 
 1. Create a virtual environment for SpineToolbox, making sure to use Python 3.8
 
@@ -34,6 +46,9 @@ Navigate into the project folder and run `python src/app.py`
 ## Setting up MySQL on Windows
 ### Install
 You can install MariaDB via Chocolatey or via the normal installer.
+
+### Run MySQL Service
+To start the MySQL service, open the Services app in Windows, find the MySQL service, right-click it and select Start.
 
 ### Setup
 Assuming MariaDB, open MySQL Client. The default password is blank.
