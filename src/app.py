@@ -1,8 +1,6 @@
 from types import SimpleNamespace
 import werkzeug
 from flask import Flask, render_template, g, send_file, url_for, request, redirect, session
-from flask_oidc import OpenIDConnect
-from okta.client import Client as UsersClient
 import asyncio
 from config import config
 from backend import DBSession
@@ -23,6 +21,8 @@ app.secret_key = config['app_secret_key']
 #initialize okta
 USE_OKTA = config['use_okta']
 if USE_OKTA:
+    from flask_oidc import OpenIDConnect
+    from okta.client import Client as UsersClient
     app.config["OIDC_CLIENT_SECRETS"] = "config/client_secrets.json"
     app.config["OIDC_COOKIE_SECURE"] = False
     app.config["OIDC_CALLBACK_ROUTE"] = "/oidc/callback"

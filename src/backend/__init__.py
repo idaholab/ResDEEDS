@@ -10,7 +10,13 @@ MAX_DIR_LENGTH = 80
 MAX_OTHER_LENGTH = 20
 
 dbc = config["database"]
-db_uri = f'mysql://{dbc["db_user"]}:{dbc["db_pass"]}@{dbc["db_host"]}/{dbc["db_name"]}'
+if dbc["dialect"] == 'sqlite':
+    db_uri = f'sqlite:///{dbc["db_name"]}.db'
+elif dbc["dialect"] == 'mysql':
+    db_uri = f'mysql://{dbc["db_user"]}:{dbc["db_pass"]}@{dbc["db_host"]}/{dbc["db_name"]}'
+else:
+    print(f'DB dialect {dbc["dialect"]} unsupported.')
+    exit(1)
 engine = create_engine(db_uri, echo=False)
 DBSession = sessionmaker(bind=engine)
 

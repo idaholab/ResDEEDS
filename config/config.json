@@ -3,6 +3,7 @@
     "debug_mode": true,
     "use_okta": true,
     "database": {
+        "dialect": "sqlite",
         "db_name": "resilience_calculator",
         "db_user": "resilience_calculator",
         "db_pass": "password1",
