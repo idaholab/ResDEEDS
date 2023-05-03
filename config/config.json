@@ -1,7 +1,7 @@
 {
     "app_secret_key": "f46cBXvh34ovp1lxCmfE",
     "debug_mode": true,
-    "use_okta": true,
+    "use_okta": false,
     "database": {
         "dialect": "sqlite",
         "db_name": "resilience_calculator",

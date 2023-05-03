@@ -6,8 +6,8 @@ Visit the URL printed on the console during startup (e.g. http://127.0.0.1:5000)
 
 # Installing from Source
 ## Prerequisites
-* Python 3.7 or 3.8 (per Spine Toolbox requirements)
-* A MySQL or MariaDB server
+* Python 3.7 or 3.8 (per Spine Toolbox requirements - possibly can be relaxed with newer Spine Toolbox?)
+* A MySQL or MariaDB server (if not using sqlite)
 * pip install...
     * flask
     * flask-sqlalchemy
@@ -47,6 +47,24 @@ Visit the URL printed on the console during startup (e.g. http://127.0.0.1:5000)
     `pip install -r requirements.txt`
 
 1. (Optional) Install and set up MySQL/MariaDB (see below)
+
+1. Set up the Spine Toolbox workflow. TODO: make this process better...
+
+    1. Run the Flask app and create a new project. (Try to) upload a spreadsheet.
+
+    1. With the Spine Toolbox venv activated, open the project in Spine Toolbox.
+
+        `python spine/Spine-Toolbox/spinetoolbox.py &`
+
+        Then File->Open project. Your new project should be in `spine/projects/`.
+
+    1. If needed, install Julia from File -> Settings -> Tools.
+
+    1. Install the SpineOpt Julia package from the same screen.
+
+    1. Open a Julia command line and install Revise, SpineInterface, XLSX, DataFrames, Distributions, and CSV
+
+    1. Run the workflow to make sure it will complete successfully by pressing the Project "play" button
 
 ## Setting up MySQL on Windows
 If you are using the mysql dialect option for the database, you will need a MySQL or MariaDB server to connect to. These instructions are for if you want to run it locally on Windows.
