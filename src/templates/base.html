@@ -46,11 +46,11 @@
 				<a class="navbar-brand col-sm-3 col-md-2 mr-0 nav-link" href="/">Idaho National Laboratory - Resilience
 					Calculator</a>
 				{% if g.user.use_okta is not defined or g.user.use_okta %}
-					{% if not g.user %}
-					<a class="p-2 text-light" href="/login">Log In / Register</a>
-					{% else %}
-					<a class="p-2 text-light" href="/logout">Hi, {{ g.user.profile.firstName }}! Logout?</a>
-					{% endif %}
+				{% if not g.user %}
+				<a class="p-2 text-light" href="/login">Log In / Register</a>
+				{% else %}
+				<a class="p-2 text-light" href="/logout">Hi, {{ g.user.profile.firstName }}! Logout?</a>
+				{% endif %}
 				{% endif %}
 			</nav>
 		</div>
@@ -122,26 +122,30 @@
 						</div>
 						<div class="container-fluid d-flex justify-content-center">
 							<div class="row">
-							{% for proj in projects %}
+								{% for proj in projects %}
 								<!-- <div class="col"> -->
-									<div class="card" style="width: 18rem;">
-										<div class="card-body">
+								<div class="card" style="width: 18rem;">
+									<div class="card-body">
 										<h5 class="card-title">{{proj.name}}</h5>
-										<button class="btn btn-link" type="submit" name="edit" value={{proj.id}}>Edit</button>
-										<button class="btn btn-link" type="submit" name="delete" value={{proj.id}}>Delete</button>
-										</div>
+										<button class="btn btn-link" type="submit" name="edit"
+											value={{proj.id}}>Edit</button>
+										<button class="btn btn-link" type="submit" name="delete"
+											value={{proj.id}}>Delete</button>
 									</div>
+								</div>
 								<!-- </div> -->
-							{% endfor %}
+								{% endfor %}
 							</div>
 						</div>
 						<div class="container-fluid d-flex justify-content-center">
 							<div class="row">
 								<div class="card" style="width: 18rem;">
 									<div class="card-body">
-									<h5 class="card-title">Add a new project</h5>
-									<h6 class="card-subtitle mb-2 text-muted">Enter a name and click continue to create a new project: </h6>
-									<p class="card-text"><input type="text" id="projectName1" name="projNameValAdd"></p>
+										<h5 class="card-title">Add a new project</h5>
+										<h6 class="card-subtitle mb-2 text-muted">Enter a name and click continue to
+											create a new project: </h6>
+										<p class="card-text"><input type="text" id="projectName1" name="projNameValAdd">
+										</p>
 									</div>
 								</div>
 							</div>
@@ -152,84 +156,92 @@
 							<div class="row">
 								<div class="card" style="width: 18rem;">
 									<div class="card-body">
-									<h5 class="card-title">No projects saved.</h5>
-									<h6 class="card-subtitle mb-2 text-muted">Enter a name and click continue to create a new project: </h6>
-									<p class="card-text"><input type="text" id="projName2" name="projNameVal"></p>
+										<h5 class="card-title">No projects saved.</h5>
+										<h6 class="card-subtitle mb-2 text-muted">Enter a name and click continue to
+											create a new project: </h6>
+										<p class="card-text"><input type="text" id="projName2" name="projNameVal"></p>
 									</div>
 								</div>
 							</div>
 						</div>
 						{% endif %}
-					</div>
-					<ol>
-					</ol>
-					<br>
-					
-						<div class="d-flex justify-content-center">
-							<button type="submit" class="btn btn-outline-success" id="next_base_button">Continue</button>
-						</div>
-					</form>
-					{% endblock %}
 				</div>
-			</main>
+				<ol>
+				</ol>
+				<br>
+
+				<div class="d-flex justify-content-center">
+					<button type="submit" class="btn btn-outline-success" id="next_base_button">Continue</button>
+				</div>
+				</form>
+				{% endblock %}
 		</div>
-		{% else %}
-		<main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
-			<div
-				class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-			</div>
-			<div>
-				<div class="container-fluid d-flex justify-content-center">
-					<h3>INL Resilience Calculator</h3>
-				</div>
-				<div class="container-fluid d-flex justify-content-center border-bottom text-muted">
-					<h5>Measure your system's resilience and receive suggestions for improvement.</h5>
-				</div>
-				<div class="container-fluid d-flex justify-content-center border-bottom text-muted">
-					<p>Access to reliable, resilient power systems is important in 21st century
-						now more than ever. Terrestrial weather events exacerbated by climate
-						change and extreme weather conditions
-						are happening with greater frequency and intensity. Cyberattacks are
-						seen at an increasing frequency against the power grid, and the attacks
-						are becoming more
-						sophisticated and targeted towards electric energy systems. The Idaho
-						National Laboratory (INL), as part of the multi-laboratory Microgrids,
-						Infrastructure Resilience, and Advanced
-						Controls Launchpad (MIRACL) project, has developed a resilience
-						framework for electric energy delivery systems (EEDS).
-						The framework provides detailed steps for evaluating resiliency in the
-						planning, operational, and future stages, and
-						encompasses five core functions of resilience. It allows users to
-						evaluate the resilience of distributed wind, taking
-						into consideration the resilience of the wind systems themselves, as
-						well as the effect they have on the resiliency of
-						any systems they are connected to. This application follows the
-						frameowork to allow stakeholders to evaluate their current position,
-						create resiliency goals, compare different investment options,
-						and decide which metrics are most appropriate for their system</p>
-				</div>
-				<!-- Graphic -->
-				<div class="container-fluid d-flex justify-content-center">
-					<img src="../static/planning_stage.png" alt="Framework Description"
-						class="img-thumbnail border-0" height="300px" width="600px">
-				</div>
-				<!-- Link -->
-				<div class="container-fluid d-flex justify-content-center">
-					<a href="https://resilience.inl.gov/miracl/"><span
-							data-feather="link"></span>https://resilience.inl.gov/miracl/</a>
-				</div>
-		{% endif %}
+		</main>
 	</div>
+	{% else %}
+	<main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+		<div
+			class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+		</div>
+		<div>
+			<div class="container-fluid d-flex justify-content-center">
+				<h3>INL Resilience Calculator</h3>
+			</div>
+			<div class="container-fluid d-flex justify-content-center border-bottom text-muted">
+				<h5>Measure your system's resilience and receive suggestions for improvement.</h5>
+			</div>
+			<div class="container-fluid d-flex justify-content-center border-bottom text-muted">
+				<p>Access to reliable, resilient power systems is important in 21st century
+					now more than ever. Terrestrial weather events exacerbated by climate
+					change and extreme weather conditions
+					are happening with greater frequency and intensity. Cyberattacks are
+					seen at an increasing frequency against the power grid, and the attacks
+					are becoming more
+					sophisticated and targeted towards electric energy systems. The Idaho
+					National Laboratory (INL), as part of the multi-laboratory Microgrids,
+					Infrastructure Resilience, and Advanced
+					Controls Launchpad (MIRACL) project, has developed a resilience
+					framework for electric energy delivery systems (EEDS).
+					The framework provides detailed steps for evaluating resiliency in the
+					planning, operational, and future stages, and
+					encompasses five core functions of resilience. It allows users to
+					evaluate the resilience of distributed wind, taking
+					into consideration the resilience of the wind systems themselves, as
+					well as the effect they have on the resiliency of
+					any systems they are connected to. This application follows the
+					frameowork to allow stakeholders to evaluate their current position,
+					create resiliency goals, compare different investment options,
+					and decide which metrics are most appropriate for their system</p>
+			</div>
+			<!-- Graphic -->
+			<div class="container-fluid d-flex justify-content-center">
+				<img src="../static/planning_stage.png" alt="Framework Description" class="img-thumbnail border-0"
+					height="300px" width="600px">
+			</div>
+			<!-- Link -->
+			<div class="container-fluid d-flex justify-content-center">
+				<a href="https://resilience.inl.gov/miracl/"><span
+						data-feather="link"></span>https://resilience.inl.gov/miracl/</a>
+			</div>
+			{% endif %}
+		</div>
 
-	<!-- Icons -->
-	<script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script>
-	<script>
-		feather.replace()
-	</script>
-	<!-- Latest CDN production JavaScript and CSS -->
-	<script src="https://global.oktacdn.com/okta-signin-widget/5.16.1/js/okta-sign-in.min.js"
-		type="text/javascript"></script>
+		<!-- Icons -->
+		<script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script>
+		<script>
+			feather.replace()
+		</script>
+		<!-- Latest CDN production JavaScript and CSS -->
+		<script src="https://global.oktacdn.com/okta-signin-widget/5.16.1/js/okta-sign-in.min.js"
+			type="text/javascript"></script>
 
+		{% if errors is defined and errors is not none %}
+			{% for error in errors %}
+				<div class="alert alert-danger" role="alert">
+					{{error}}
+				</div>
+			{% endfor %}
+		{% endif %}
 </body>
 
 

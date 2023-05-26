@@ -5,6 +5,7 @@ import asyncio
 from config import config
 from backend import DBSession
 from backend.project import *
+import logging
 
 import platform
 if platform.system()=='Windows':
@@ -101,7 +102,12 @@ def qualities():
         if 'system_spreadsheet' in request.files:
             file = request.files['system_spreadsheet']
             if allowed_file(file.filename):
-                result = g.project.import_system(g.db_session, g.spine_db_session, file, is_baseline=True)
+                try:
+                    result = g.project.import_system(g.db_session, g.spine_db_session, file, is_baseline=True)
+                except Exception as e:
+                    logging.exception(e)
+                    return render_template("qualities.html", result=[], errors=["ERROR: unable to import system!"])
+
             else:
                 print(f'{file.filename} not allowed.')
         else:
