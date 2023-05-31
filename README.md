@@ -66,6 +66,8 @@ Visit the URL printed on the console during startup (e.g. http://127.0.0.1:5000)
 
     1. Run the workflow to make sure it will complete successfully by pressing the Project "play" button
 
+1. Create `config/local.json` and override default config settings as needed. At a minimum, override `"app_secret_key"` with a random string.
+
 ## Setting up MySQL on Windows
 If you are using the mysql dialect option for the database, you will need a MySQL or MariaDB server to connect to. These instructions are for if you want to run it locally on Windows.
 

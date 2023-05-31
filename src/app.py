@@ -30,8 +30,7 @@ if USE_OKTA:
     app.config["OIDC_SCOPES"] = ["openid", "email", "profile"]
     app.config["OIDC_ID_TOKEN_COOKIE_NAME"] = "oidc_token"
     oidc = OpenIDConnect(app)
-    okta_client = UsersClient({ "orgUrl": "https://dev-76461973.okta.com", 
-                                "token": "00ibPDZDUhWfUS_yzxT9OHR10VTe1Zo1q7HpEazDFa"})
+    okta_client = UsersClient(config["okta"])
 
 PROJECT_ID_KEY = "project_id"
 

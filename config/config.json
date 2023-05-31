@@ -1,12 +1,16 @@
 {
-    "app_secret_key": "f46cBXvh34ovp1lxCmfE",
+    "app_secret_key": "",
     "debug_mode": true,
     "use_okta": false,
+    "okta": {
+        "orgUrl": "",
+        "token": ""
+    },
     "database": {
         "dialect": "sqlite",
         "db_name": "resilience_calculator",
         "db_user": "resilience_calculator",
-        "db_pass": "password1",
+        "db_pass": "",
         "db_host": "localhost",
         "drop_and_recreate": false
     }
