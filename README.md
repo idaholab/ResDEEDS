@@ -1,84 +1,103 @@
-# Running the app
-Navigate into the project folder and run `python src/app.py` (or possibly `py src/app.py` on Windows).
+# ResDEEDS
 
-# Accessing the app
-Visit the URL printed on the console during startup (e.g. http://127.0.0.1:5000).
-
-# Installing from Source
-## Prerequisites
-* Python 3.7 or 3.8 (per Spine Toolbox requirements - possibly can be relaxed with newer Spine Toolbox?)
-* A MySQL or MariaDB server (if not using sqlite)
-* pip install...
-    * flask
-    * flask-sqlalchemy
-* If using mysql for the app database, also pip install...
-    * mysqlclient
-* If using Okta authentication, also pip install...
-    * flask-oidc 
-    * okta
-
-## Instructions
-1. Clone the project and submodules
+## Installation
+### Linux
+1. Clone the project and submodules.
 
     `git clone --recurse-submodules https://gitlab.software.inl.gov/miracle/resilience_calculator`
 
-1. Install Spine Database API
+1. Run the install script.
 
-    `cd resilience_calculator/spine/`
+    `cd resilience_calculator`
 
-    `git clone https://github.com/Spine-project/Spine-Database-API.git`
+    `sudo install/install.sh`
 
-1. Install Spine Toolbox
+    TODO: should the install script create and use a venv?
 
-    `cd resilience_calculator/spine/`
+    TODO: install script for `yum`?
 
-    `git clone https://github.com/Spine-project/Spine-Toolbox.git`
+### Windows
+#### Prerequisites
+* Git (download for Windows [here](https://git-scm.com/download/win))
+* Python 3 (download [here](https://www.python.org/downloads/), tested on 3.10)
 
-1. Create a virtual environment for SpineToolbox, making sure to use Python 3.8
+#### Steps
+1. Using Git Bash, clone the project and submodules.
 
-    `cd resilience_calculator/spine/Spine-Toolbox`
+    `git clone --recurse-submodules https://gitlab.software.inl.gov/miracle/resilience_calculator`
 
-    `/path/to/python3.8/python -m venv .venv`
+1. Create and activate a Python virtual environment for the project.
 
-1. Activate the venv using the `activate` script
+    `cd resilience_calculator`
 
-1. Install SpineToolbox
+    `py -m venv venv`
+
+    `. venv/Scripts/activate`
+
+1. Update pip.
+
+    `python -m pip install --upgrade pip`
+
+1. Install the project.
 
     `pip install -r requirements.txt`
 
-1. (Optional) Install and set up MySQL/MariaDB (see below)
+1. Install Julia.
 
-1. Set up the Spine Toolbox workflow. TODO: make this process better...
+    `python -m jill install --confirm`
 
-    1. Run the Flask app and create a new project. (Try to) upload a spreadsheet.
+1. Install Julia dependencies.
 
-    1. With the Spine Toolbox venv activated, open the project in Spine Toolbox.
+    `~/AppData/Local/julias/bin/julia.cmd -e 'using Pkg; Pkg.add(url="https://github.com/spine-tools/SpineInterface.jl.git")'`
 
-        `python spine/Spine-Toolbox/spinetoolbox.py &`
+    `~/AppData/Local/julias/bin/julia.cmd -e 'using Pkg; Pkg.add(url="https://github.com/spine-tools/SpineOpt.jl.git")'`
 
-        Then File->Open project. Your new project should be in `spine/projects/`.
+    `~/AppData/Local/julias/bin/julia.cmd -e 'using Pkg; Pkg.add(["XLSX", "DataFrames", "Distributions", "CSV", "Revise", "Cbc", "Clp"])'`
 
-    1. If needed, install Julia from File -> Settings -> Tools.
+1. Create `config/local.json` and override default config settings as needed. At a minimum, override `"app_secret_key"` with a random string.
 
-    1. Install the SpineOpt Julia package from the same screen.
+## Running the app
+1. Navigate into the project folder on the command line.
 
-    1. Open a Julia command line and install Revise, SpineInterface, XLSX, DataFrames, Distributions, and CSV
+1. Activate the Python virtual environment.
 
-    1. Run the workflow to make sure it will complete successfully by pressing the Project "play" button
+1. Run `python src/app.py`.
 
-## Setting up MySQL on Windows
+## Accessing the app
+In a web browser, visit the URL printed on the console during startup (e.g. http://127.0.0.1:5000).
+
+## Configuration
+### Overview
+Configuration is done via JSON in `config/local.json` (create this file if it does not exist). This JSON overrides the values found in `config/config.json`.
+
+### Options
+* `app_secret_key` - identifies your Flask app. Should remain secret.
+* `debug_mode` - set to `true` to enable Flask debugging.
+* `use_okta` - set to `true` to enable Okta authentication. Configure your Okta instance in a `config/client_secrets.json`. If this is set to `false`, the app runs in an unauthenticated mode, where all users can see all projects.
+* `okta` - partial Okta configuration. The remainder is found in a `config/client_secrets.json` file like [this one](https://github.com/okta/samples-python-flask/blob/master/okta-hosted-login/client_secrets.json.dist).
+    * `orgUrl` - the Okta organization URL, e.g. https://example.okta.com.
+    * `token` - your API token.
+* `database` - database configuration.
+    * `dialect` - the dialect used for SQLAlchemy. Options are "sqlite" and "mysql".
+    * `db_name` - the name of the SQL database.
+    * `db_user` - (mysql only) the name of the SQL database user. The user should have all privileges on the database.
+    * `db_pass` - (mysql only) the password of the SQL database user.
+    * `db_host` - (mysql only) the host for the SQL server. Use `localhost` if running locally.
+    * `drop_and_recreate` - if `true`, drops and recreates the database on Flask app startup. Intended for development/debugging only.
+
+## MySQL Suport
+To use MySQL, install the `mysqlclient` package with pip. TODO: document configuration.
+
+### Setting up MySQL on Windows
 If you are using the mysql dialect option for the database, you will need a MySQL or MariaDB server to connect to. These instructions are for if you want to run it locally on Windows.
 
-### Install
+#### Install
 You can install MariaDB via Chocolatey or via the installer for MariaDB Server available at https://mariadb.org/download/. If you plan to run the app locally, you do not need to enable networking for MariaDB server.
 
-### Run MySQL Service
+#### Run MySQL Service
 To start the MySQL service, open the Services app in Windows, find the MySQL service, right-click it and select Start.
 
-### Run MySQL Service
-To start the MySQL service, open the Services app in Windows, find the MySQL service, right-click it and select Start.
-
-### Setup
+#### Setup
 Assuming MariaDB, open MySQL Client (installed along with MariaDB). The default password is blank.
 
 To create the database for the project, run:
@@ -89,20 +108,4 @@ To create the database user, run:
 
 `GRANT ALL PRIVILEGES ON resilience_calculator.* TO resilience_calculator@localhost IDENTIFIED BY '<your_password>';`
 
-Your database password should be set as `db_pass` in `config/config.json`.
-
-# Configuring
-## Overview
-Configuration is done via JSON in `config/config.json`. If you use Okta, additional configuration is found in `config/client_secrets.json`. **Do not commit your sensitive configuration data to git.**
-
-## Options in `config.json`
-* `app_secret_key` - identifies your Flask app. Should remain secret.
-* `debug_mode` - set to `true` to enable Flask debugging.
-* `use_okta` - set to `true` to enable Okta authentication. Configure your Okta instance in `client_secrets.json`. If this is set to `false`, the app runs in an unauthenticated mode, where all users can see all projects. This is meant for local deployments.
-* `database` - database configuration.
-    * `dialect` - the dialect used for SQLAlchemy. Options are "sqlite" and "mysql".
-    * `db_name` - the name of the SQL database.
-    * `db_user` - the name of the SQL database user. The user should have all privileges on the database.
-    * `db_pass` - the password of the SQL database user.
-    * `db_host` - the host for the SQL server. Use `localhost` if running locally.
-    * `drop_and_recreate` - if `true`, drops and recreates the database on Flask app startup. Intended for development/debugging only.
+Your database password should be set as `db_pass` in `config/local.json`.

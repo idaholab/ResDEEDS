@@ -12,3 +12,5 @@ spine/Spine-Database-API
 spine/Spine-Toolbox
 venv
 .vscode
+local.json
+client_secrets.json
