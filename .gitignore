@@ -10,5 +10,5 @@ __pycache__
 spine/projects/*
 spine/Spine-Database-API
 spine/Spine-Toolbox
-
+venv/*
 .vscode
