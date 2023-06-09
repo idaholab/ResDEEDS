@@ -10,7 +10,7 @@ __pycache__
 spine/projects/*
 spine/Spine-Database-API
 spine/Spine-Toolbox
-venv
+venv/*
 .vscode
 local.json
 client_secrets.json
