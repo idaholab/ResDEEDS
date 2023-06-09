@@ -1,6 +1,5 @@
 
 services:
-
   rescalc:
     image: rescalc
     build:
@@ -8,9 +7,3 @@ services:
       dockerfile: ./install/Dockerfile
     ports:
       - 5000:5000
-
-  # adminer:
-  #   image: adminer
-  #   restart: always
-  #   ports:
-  #     - 8080:8080
