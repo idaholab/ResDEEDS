@@ -19,8 +19,8 @@ jobs:
         python -m pip install --upgrade pip
         python -m pip install -r requirements.txt
         python -m jill install --confirm
-        julia -e 'using Pkg; Pkg.rm("SpineInterface")'
-        julia -e 'using Pkg; Pkg.rm("SpineOpt")'
+        julia -e 'using Pkg; Pkg.rm("SpineInterface")' || true
+        julia -e 'using Pkg; Pkg.rm("SpineOpt")' || true
         julia -e 'using Pkg; Pkg.add(url="https://github.com/spine-tools/SpineInterface.jl.git")'
         julia -e 'using Pkg; Pkg.add(url="https://github.com/spine-tools/SpineOpt.jl.git")'
         julia -e 'using Pkg; Pkg.add(["XLSX", "DataFrames", "Distributions", "CSV", "Revise", "Cbc", "Clp"])'
