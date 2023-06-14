@@ -6,7 +6,7 @@ from config import config
 from backend import DBSession
 from backend.project import *
 import logging
-
+import os
 import platform
 if platform.system()=='Windows':
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
@@ -18,6 +18,7 @@ def allowed_file(filename):
 app = Flask(__name__)
 
 app.secret_key = config['app_secret_key']
+os.environ["NEMO_PRINT_BANNER"]= "false"
 
 #initialize okta
 USE_OKTA = config['use_okta']
@@ -195,7 +196,7 @@ def spineopt():
 def run_spineopt():
     spine_output = g.project.run_spineopt()
     session["spine_output"] = spine_output
-    print(session["spine_output"])
+    print(type(session["spine_output"]))
     g.project.load_results(g.spine_db_session)
     return redirect("/results")
 

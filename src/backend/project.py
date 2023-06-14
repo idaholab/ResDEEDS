@@ -240,7 +240,8 @@ class Project(Base):
         result = ''
         #TODO: uncomment
         result = toolbox.import_system()
-        print(result)
+        for i in result:
+            print(i)
         ##spine_session = SpineDBSession()
 
         if is_baseline:

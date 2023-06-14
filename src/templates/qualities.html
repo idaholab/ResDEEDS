@@ -28,11 +28,17 @@
         <h4></h4>
         
     </div>
-
-    <div class="d-flex justify-content-center">
-        <button type="submit" class="btn btn-outline-primary" id="next_qual_button">Upload</button>
-        <a href="/initial-system" role="button" class="btn btn-outline-success ml-3">Continue</a>
-    </div>
+    
+    <div class="container"> 
+        <div id="loading" class="loading">
+          Loading&#8230;     
+        </div>
+        <div class="d-flex justify-content-center">
+            <button type="submit" class="btn btn-outline-primary"  id="next_qual_button" onClick="showSpinner()">Upload</button>
+            <a href="/initial-system" role="button" class="btn btn-outline-success ml-3">Continue</a>
+        </div>
+      </div>
+    
 </form>
 
 {% if result != "" %}

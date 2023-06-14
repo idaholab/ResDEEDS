@@ -18,6 +18,13 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         python -m pip install -r requirements.txt
+        python -m jill install --confirm
+        julia -e 'using Pkg; Pkg.rm("SpineInterface")'
+        julia -e 'using Pkg; Pkg.rm("SpineOpt")'
+        julia -e 'using Pkg; Pkg.add(url="https://github.com/spine-tools/SpineInterface.jl.git")'
+        julia -e 'using Pkg; Pkg.add(url="https://github.com/spine-tools/SpineOpt.jl.git")'
+        julia -e 'using Pkg; Pkg.add(["XLSX", "DataFrames", "Distributions", "CSV", "Revise", "Cbc", "Clp"])'
+        python ./src/tests/set_secret.py
     - name: Running pytest
       run: |
         python3 -m pytest ./src/tests/test.py
