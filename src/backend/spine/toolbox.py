@@ -39,14 +39,14 @@ class SpineToolbox:
         return self.run(import_system=True)
 
     def run(self, import_system: bool = False) -> str:
-        
-        m = Manager().list()
-        p = Process(target=run_spine, args=(self.spine_dir, import_system, m))
-        p.start()
-        p.join()
-        
-        print(f'Running Spine command')
-        return m
+        with Manager() as manager:
+            m = manager.list()
+            p = Process(target=run_spine, args=(self.spine_dir, import_system, m))
+            p.start()
+            p.join()
+            
+            print(f'Running Spine command')
+            return list(m)
 
-        # completed = subprocess.run(spine_cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-        # return completed.stdout.decode().split('\n')
+            # completed = subprocess.run(spine_cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+            # return completed.stdout.decode().split('\n')
