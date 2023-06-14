@@ -4,7 +4,7 @@
 ### Linux
 1. Clone the project and submodules.
 
-    `git clone --recurse-submodules https://gitlab.software.inl.gov/miracle/resilience_calculator`
+    `git clone --recurse-submodules https://github.inl.gov/miracle/resilience_calculator.git`
 
 1. Run the install script.
 
