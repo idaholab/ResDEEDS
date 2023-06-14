@@ -5,6 +5,7 @@ flask_oidc
 okta
 jill
 pytest
+PySide2
 -e git+https://github.com/spine-tools/spine-engine.git@7be63302466f2826ab80ffa0730e31a052770fc4#egg=spine_engine
 -e git+https://github.com/spine-tools/spine-items.git@f08c405fdcc4effc36da93d96239caf211718e92#egg=spine_items
 -e git+https://github.com/spine-tools/Spine-Database-API.git@c147f787f314413356ce3a59cf608d6bbcd4bfa4#egg=spinedb_api

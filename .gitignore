@@ -6,6 +6,7 @@ __pycache__
 .DS_Store
 
 *.db
+*.db-journal
 
 spine/projects/*
 spine/Spine-Database-API

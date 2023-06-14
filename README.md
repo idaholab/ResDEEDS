@@ -54,6 +54,10 @@
 
     `~/AppData/Local/julias/bin/julia.cmd -e 'using Pkg; Pkg.add(["XLSX", "DataFrames", "Distributions", "CSV", "Revise", "Cbc", "Clp"])'`
 
+1. Configure Spine Toolbox's Julia paths.
+
+    `python venv/src/spinetoolbox/bin/configure_julia.py "~/AppData/Local/julias/bin/julia.cmd" "~/.julia/"`
+
 1. Create `config/local.json` and override default config settings as needed. At a minimum, override `"app_secret_key"` with a random string.
 
 ## Running the app
