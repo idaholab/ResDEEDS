@@ -5,8 +5,8 @@ python3 -m pip install pip --upgrade
 python3 -m pip install -r requirements.txt
 python3 -m jill install --confirm
 # should lock this to a commit hash
-julia -e 'using Pkg; Pkg.rm("SpineInterface")'
-julia -e 'using Pkg; Pkg.rm("SpineOpt")'
+julia -e 'using Pkg; Pkg.rm("SpineInterface")' || true
+julia -e 'using Pkg; Pkg.rm("SpineOpt")' || true
 julia -e 'using Pkg; Pkg.add(url="https://github.com/spine-tools/SpineInterface.jl.git")'
 julia -e 'using Pkg; Pkg.add(url="https://github.com/spine-tools/SpineOpt.jl.git")'
 julia -e 'using Pkg; Pkg.add(["XLSX", "DataFrames", "Distributions", "CSV", "Revise", "Cbc", "Clp"])'
