@@ -56,7 +56,7 @@
 
 1. Configure Spine Toolbox's Julia paths.
 
-    `python venv/src/spinetoolbox/bin/configure_julia.py "C:/Users/$(whoami)/AppData/Local/julias/bin/julia.cmd" ""`
+    `python venv/src/spinetoolbox/bin/configure_julia.py "C:/Users/$(whoami)/AppData/Local/Programs/Julia-1.9.0/bin/julia.exe" ""`
 
 1. Create `config/local.json` and override default config settings as needed. At a minimum, override `"app_secret_key"` with a random string.
 
