@@ -48,11 +48,11 @@
 
 1. Install Julia dependencies.
 
-    `~/AppData/Local/julias/bin/julia.cmd -e 'using Pkg; Pkg.add(url="https://github.com/spine-tools/SpineInterface.jl.git")'`
+    `~/AppData/Local/julia/bin/julia.cmd -e 'using Pkg; Pkg.add(url="https://github.com/spine-tools/SpineInterface.jl.git")'`
 
-    `~/AppData/Local/julias/bin/julia.cmd -e 'using Pkg; Pkg.add(url="https://github.com/spine-tools/SpineOpt.jl.git")'`
+    `~/AppData/Local/julia/bin/julia.cmd -e 'using Pkg; Pkg.add(url="https://github.com/spine-tools/SpineOpt.jl.git")'`
 
-    `~/AppData/Local/julias/bin/julia.cmd -e 'using Pkg; Pkg.add(["XLSX", "DataFrames", "Distributions", "CSV", "Revise", "Cbc", "Clp"])'`
+    `~/AppData/Local/julia/bin/julia.cmd -e 'using Pkg; Pkg.add(["XLSX", "DataFrames", "Distributions", "CSV", "Revise", "Cbc", "Clp"])'`
 
 1. Configure Spine Toolbox's Julia paths.
 
