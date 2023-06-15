@@ -61,9 +61,10 @@
 1. Create `config/local.json` and override default config settings as needed. At a minimum, override `"app_secret_key"` with a random string.
 
 ## Running the app
-1. Navigate into the project folder on the command line.
+1. Navigate into the project folder on the command line: Find "resilience_calculator" folder -> Right-click on folder location in address bar and copy address -> Input 'cd ' and paste folder location address into CMD terminal or PowerShell
 
 1. Activate the Python virtual environment.
+    'venv\Scripts\activate'
 
 1. Run `python src/app.py`.
 
