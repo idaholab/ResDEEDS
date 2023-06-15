@@ -89,7 +89,7 @@ Configuration is done via JSON in `config/local.json` (create this file if it do
     * `db_host` - (mysql only) the host for the SQL server. Use `localhost` if running locally.
     * `drop_and_recreate` - if `true`, drops and recreates the database on Flask app startup. Intended for development/debugging only.
 
-## MySQL Suport
+## MySQL Support
 To use MySQL, install the `mysqlclient` package with pip. TODO: document configuration.
 
 ### Setting up MySQL on Windows
