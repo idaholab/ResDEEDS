@@ -344,14 +344,20 @@ class Project(Base):
         relationships = spine_db.get_relationships(self.dir, RESULTS_DB_PATH)
         for r in relationships:
             print(r.objects[0].object_name)
-            for h in self.hazards:
-                print(h.name)
-            hazard = [h for h in self.hazards if h.name == r.objects[0].object_name][0]
+            print([h.name for h in self.hazards])
+            hazard_name = r.objects[0].object_name
+            if hazard_name[:len(BASELINE_HAZARD_PREFIX)] == BASELINE_HAZARD_PREFIX:
+                hazard_name = 'Base'
+                hazard = self.get_base_hazard()
+            else:
+                hazard = [h for h in self.hazards if h.name == hazard_name][0]
+            print(f'Found hazard {hazard.name}')
             print(r.objects[1].object_name)
-            for g in hazard.goals:
-                print(g.metric.name)
+
+            print([g.metric.name for g in hazard.goals])
 
             metric = [g.metric for g in hazard.goals if g.metric.name == r.objects[1].object_name][0]
+            print(f'Found metric {metric.name}')
             try:
                 if baseline:
                     print(r.parameters)
