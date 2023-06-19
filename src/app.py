@@ -9,7 +9,7 @@ import logging
 import os
 import platform
 
-logging.basicConfig(level=logging.DEBUG if config['debug_mode'] else logging.INFO)
+logging.basicConfig(filename="log.log", level=logging.DEBUG if config['debug_mode'] else logging.INFO)
 
 if platform.system()=='Windows':
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
@@ -79,6 +79,7 @@ def index():
         projects = Project.get_all_for_user(g.db_session, g.user.id)
     else:
         logging.debug("Anonymous user.")
+    logging.info(request.form)
     if request.method == "POST":
         if len(projects) == 0 or request.form["projNameValAdd"] != "":
             if len(projects) > 0:

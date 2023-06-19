@@ -9,6 +9,7 @@ RUN ./install/install.sh
 COPY config config
 COPY spine spine
 COPY src src
+COPY resilience_calculator.db resilience_calculator.db
 RUN mkdir -p /root/.spinetoolbox/SpineProject
 COPY ["./install/Spine Toolbox.conf", "/root/.config/SpineProject/"]
 ENTRYPOINT ["./install/run.sh"]
