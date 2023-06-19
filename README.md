@@ -19,7 +19,7 @@
 ### Windows
 #### Prerequisites
 * Git (download for Windows [here](https://git-scm.com/download/win))
-* Python 3 (download [here](https://www.python.org/downloads/), tested on 3.10)
+* Python 3 (download [here](https://www.python.org/downloads/release/python-3100/), tested on 3.10)
 
 #### Steps
 1. Using Git Bash, clone the project and submodules.
