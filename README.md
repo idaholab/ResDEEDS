@@ -48,22 +48,23 @@
 
 1. Install Julia dependencies.
 
-    `~/AppData/Local/julias/bin/julia.cmd -e 'using Pkg; Pkg.add(url="https://github.com/spine-tools/SpineInterface.jl.git")'`
+    `~/AppData/Local/Programs/Julia-1.9.0/bin/julia.exe -e 'using Pkg; Pkg.add(url="https://github.com/spine-tools/SpineInterface.jl.git")'`
 
-    `~/AppData/Local/julias/bin/julia.cmd -e 'using Pkg; Pkg.add(url="https://github.com/spine-tools/SpineOpt.jl.git")'`
+    `~/AppData/Local/Programs/Julia-1.9.0/bin/julia.exe -e 'using Pkg; Pkg.add(url="https://github.com/spine-tools/SpineOpt.jl.git")'`
 
-    `~/AppData/Local/julias/bin/julia.cmd -e 'using Pkg; Pkg.add(["XLSX", "DataFrames", "Distributions", "CSV", "Revise", "Cbc", "Clp"])'`
+    `~/AppData/Local/Programs/Julia-1.9.0/bin/julia.exe -e 'using Pkg; Pkg.add(["XLSX", "DataFrames", "Distributions", "CSV", "Revise", "Cbc", "Clp"])'`
 
 1. Configure Spine Toolbox's Julia paths.
 
-    `python venv/src/spinetoolbox/bin/configure_julia.py "C:/Users/$(whoami)/AppData/Local/julias/bin/julia.cmd" ""`
+    `python venv/src/spinetoolbox/bin/configure_julia.py "C:/Users/$(whoami)/AppData/Local/Programs/Julia-1.9.0/bin/julia.exe" ""`
 
 1. Create `config/local.json` and override default config settings as needed. At a minimum, override `"app_secret_key"` with a random string.
 
 ## Running the app
-1. Navigate into the project folder on the command line.
+1. Navigate into the project folder on the command line: Find "resilience_calculator" folder -> Right-click on folder location in address bar and copy address -> Input 'cd ' and paste folder location address into CMD terminal or PowerShell
 
 1. Activate the Python virtual environment.
+    'venv\Scripts\activate'
 
 1. Run `python src/app.py`.
 
@@ -89,7 +90,7 @@ Configuration is done via JSON in `config/local.json` (create this file if it do
     * `db_host` - (mysql only) the host for the SQL server. Use `localhost` if running locally.
     * `drop_and_recreate` - if `true`, drops and recreates the database on Flask app startup. Intended for development/debugging only.
 
-## MySQL Suport
+## MySQL Support
 To use MySQL, install the `mysqlclient` package with pip. TODO: document configuration.
 
 ### Setting up MySQL on Windows

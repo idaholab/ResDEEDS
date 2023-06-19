@@ -49,11 +49,11 @@
 				<a class="navbar-brand col-sm-3 col-md-2 mr-0 nav-link" href="/">Idaho National Laboratory - Resilience
 					Calculator</a>
 				{% if g.user.use_okta is not defined or g.user.use_okta %}
-				{% if not g.user %}
-				<a class="p-2 text-light" href="/login">Log In / Register</a>
-				{% else %}
-				<a class="p-2 text-light" href="/logout">Hi, {{ g.user.profile.firstName }}! Logout?</a>
-				{% endif %}
+					{% if not g.user %}
+					<a class="p-2 text-light" href="/login">Log In / Register</a>
+					{% else %}
+					<a class="p-2 text-light" href="/logout">Hi, {{ g.user.profile.firstName }}! Logout?</a>
+					{% endif %}
 				{% endif %}
 			</nav>
 		</div>
@@ -62,6 +62,9 @@
 			<nav class="col-md-2 d-none d-md-block bg-light sidebar">
 				<div class="sidebar-sticky">
 					<br>
+					{% if g.project %}
+						<p class="text-center lead border bg-primary text-light"><strong>{{ g.project.name }}</strong></p>
+					{% endif %}
 					<ul class="nav flex-column">
 						<li class="nav-item">
 							<a class="nav-link navButton" href="/qualities">

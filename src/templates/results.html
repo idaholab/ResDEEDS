@@ -12,11 +12,9 @@
         <div class="row">
             <div class="col-sm font-weight-bold"></div>
             <div class="col-md font-weight-bold">Name</div>
-            <div class="col-sm font-weight-bold"></div>
             <div class="col font-weight-bold">Goal</div>
             <div class="col font-weight-bold">Calculated Value</div>
             <div class="col font-weight-bold">Delta</div>
-            <div class="col-sm font-weight-bold"></div>
         </div>
         {% for goal in base_hazard.goals %}
             <div class="row">
@@ -30,24 +28,20 @@
                 <div class="col-md">
                     <p>{{ goal.metric.name }}</p>
                 </div>
-                <div class="col-sm">
-                    <p>{{ goal.comparison.value|safe }}</p>
+                <div class="col">
+                    <p>{{ goal.comparison.value|safe }} {{ goal.target_value }} {{ goal.metric.unit.value }}</p>
                 </div>
                 <div class="col">
-                    <p>{{ goal.target_value }}</p>
-                </div>
-                <div class="col">
-                    <p>{{ goal.metric.final_value }}</p>
+                    <p>{{ goal.metric.final_value }} {{ goal.metric.unit.value }}</p>
                 </div>
                 <div class="col">
                     <p>
                         {% if goal.metric.get_delta() >= 0 %}
                         +
                         {% endif %}
-                        {{ goal.metric.get_delta() }}
+                        {{ goal.metric.get_delta() }} {{ goal.metric.unit.value }}
                     </p>
                 </div>
-                <div class="col-sm"><p>{{ goal.metric.unit.value }}</p></div>
             </div>
         {% endfor %}
         </div>
@@ -59,11 +53,9 @@
         <div class="row">
             <div class="col-sm font-weight-bold"></div>
             <div class="col-md font-weight-bold">Name</div>
-            <div class="col-sm font-weight-bold"></div>
             <div class="col font-weight-bold">Goal</div>
             <div class="col font-weight-bold">Calculated Value</div>
             <div class="col font-weight-bold">Delta</div>
-            <div class="col-sm font-weight-bold"></div>
         </div>
         {% for goal in hazard.goals %}
             <div class="row">
@@ -78,23 +70,19 @@
                     <p>{{ goal.metric.name }}</p>
                 </div>
                 <div class="col-sm">
-                    <p>{{ goal.get_comparison().value|safe }}</p>
+                    <p>{{ goal.get_comparison().value|safe }} {{ goal.get_target_value() }} {{ goal.metric.unit.value }}</p>
                 </div>
-                <div class="col">
-                    <p>{{ goal.get_target_value() }}</p>
+                <div class="col-sm">
+                    <p>{{ goal.metric.final_value }} {{ goal.metric.unit.value }}</p>
                 </div>
-                <div class="col">
-                    <p>{{ goal.metric.final_value }}</p>
-                </div>
-                <div class="col">
+                <div class="col-sm">
                     <p>
                         {% if goal.metric.get_delta() >= 0 %}
                         +
                         {% endif %}
-                        {{ goal.metric.get_delta() }}
+                        {{ goal.metric.get_delta() }} {{ goal.metric.unit.value }}
                     </p>
                 </div>
-                <div class="col-sm"><p>{{ goal.metric.unit.value }}</p></div>
             </div>
         {% endfor %}
         </div>

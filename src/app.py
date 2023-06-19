@@ -200,11 +200,12 @@ def run_spineopt():
     spine_output = g.project.run_spineopt()
     session["spine_output"] = spine_output
     print(type(session["spine_output"]))
-    g.project.load_results(g.spine_db_session)
     return redirect("/results")
 
 @app.route('/results', methods=["GET"])
 def results():
+    g.project.load_results(g.spine_db_session, baseline=False)
+    g.project.load_results(g.spine_db_session, baseline=True)
     return render_template("results.html", base_hazard=g.project.get_base_hazard(), hazards=sorted(g.project.get_hazards(), reverse=True, key=lambda x: x.get_risk_level().value), goal_comparisons=GoalComparison.get_all(), colors=hazard_risk_colors)
 
 @app.route('/changes', methods=["GET"])
