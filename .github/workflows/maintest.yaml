@@ -1,6 +1,6 @@
 name: maintest
 
-on: [push]
+on: []
 
 jobs:
   build:
