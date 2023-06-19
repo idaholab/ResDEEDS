@@ -8,6 +8,9 @@ from backend.project import *
 import logging
 import os
 import platform
+
+logging.basicConfig(level=logging.DEBUG if config['debug_mode'] else logging.INFO)
+
 if platform.system()=='Windows':
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
@@ -54,10 +57,10 @@ def before_request():
             g.__setattr__('user', user)
         asyncio.run(_f())
     elif USE_OKTA:
-        print('Not logged in!')
+        logging.info('User is not logged in!')
         g.__setattr__('user', None)
     else:
-        print('Operating in unauthenticated mode.')
+        logging.warning('Operating in unauthenticated mode.')
         user = SimpleNamespace()
         user.use_okta = False
         user.id = 'default'
@@ -75,7 +78,7 @@ def index():
     if g.user is not None:
         projects = Project.get_all_for_user(g.db_session, g.user.id)
     else:
-        print("Anonymous user.")
+        logging.debug("Anonymous user.")
     if request.method == "POST":
         if len(projects) == 0 or request.form["projNameValAdd"] != "":
             if len(projects) > 0:
@@ -104,14 +107,14 @@ def qualities():
             if allowed_file(file.filename):
                 try:
                     result = g.project.import_system(g.db_session, g.spine_db_session, file, is_baseline=True)
-                except Exception as e:
-                    logging.exception(e)
-                    return render_template("qualities.html", result=[], errors=["ERROR: unable to import system!"])
+                except Exception as exception: #pylint: disable=W0718
+                    logging.exception(exception)
+                    return render_template("qualities.html", result=[], errors=["ERROR: unable to import system!"]), 500
 
             else:
-                print(f'{file.filename} not allowed.')
+                logging.info(f'{file.filename} not allowed.')
         else:
-            print('Did not find system_spreadsheet in posted files.')
+            logging.info('Did not find system_spreadsheet in posted files.')
     return render_template("qualities.html", result=result)
 
 @app.route('/download-template', methods=["GET"])
@@ -122,7 +125,7 @@ def download_template():
 @app.route('/initial-system', methods=["GET"])
 def initial_system():
     sys, rels = g.project.get_system(g.spine_db_session, baseline=True)
-    print(f'Sys: {sys}')
+    logging.debug(f'Sys: {sys}')
     return render_template("initial-system.html", system=sys, relationships=rels)
 
 @app.route('/hazards', methods=["GET", "POST"])
@@ -132,7 +135,7 @@ def hazards():
             hazard.impact = HazardImpact.UNKNOWN
             hazard.likelihood = HazardLikelihood.UNKNOWN
         
-        print(request.form)
+        logging.debug(request.form)
         for impact_likelihood, hazard_string in request.form.items():
             for hazard in g.project.hazards:
                 if hazard.name == hazard_string:
@@ -165,16 +168,16 @@ def goals():
 @app.route('/spineopt', methods=["GET", "POST"])
 def spineopt():
     sys, rels = g.project.get_system(g.spine_db_session)
-
+    logging.debug(request)
     if request.method == "POST":
         # Update system objects
         if 'system_spreadsheet' in request.files and request.files['system_spreadsheet'].filename:
             print('Importing spreadsheet, ignoring manual entries.')
             file = request.files['system_spreadsheet']
             if allowed_file(file.filename):
-                result = g.project.import_system(g.db_session, g.spine_db_session, file, is_baseline=False)
+                g.project.import_system(g.db_session, g.spine_db_session, file, is_baseline=False)
                 sys, rels = g.project.get_system(g.spine_db_session)
-                print(sys)
+                logging.debug(sys)
             else:
                 print(f'{file.filename} not allowed.')
         else:
