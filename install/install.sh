@@ -1,4 +1,5 @@
 #!/bin/bash -e
+# Copyright 2023, Battelle Energy Alliance, LLC
 apt update
 apt install python3 python3-pip git -y
 python3 -m pip install pip --upgrade
