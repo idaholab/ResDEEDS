@@ -21,11 +21,15 @@
                 <p class="card-text"><button type="submit" class="btn btn-outline-primary" id="update_button">Upload</button></p>
             </div>
         </div>
+
+            <div id="loading" class="loading">
+              Loading&#8230;     
+            </div>
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title">Run SpineOpt</h5>
                 <p class="card-text">Run SpineOpt simulations to evaluate resilience metrics of the proposed system.</p>
-                <p class="card-text"><a href="/run-spineopt" role="button" class="btn btn-outline-success">Run SpineOpt</a></p>
+                <p class="card-text"><a href="/run-spineopt" role="button" class="btn btn-outline-success" onClick="showSpinner()">Run SpineOpt</a></p>
             </div>
         </div>
     </div>
