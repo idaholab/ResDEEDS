@@ -1,3 +1,4 @@
+# Copyright 2023, Battelle Energy Alliance, LLC
 from types import SimpleNamespace
 import werkzeug
 from flask import Flask, render_template, g, send_file, url_for, request, redirect, session

@@ -1,3 +1,4 @@
+# Copyright 2023, Battelle Energy Alliance, LLC
 import sys, os
 sys.path.insert(0, os.path.abspath('./src'))
 import pytest

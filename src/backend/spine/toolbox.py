@@ -1,3 +1,4 @@
+# Copyright 2023, Battelle Energy Alliance, LLC
 from typing import List, Set
 from spinetoolbox.headless import headless_main
 from spinetoolbox.main import _make_argument_parser

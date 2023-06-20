@@ -1,3 +1,4 @@
+# Copyright 2023, Battelle Energy Alliance, LLC
 import json
 from typing import Dict, List, Type
 from sqlalchemy import Boolean, Column, Integer, String, JSON, ForeignKey, create_engine

@@ -1,3 +1,4 @@
+# Copyright 2023, Battelle Energy Alliance, LLC
 from typing import List
 from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
