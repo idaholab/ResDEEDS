@@ -1,3 +1,4 @@
+# Copyright 2023, Battelle Energy Alliance, LLC
 import json
 
 with open('config/config.json') as f:

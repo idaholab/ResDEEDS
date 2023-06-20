@@ -1,3 +1,4 @@
+# Copyright 2023, Battelle Energy Alliance, LLC
 import csv
 
 from sqlalchemy import Column, ForeignKey, Integer, Numeric, String

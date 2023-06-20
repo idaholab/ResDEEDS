@@ -1,3 +1,4 @@
+# Copyright 2023, Battelle Energy Alliance, LLC
 # will be used primarily for testing
 FROM ubuntu:22.04
 WORKDIR /resilience_calculator

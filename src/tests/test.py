@@ -1,3 +1,4 @@
+# Copyright 2023, Battelle Energy Alliance, LLC
 import sys
 sys.path.append("./src")
 from app import app
