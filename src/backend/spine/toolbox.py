@@ -6,6 +6,7 @@ from multiprocessing import Process, Manager
 from PySide6.QtCore import QCoreApplication
 from io import StringIO
 import sys
+import logging
 
 
 def run_spine(spine_dir, import_system, manager):
@@ -46,7 +47,7 @@ class SpineToolbox:
             p.start()
             p.join()
             
-            print(f'Running Spine command')
+            logging.info(f'Running Spine command')
             return list(m)
 
             # completed = subprocess.run(spine_cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)

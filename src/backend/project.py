@@ -11,6 +11,7 @@ from sqlalchemy.orm import relationship
 from backend import Base, MAX_NAME_LENGTH, MAX_DIR_LENGTH, DBSession
 from backend.spine.db import SpineDBSession, SpineObject, SpineRelationship, SpineScenario
 from backend.spine.toolbox import SpineToolbox
+import logging
 
 SPINE_TEMPLATE_DIR = 'spine/Spine'
 SPINE_PROJECTS_DIR = 'spine/projects'
@@ -31,7 +32,7 @@ class GoalComparison(enum.Enum):
     @staticmethod
     def get_all():
         all = [str(e.value) for e in GoalComparison]
-        print(all)
+        logging.info(all)
         return all
 
     def compare(self, a, b) -> bool:
@@ -102,8 +103,9 @@ class Goal(Base):
         try:
             base_goal = [x for x in base_hazard.goals if x.metric.name == self.metric.name][0]
             return base_goal
-        except IndexError:
-            print(f'Unable to find base goal for metric {self.metric.name}.')
+        except IndexError as ie:
+            logging.exception(f'Unable to find base goal for metric {self.metric.name}.')
+            logging.exception(ie)
             return None
 
     def get_comparison(self):
@@ -232,26 +234,26 @@ class Project(Base):
     def run_spineopt(self) -> str:
         toolbox = SpineToolbox(self.dir)
         result = toolbox.run()
-        print(result)
+        logging.info(result)
 
     def import_system(self, session: DBSession, spine_db: SpineDBSession, file: FileStorage, is_baseline: bool = True) -> str:
         file.save(os.path.join(self.dir, SYSTEM_SPREADSHEET_FILENAME))
-        print('System spreadsheet saved.')
+        logging.info('System spreadsheet saved.')
         toolbox = SpineToolbox(self.dir)
         result = ''
         #TODO: uncomment
         result = toolbox.import_system()
         for i in result:
-            print(i)
+            logging.info(i)
         ##spine_session = SpineDBSession()
 
         if is_baseline:
-            print('Saving baseline system...')
+            logging.info('Saving baseline system...')
             self._save_system_db_as(BASELINE_SYSTEM_DB_PATH)
-            print('Running full Spine Toolbox project...')
+            logging.info('Running full Spine Toolbox project...')
             #TODO: uncomment
             result = toolbox.run()
-            print(result)
+            logging.info(result)
             self.import_hazards(session, spine_db)
             self.load_results(spine_db, baseline=True)
 
@@ -292,7 +294,7 @@ class Project(Base):
         #hazard_names = [BASE_HAZARD_NAME]
         #hazard_names.extend([s.name for s in scenarios])
         hazard_names = [s.name for s in scenarios]
-        print(f'Hazard names: {hazard_names}')
+        logging.info(f'Hazard names: {hazard_names}')
         hazards = []
         # TODO: calculate for base scenario too?
         for name in hazard_names:
@@ -317,7 +319,7 @@ class Project(Base):
 
     def import_metrics(self, session: DBSession, spine_db: SpineDBSession) -> List[Metric]:
         objects = spine_db.get_objects(self.dir, RESULTS_DB_PATH)
-        print(objects)
+        logging.info(objects)
         metrics = [Metric(name=o.object_name) for o in objects if o.object_class_name == 'metrics']
         for m in metrics:
             session.add(m)
@@ -334,8 +336,9 @@ class Project(Base):
         try:
             hazard = [h for h in self.hazards if h.name == hazard_name][0]
             goal = [g for g in hazard.goals if g.metric.name == metric_name][0]
-        except IndexError:
-            print(f'Goal with metric {metric_name} for hazard {hazard_name} not found.')
+        except IndexError as ie:
+            logging.exception(f'Goal with metric {metric_name} for hazard {hazard_name} not found.')
+            logging.exception(ie)
             return
 
         goal.comparison = GoalComparison(comparison)
@@ -344,29 +347,30 @@ class Project(Base):
     def load_results(self, spine_db: SpineDBSession, baseline=False) -> List[Hazard]:
         relationships = spine_db.get_relationships(self.dir, RESULTS_DB_PATH)
         for r in relationships:
-            print(r.objects[0].object_name)
-            print([h.name for h in self.hazards])
+            logging.info(r.objects[0].object_name)
+            logging.info([h.name for h in self.hazards])
             hazard_name = r.objects[0].object_name
             if hazard_name[:len(BASELINE_HAZARD_PREFIX)] == BASELINE_HAZARD_PREFIX:
                 hazard_name = 'Base'
                 hazard = self.get_base_hazard()
             else:
                 hazard = [h for h in self.hazards if h.name == hazard_name][0]
-            print(f'Found hazard {hazard.name}')
-            print(r.objects[1].object_name)
+            logging.info(f'Found hazard {hazard.name}')
+            logging.info(r.objects[1].object_name)
 
-            print([g.metric.name for g in hazard.goals])
+            logging.info([g.metric.name for g in hazard.goals])
 
             metric = [g.metric for g in hazard.goals if g.metric.name == r.objects[1].object_name][0]
-            print(f'Found metric {metric.name}')
+            logging.info(f'Found metric {metric.name}')
             try:
                 if baseline:
-                    print(r.parameters)
+                    logging.info(r.parameters)
                     metric.baseline_value = float(r.parameters['value'][1])
                 else:
                     metric.final_value = float(r.parameters['value'][1])
-            except ValueError:
-                print(f'Skipping {r.name} because value is not a float ({r.parameters["value"][1]})')
+            except ValueError as ve:
+                logging.exception(f'Skipping {r.name} because value is not a float ({r.parameters["value"][1]})')
+                logging.exception(ve)
 
         return self.hazards
 

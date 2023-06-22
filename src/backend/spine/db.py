@@ -4,6 +4,7 @@ from typing import Dict, Tuple, Type, List
 
 from backend import MAX_DIR_LENGTH, MAX_NAME_LENGTH, Base
 from spinedb_api import DiffDatabaseMapping, export_functions
+import logging
 
 # -----------------v-SPINE-v------------------------#
 #DB_PATH = '.spinetoolbox/items/miracl_db/miracl_db.sqlite'
@@ -91,7 +92,7 @@ class SpineDBSession:
     #     new_db_map = self._open(new_url)
 
     #     data = export_functions.export_data(db_map)
-    #     print(data)
+    #     logging.info(data)
 
     def find_object_by_name(self, url, obj_name: str) -> SpineObject:
         for obj in self._objects[url].values():
@@ -118,14 +119,14 @@ class SpineDBSession:
                                         object_name=obj.name)
             obj_param_defs = db_map.object_parameter_definition_list(object_class_id=obj.class_id)
             for opd in obj_param_defs:
-                #print(dir(opd))
+                #logging.info(dir(opd))
                 objects[obj.id].parameters[opd.parameter_name] = None
 
         object_param_vals = db_map.object_parameter_value_list()
 
         for opv in object_param_vals:
-            #print(dir(opv))
-            #print(opv.alternative_id, opv.alternative_name, opv.count, opv.entity_class_id, opv.entity_id, opv.id, opv.index, opv.keys, opv.object_class_id, opv.object_class_name, opv.object_id, opv.object_name, opv.parameter_id, opv.parameter_name, opv.type, opv.value)
+            #logging.info(dir(opv))
+            #logging.info(opv.alternative_id, opv.alternative_name, opv.count, opv.entity_class_id, opv.entity_id, opv.id, opv.index, opv.keys, opv.object_class_id, opv.object_class_name, opv.object_id, opv.object_name, opv.parameter_id, opv.parameter_name, opv.type, opv.value)
             #return
             # try:
             obj = objects[opv.entity_id]
@@ -194,9 +195,9 @@ class SpineDBSession:
                     'id': param_id,
                     'value': val.encode('utf-8')
                 }
-                #print(f'Updating {param} with {item}...')
+                #logging.info(f'Updating {param} with {item}...')
                 updated = self._db_maps[url].update_parameter_values(item)
-                #print(f'Updated: {updated}')
+                #logging.info(f'Updated: {updated}')
                 if updated:
                     return True
                 return False
@@ -216,10 +217,11 @@ class SpineDBSession:
                     # This returns a tuple of (id_set, err_list)
                     new_id = self._db_maps[url].add_parameter_values(item)[0].pop()
                     obj.parameters[param] = (new_id, val)
-                    print(f'Added param value id {new_id}')
+                    logging.info(f'Added param value id {new_id}')
                     return True
-                except IndexError:
-                    print(f'Failed to add {item}')
+                except IndexError as ie:
+                    logging.exception(f'Failed to add {item}')
+                    logging.exception(ie)
                     return False
 
     # def update_relationship_parameter(self, dir: str, db_path: str, rel_id: int, param: str, val: str) -> bool:
@@ -230,9 +232,9 @@ class SpineDBSession:
     #         'id': rel.parameters[param][0],
     #         'value': val.encode('utf-8')
     #     }
-    #     print(f'Updating {param} with {item}...')
+    #     logging.info(f'Updating {param} with {item}...')
     #     updated = self._db_maps[url].update_parameter_values(item)
-    #     print(f'Updated: {updated}')
+    #     logging.info(f'Updated: {updated}')
     #     if updated:
     #         return True
     #     return False
@@ -249,9 +251,9 @@ class SpineDBSession:
             'object_id_list': [obj.object_id for obj in obj_list],
             'object_class_id_list': [obj.object_class_id for obj in obj_list]
         }
-        #print(f'Updating relationship {rel_id} with {item}...')
+        #logging.info(f'Updating relationship {rel_id} with {item}...')
         updated = self._db_maps[url].update_wide_relationships(item)
-        print(f'Updated: {updated}')
+        logging.info(f'Updated: {updated}')
         if updated:
             return True
         return False

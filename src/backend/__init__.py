@@ -5,6 +5,7 @@ from sqlalchemy import Boolean, Column, Integer, String, JSON, ForeignKey, creat
 from sqlalchemy.ext.declarative import declarative_base, declared_attr
 from sqlalchemy.orm import sessionmaker, relationship
 from config import config
+import logging
 
 MAX_NAME_LENGTH = 80
 MAX_DIR_LENGTH = 80
@@ -16,7 +17,7 @@ if dbc["dialect"] == 'sqlite':
 elif dbc["dialect"] == 'mysql':
     db_uri = f'mysql://{dbc["db_user"]}:{dbc["db_pass"]}@{dbc["db_host"]}/{dbc["db_name"]}'
 else:
-    print(f'DB dialect {dbc["dialect"]} unsupported.')
+    logging.error(f'DB dialect {dbc["dialect"]} unsupported.')
     exit(1)
 engine = create_engine(db_uri, echo=False)
 DBSession = sessionmaker(bind=engine)
@@ -54,12 +55,12 @@ if not engine.dialect.has_table(engine, 'project'):
     #from backend.hazard import Hazard, HazardToHazardLink, HazardToImpactLink
     #from backend.impact import Impact, IMPACT_TYPES
     from backend.project import Goal, Metric, Project, Hazard
-    print('Table project not found, creating tables.')
+    logging.info('Table project not found, creating tables.')
     #Base.metadata.drop_all(bind=engine)
     Base.metadata.create_all(bind=engine)
     #DBSession().commit()
 else:
-    print('Tables already exist.')
+    logging.info('Tables already exist.')
 
 if config["database"]["drop_and_recreate"]:
     #from backend.hazard import Hazard, HazardToHazardLink, HazardToImpactLink
@@ -82,7 +83,7 @@ if config["database"]["drop_and_recreate"]:
     #     IMPACTS = 4
     #     METRICS = 5
     #     for row in reader:
-    #         print(row)
+    #         logging.info(row)
     #         name = row[NAME]
     #         primary_cat = row[PRIMARY_CAT]
     #         secondary_cat = row[SECONDARY_CAT]
@@ -92,8 +93,8 @@ if config["database"]["drop_and_recreate"]:
     #             if impact not in IMPACT_TYPES:
     #                 logging.warning('Impact type %s not found while loading templates.', impact)
     #             new_impact = Impact(is_template=True, impact_type=impact, severity=0.5)
-    #             print(new_impact)
-    #             # print(Impact.get_by_name(impact))
+    #             logging.info(new_impact)
+    #             # logging.info(Impact.get_by_name(impact))
     #             # if Impact.get_by_name(impact) is not None:
     #             #     try:
     #             #         type = ImpactType(impact)

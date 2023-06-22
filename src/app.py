@@ -155,14 +155,15 @@ def goals():
         goal_comparisons = request.form.getlist('goalComparison')
         goal_target_values = request.form.getlist('goalTargetValue')
 
-        print(goal_names, goal_comparisons, goal_target_values)
+        logging.info(goal_names, goal_comparisons, goal_target_values)
 
         for n, c, tv in zip(goal_names, goal_comparisons, goal_target_values):
             hazard_name, goal_name = n.split('.')
             try:
                 g.project.update_goal(g.db_session, hazard_name, goal_name, c, float(tv))
-            except ValueError:
-                print(f'Could not convert {tv} to float for goal {n}.')
+            except ValueError as ve:
+                logging.exception(f'Could not convert {tv} to float for goal {n}.')
+                logging.exception(ve)
 
         return redirect("/spineopt")
     return render_template("goals.html", base_hazard=g.project.get_base_hazard(), hazards=sorted(g.project.get_hazards(), reverse=True, key=lambda x: x.get_risk_level().value), goal_comparisons=GoalComparison.get_all(), colors=hazard_risk_colors)
@@ -174,16 +175,16 @@ def spineopt():
     if request.method == "POST":
         # Update system objects
         if 'system_spreadsheet' in request.files and request.files['system_spreadsheet'].filename:
-            print('Importing spreadsheet, ignoring manual entries.')
+            logging.info('Importing spreadsheet, ignoring manual entries.')
             file = request.files['system_spreadsheet']
             if allowed_file(file.filename):
                 g.project.import_system(g.db_session, g.spine_db_session, file, is_baseline=False)
                 sys, rels = g.project.get_system(g.spine_db_session)
                 logging.debug(sys)
             else:
-                print(f'{file.filename} not allowed.')
+                logging.info(f'{file.filename} not allowed.')
         else:
-            print('Doing GUI parameter updates.')
+            logging.info('Doing GUI parameter updates.')
             for k, v in request.form.items():
                 words = k.split('.')
                 if words[0] == 'obj':
@@ -201,7 +202,8 @@ def spineopt():
 def run_spineopt():
     spine_output = g.project.run_spineopt()
     session["spine_output"] = spine_output
-    print(type(session["spine_output"]))
+    logging.info(type(session["spine_output"]))
+    g.project.load_results(g.spine_db_session)
     return redirect("/results")
 
 @app.route('/results', methods=["GET"])
