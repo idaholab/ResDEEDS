@@ -10,34 +10,28 @@
 	<title>INL - Resilience Calculator</title>
 
 	<!-- Bootstrap -->
-	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-		integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-		crossorigin="anonymous"></script>
-	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
-		integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-		crossorigin="anonymous"></script>
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
-		integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-		crossorigin="anonymous"></script>
+	<script src="../static/jquery-3.2.1.slim.min.js"></script>
+	<script src="../static/jquery-ui.min.js"></script>
+	<script src="../static/popper.min.js"></script>
+	<script src="../static/bootstrap.min.js"></script>
 	<script src="./static/spinner.js"></script>
 
 	<!-- Latest compiled and minified CSS -->
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-		integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-	<link href="https://global.oktacdn.com/okta-signin-widget/5.16.1/css/okta-sign-in.min.css" type="text/css"
+	<link rel="stylesheet" href="../static/bootstrap.min.css" type="text/css"
+	rel="stylesheet" />
+	<link href="../static/okta-sign-in.min.css" type="text/css"
 		rel="stylesheet" />
 	<link href="./static/spinner.css" type="text/css"
 	rel="stylesheet" />
 
 
 	<!-- Optional theme -->
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
-		integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+	<link href="../static/bootstrap-theme.min.css" type="text/css"'
+	rel="stylesheet" />
 
 	<!-- sortable jquery req -->
-	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	<script src="../static/jquery-1.12.4.js"></script>
+	<script src="../static/jquery-ui.js"></script>
 	{% block header %}
 	{% endblock %}
 </head>
@@ -234,12 +228,13 @@
 		</div>
 
 		<!-- Icons -->
-		<script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script>
+		<script src="../static/feather.min.js"></script>
 		<script>
 			feather.replace()
 		</script>
 		<!-- Latest CDN production JavaScript and CSS -->
-		<script src="https://global.oktacdn.com/okta-signin-widget/5.16.1/js/okta-sign-in.min.js"
+		<!-- This is already included above -->
+		<script src="../static/okta-sign-in.min.js"
 			type="text/javascript"></script>
 
 		{% if errors is defined and errors is not none %}
