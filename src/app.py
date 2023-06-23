@@ -10,8 +10,6 @@ import logging
 import os
 import platform
 
-logging.basicConfig(filename="log.log", level=logging.DEBUG if config['debug_mode'] else logging.INFO)
-
 if platform.system()=='Windows':
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
@@ -108,7 +106,8 @@ def qualities():
             file = request.files['system_spreadsheet']
             if allowed_file(file.filename):
                 try:
-                    result = g.project.import_system(g.db_session, g.spine_db_session, file, is_baseline=True)
+                    g.project.import_system(g.db_session, g.spine_db_session, file, is_baseline=True)
+                    result = 'System imported.'
                 except Exception as exception: #pylint: disable=W0718
                     logging.exception(exception)
                     return render_template("qualities.html", result=[], errors=["ERROR: unable to import system!"]), 500
@@ -154,8 +153,6 @@ def goals():
         goal_names = request.form.getlist('goalName')
         goal_comparisons = request.form.getlist('goalComparison')
         goal_target_values = request.form.getlist('goalTargetValue')
-
-        logging.info(goal_names, goal_comparisons, goal_target_values)
 
         for n, c, tv in zip(goal_names, goal_comparisons, goal_target_values):
             hazard_name, goal_name = n.split('.')

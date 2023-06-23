@@ -14,4 +14,6 @@ try:
     with open(os.path.join(os.path.dirname(__file__),"../config/local.json"), "r", encoding='utf-8') as local_config_file:
         config.update(json.load(local_config_file))
 except FileNotFoundError:
-    logging.info('Local config file config/local.json not found. Create this file to override default config options.')
+    logging.warning('Local config file config/local.json not found. Create this file to override default config options.')
+
+logging.basicConfig(filename="log.log", level=logging.DEBUG if config['verbose_logging'] else logging.INFO, force=True)

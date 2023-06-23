@@ -9,9 +9,7 @@ import sys
 import logging
 
 
-def run_spine(spine_dir, import_system, manager):
-    saved_stdout, saved_stderr = StringIO(), StringIO()
-    sys.stdout, sys.stderr, saved_stdout, saved_stderr = saved_stdout, saved_stderr, sys.stdout, sys.stderr
+def run_spine(spine_dir, import_system):
     if not import_system:
         deselect = ['--deselect', 'import_system', 'merge_miracl', 'apply_hazards']
         select = []
@@ -25,9 +23,9 @@ def run_spine(spine_dir, import_system, manager):
     spine_cmd.extend(select)
     parser = _make_argument_parser()
     args = parser.parse_args(spine_cmd)
+    logging.debug('Starting Spine Toolbox with arguments %s.', str(args))
     spineproc = headless_main(args)
-    sys.stdout, sys.stderr, saved_stdout, saved_stderr = saved_stdout, saved_stderr, sys.stdout, sys.stderr
-    manager.extend(saved_stdout.getvalue().split('\n'))
+    logging.debug('Spine Toolbox workflow exited with code %d.', spineproc)
     QCoreApplication.exit()
 
 class SpineToolbox:
@@ -40,15 +38,10 @@ class SpineToolbox:
     def import_system(self) -> str:
         return self.run(import_system=True)
 
-    def run(self, import_system: bool = False) -> str:
-        with Manager() as manager:
-            m = manager.list()
-            p = Process(target=run_spine, args=(self.spine_dir, import_system, m))
-            p.start()
-            p.join()
-            
-            logging.info(f'Running Spine command')
-            return list(m)
+    def run(self, import_system: bool = False):
+        p = Process(target=run_spine, args=(self.spine_dir, import_system, None))
+        p.start()
+        p.join()
 
-            # completed = subprocess.run(spine_cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-            # return completed.stdout.decode().split('\n')
+        return []
+    

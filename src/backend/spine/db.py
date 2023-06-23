@@ -262,5 +262,8 @@ class SpineDBSession:
         for db_map in self._db_maps.values():
             if db_map.has_pending_changes():
                 db_map.commit_session('Handled request.')
+            # Also manually close the connection to the DB - otherwise this can prevent the Delete
+            # option on the main page from working.
+            db_map.connection.close()
 
 # -----------------^-SPINE-^------------------------#

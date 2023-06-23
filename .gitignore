@@ -15,3 +15,5 @@ venv/*
 .vscode
 local.json
 client_secrets.json
+
+*.log

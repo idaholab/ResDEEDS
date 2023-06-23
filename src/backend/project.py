@@ -236,24 +236,17 @@ class Project(Base):
         result = toolbox.run()
         logging.info(result)
 
-    def import_system(self, session: DBSession, spine_db: SpineDBSession, file: FileStorage, is_baseline: bool = True) -> str:
+    def import_system(self, session: DBSession, spine_db: SpineDBSession, file: FileStorage, is_baseline: bool = True):
         file.save(os.path.join(self.dir, SYSTEM_SPREADSHEET_FILENAME))
         logging.info('System spreadsheet saved.')
         toolbox = SpineToolbox(self.dir)
-        result = ''
-        #TODO: uncomment
-        result = toolbox.import_system()
-        for i in result:
-            logging.info(i)
-        ##spine_session = SpineDBSession()
+        toolbox.import_system()
 
         if is_baseline:
             logging.info('Saving baseline system...')
             self._save_system_db_as(BASELINE_SYSTEM_DB_PATH)
             logging.info('Running full Spine Toolbox project...')
-            #TODO: uncomment
-            result = toolbox.run()
-            logging.info(result)
+            toolbox.run()
             self.import_hazards(session, spine_db)
             self.load_results(spine_db, baseline=True)
 
@@ -267,8 +260,6 @@ class Project(Base):
 
         # TODO: obtain list of hazards from alternatives and create Hazards, Goals, and Metrics
         # Also if baseline, populate baseline value of metrics??
-
-        return result
 
     def get_system(self, spine_db: SpineDBSession, baseline=False) -> Tuple[List[SpineObject], List[SpineRelationship]]:
         db_path = CURRENT_SYSTEM_DB_PATH
