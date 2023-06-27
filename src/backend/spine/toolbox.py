@@ -1,12 +1,12 @@
 # Copyright 2023, Battelle Energy Alliance, LLC
-from typing import List, Set
+from multiprocessing import Process
+import logging
+from PySide6.QtCore import QCoreApplication
+
 from spinetoolbox.headless import headless_main
 from spinetoolbox.main import _make_argument_parser
-from multiprocessing import Process, Manager
-from PySide6.QtCore import QCoreApplication
-from io import StringIO
-import sys
-import logging
+
+
 
 
 def run_spine(spine_dir, import_system):
@@ -29,8 +29,6 @@ def run_spine(spine_dir, import_system):
     QCoreApplication.exit()
 
 class SpineToolbox:
-    # PYTHON_PATH = 'spine/Spine-Toolbox/.venv/Scripts/python'
-    # TOOLBOX_PATH = 'spine/Spine-Toolbox/spinetoolbox.py'
 
     def __init__(self, spine_dir: str):
         self.spine_dir = spine_dir
@@ -39,7 +37,7 @@ class SpineToolbox:
         return self.run(import_system=True)
 
     def run(self, import_system: bool = False):
-        p = Process(target=run_spine, args=(self.spine_dir, import_system, None))
+        p = Process(target=run_spine, args=(self.spine_dir, import_system))
         p.start()
         p.join()
 

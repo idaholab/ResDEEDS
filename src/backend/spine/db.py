@@ -1,28 +1,12 @@
 # Copyright 2023, Battelle Energy Alliance, LLC
 import json
-from typing import Dict, Tuple, Type, List
-
-from backend import MAX_DIR_LENGTH, MAX_NAME_LENGTH, Base
-from spinedb_api import DiffDatabaseMapping, export_functions
 import logging
+from typing import Dict, Tuple, List
 
-# -----------------v-SPINE-v------------------------#
-#DB_PATH = '.spinetoolbox/items/miracl_db/miracl_db.sqlite'
+from spinedb_api import DiffDatabaseMapping
+
 
 class SpineObject:
-
-    #db_path = Column(String(MAX_DIR_LENGTH), nullable=False)
-    # object_class_name = Column(String(MAX_NAME_LENGTH), nullable=False)
-    # object_id = Column(Integer, nullable=False)
-    # object_name = Column(String(MAX_NAME_LENGTH), nullable=False)
-    # parameters = Column(JSON)
-
-    # spine_object_type = Column(String(MAX_NAME_LENGTH))
-
-    # __mapper_args__ = {
-    #     'polymorphic_identity': 'spine_object',
-    #     'polymorphic_on': spine_object_type
-    # }
 
     def __init__(self, object_class_name, object_class_id, object_id, object_name):
         self.object_id = object_id
@@ -30,12 +14,6 @@ class SpineObject:
         self.object_class_id = object_class_id
         self.object_name = object_name
         self.parameters: Dict[str, Tuple[int, str]] = {}
-        #self.relationships: Dict[str, SpineRelationship] = {}
-
-    # @property
-    # def parameters(self) -> Dict[str, str]:
-    #     exclude = ['key', 'object_id', 'object_class_name', 'object_name', 'parameter_ids']
-    #     return { k: str(v) for k, v in self.__dict__.items() if k not in exclude }
 
     @property
     def pretty_parameters(self) -> str:
@@ -51,19 +29,6 @@ class SpineRelationship:
         self.objects = objects
         self.id = id
         self.parameters: Dict[str, Tuple[int, str]] = {}
-
-# class SystemSpineObject(SpineObject):
-
-#     id = Column(Integer, ForeignKey('spineobject.id'), primary_key=True)
-#     system_id = Column(Integer, ForeignKey('system.id'), nullable=False)
-#     system = relationship('System', back_populates='objects')
-
-#     __mapper_args__ = {
-#         'polymorphic_identity': 'system_spine_object'
-#     }
-
-# class HazardSpineObject():
-#     DB_PATH = '.spinetoolbox/items/miracl_db/miracl_db.sqlite'
 
 class SpineScenario:
 
@@ -84,15 +49,6 @@ class SpineDBSession:
         if url not in self._db_maps:
             self._db_maps[url] = DiffDatabaseMapping(url)
         return self._db_maps[url]
-
-    # def clone_db(self, proj_dir: str, new_path: str):
-    #     url = self._url(proj_dir, DB_PATH)
-    #     db_map = self._open(url)
-    #     new_url = self._url(proj_dir, new_path)
-    #     new_db_map = self._open(new_url)
-
-    #     data = export_functions.export_data(db_map)
-    #     logging.info(data)
 
     def find_object_by_name(self, url, obj_name: str) -> SpineObject:
         for obj in self._objects[url].values():
@@ -119,24 +75,13 @@ class SpineDBSession:
                                         object_name=obj.name)
             obj_param_defs = db_map.object_parameter_definition_list(object_class_id=obj.class_id)
             for opd in obj_param_defs:
-                #logging.info(dir(opd))
                 objects[obj.id].parameters[opd.parameter_name] = None
 
         object_param_vals = db_map.object_parameter_value_list()
 
         for opv in object_param_vals:
-            #logging.info(dir(opv))
-            #logging.info(opv.alternative_id, opv.alternative_name, opv.count, opv.entity_class_id, opv.entity_id, opv.id, opv.index, opv.keys, opv.object_class_id, opv.object_class_name, opv.object_id, opv.object_name, opv.parameter_id, opv.parameter_name, opv.type, opv.value)
-            #return
-            # try:
             obj = objects[opv.entity_id]
-            # except KeyError:
-            #     obj = obj_class(object_class_name=opv.object_class_name, object_id=int(opv.entity_id), object_name=opv.object_name)
-            #     objects[int(opv.entity_id)] = obj
-            #     obj.parameters = {}
             obj.parameters[opv.parameter_name] = (opv.id, opv.value.decode('utf-8'))
-            #obj.parameter_ids[opv.parameter_name] = opv.id
-            #obj.__setattr__(opv.parameter_name, opv.value.decode('utf-8'))
 
         self._objects[url] = objects
         return list(objects.values())
@@ -178,7 +123,6 @@ class SpineDBSession:
         hazard_names = [alt.name.replace('_alt', '') for alt in alts]
         return [SpineScenario(name) for name in hazard_names]
 
-
     def update_object_parameter(self, dir: str, db_path: str, obj_id: int, param: str, val: str) -> bool:
         url = self._url(dir, db_path)
         obj = self._objects[url][obj_id]
@@ -195,9 +139,7 @@ class SpineDBSession:
                     'id': param_id,
                     'value': val.encode('utf-8')
                 }
-                #logging.info(f'Updating {param} with {item}...')
                 updated = self._db_maps[url].update_parameter_values(item)
-                #logging.info(f'Updated: {updated}')
                 if updated:
                     return True
                 return False
@@ -217,27 +159,12 @@ class SpineDBSession:
                     # This returns a tuple of (id_set, err_list)
                     new_id = self._db_maps[url].add_parameter_values(item)[0].pop()
                     obj.parameters[param] = (new_id, val)
-                    logging.info(f'Added param value id {new_id}')
+                    logging.debug('Added param value id %d', new_id)
                     return True
-                except IndexError as ie:
-                    logging.exception(f'Failed to add {item}')
-                    logging.exception(ie)
+                except IndexError as err:
+                    logging.exception('Failed to add %s', str(item))
+                    logging.exception(err)
                     return False
-
-    # def update_relationship_parameter(self, dir: str, db_path: str, rel_id: int, param: str, val: str) -> bool:
-    #     url = self._url(dir, db_path)
-    #     rel = self._relationships[url][rel_id]
-    #     rel.parameters[param][1] = val
-    #     item = {
-    #         'id': rel.parameters[param][0],
-    #         'value': val.encode('utf-8')
-    #     }
-    #     logging.info(f'Updating {param} with {item}...')
-    #     updated = self._db_maps[url].update_parameter_values(item)
-    #     logging.info(f'Updated: {updated}')
-    #     if updated:
-    #         return True
-    #     return False
 
     def update_relationship_object(self, dir: str, db_path: str, rel_id: int, obj_index: int, obj_name: str) -> bool:
         url = self._url(dir, db_path)
@@ -251,9 +178,8 @@ class SpineDBSession:
             'object_id_list': [obj.object_id for obj in obj_list],
             'object_class_id_list': [obj.object_class_id for obj in obj_list]
         }
-        #logging.info(f'Updating relationship {rel_id} with {item}...')
         updated = self._db_maps[url].update_wide_relationships(item)
-        logging.info(f'Updated: {updated}')
+        logging.debug('Updated: %s', str(updated))
         if updated:
             return True
         return False
@@ -265,5 +191,3 @@ class SpineDBSession:
             # Also manually close the connection to the DB - otherwise this can prevent the Delete
             # option on the main page from working.
             db_map.connection.close()
-
-# -----------------^-SPINE-^------------------------#

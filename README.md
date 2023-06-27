@@ -61,12 +61,16 @@
 1. Create `config/local.json` and override default config settings as needed. At a minimum, override `"app_secret_key"` with a random string.
 
 ## Running the app
-1. Navigate into the project folder on the command line: Find "resilience_calculator" folder -> Right-click on folder location in address bar and copy address -> Input 'cd ' and paste folder location address into CMD terminal or PowerShell
+### Windows
+1. Navigate into the project folder on the command line (use CMD, PowerShell, or GitBash directly - we don't recommend running it in an IDE-integrated terminal currently). Find "resilience_calculator" folder -> Right-click on folder location in address bar and copy address -> Input 'cd ' and paste folder location address into CMD terminal or PowerShell
 
 1. Activate the Python virtual environment.
     'venv\Scripts\activate'
 
 1. Run `python src/app.py`.
+
+### Linux
+1. Run `install/run.sh`.
 
 ## Accessing the app
 In a web browser, visit the URL printed on the console during startup (e.g. http://127.0.0.1:5000).
