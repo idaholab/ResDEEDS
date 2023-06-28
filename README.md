@@ -1,4 +1,9 @@
 # ResDEEDS
+## Intro
+Access to reliable, resilient power systems is important in 21st century now more than ever. Terrestrial weather events exacerbated by climate change and extreme weather conditions are happening with greater frequency and intensity. Cyberattacks are seen at an increasing frequency against the power grid, and the attacks are becoming more sophisticated and targeted towards electric energy systems. The Idaho National Laboratory (INL), as part of the multi-laboratory Microgrids, Infrastructure Resilience, and Advanced Controls Launchpad (MIRACL) project, has developed a resilience framework for electric energy delivery systems (EEDS). The framework provides detailed steps for evaluating resiliency in the planning, operational, and future stages, and encompasses five core functions of resilience. It allows users to evaluate the resilience of distributed wind, taking into consideration the resilience of the wind systems themselves, as well as the effect they have on the resiliency of any systems they are connected to. This application follows the framework to allow stakeholders to evaluate their current position, create resiliency goals, compare different investment options, and decide which metrics are most appropriate for their system.
+
+## Overview
+This tool is implemented as a Flask (Python) web application. It is currently primarily intended to be run/hosted locally by the end user. The app uses the [Spine Toolbox and SpineOpt](http://www.spine-model.org/) modeling tools to calculate values for resilience metrics. The input to Spine is an Excel spreadsheet of user system data and hazard modeling data.
 
 ## Installation
 ### Linux
@@ -11,10 +16,6 @@
     `cd resilience_calculator`
 
     `sudo install/install.sh`
-
-    TODO: should the install script create and use a venv?
-
-    TODO: install script for `yum`?
 
 ### Windows
 #### Prerequisites
@@ -54,6 +55,10 @@
 
     `~/AppData/Local/Programs/Julia-1.9.0/bin/julia.exe -e 'using Pkg; Pkg.add(["XLSX", "DataFrames", "Distributions", "CSV", "Revise", "Cbc", "Clp"])'`
 
+1. Run Spine Toolbox to initialize configuration. You can close it after it opens.
+
+    `python -m toolbox &`
+
 1. Configure Spine Toolbox's Julia paths.
 
     `python venv/src/spinetoolbox/bin/configure_julia.py "C:/Users/$(whoami)/AppData/Local/Programs/Julia-1.9.0/bin/julia.exe" ""`
@@ -62,10 +67,15 @@
 
 ## Running the app
 ### Windows
-1. Navigate into the project folder on the command line (use CMD, PowerShell, or GitBash directly - we don't recommend running it in an IDE-integrated terminal currently). Find "resilience_calculator" folder -> Right-click on folder location in address bar and copy address -> Input 'cd ' and paste folder location address into CMD terminal or PowerShell
+1. Navigate into the project folder using GitBash or PowerShell (we don't recommend running the app in an IDE-integrated terminal).
+
+    `cd $PROJECT_ROOT`
+
+    where `$PROJECT_ROOT` is your `resilience_calculator` folder. On at least some version of Windows, you can also navigate to the folder in File Explorer, right-click on a blank space, and select `Open in Terminal`.
 
 1. Activate the Python virtual environment.
-    'venv\Scripts\activate'
+
+    `. venv\Scripts\activate`
 
 1. Run `python src/app.py`.
 
@@ -73,7 +83,7 @@
 1. Run `install/run.sh`.
 
 ## Accessing the app
-In a web browser, visit the URL printed on the console during startup (e.g. http://127.0.0.1:5000).
+In a web browser, visit `http://localhost:5000`, or the URL printed to the console during startup, if different.
 
 ## Configuration
 ### Overview
@@ -82,7 +92,8 @@ Configuration is done via JSON in `config/local.json` (create this file if it do
 ### Options
 * `app_secret_key` - identifies your Flask app. Should remain secret.
 * `debug_mode` - set to `true` to enable Flask debugging.
-* `use_okta` - set to `true` to enable Okta authentication. Configure your Okta instance in a `config/client_secrets.json`. If this is set to `false`, the app runs in an unauthenticated mode, where all users can see all projects.
+* `verbose_logging` - set to `true` to enable debug log messages.
+* `use_okta` - set to `true` to enable Okta authentication. Configure your Okta instance in a `config/client_secrets.json`. If this is set to `false`, the app runs in an unauthenticated mode, where all users can see all projects. For a single user running the app locally, we recommend setting this to `false`.
 * `okta` - partial Okta configuration. The remainder is found in a `config/client_secrets.json` file like [this one](https://github.com/okta/samples-python-flask/blob/master/okta-hosted-login/client_secrets.json.dist).
     * `orgUrl` - the Okta organization URL, e.g. https://example.okta.com.
     * `token` - your API token.
@@ -95,7 +106,7 @@ Configuration is done via JSON in `config/local.json` (create this file if it do
     * `drop_and_recreate` - if `true`, drops and recreates the database on Flask app startup. Intended for development/debugging only.
 
 ## MySQL Support
-To use MySQL, install the `mysqlclient` package with pip. TODO: document configuration.
+SQLite is used by default. MySQL is experimentally supported. To use MySQL, install the `mysqlclient` package with pip.
 
 ### Setting up MySQL on Windows
 If you are using the mysql dialect option for the database, you will need a MySQL or MariaDB server to connect to. These instructions are for if you want to run it locally on Windows.
