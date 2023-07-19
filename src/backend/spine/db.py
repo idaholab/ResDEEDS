@@ -1,3 +1,4 @@
+# Copyright 2023, Battelle Energy Alliance, LLC
 import json
 from typing import Dict, Tuple, Type, List
 
