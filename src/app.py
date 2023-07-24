@@ -1,16 +1,16 @@
 # Copyright 2023, Battelle Energy Alliance, LLC
 from types import SimpleNamespace
-import werkzeug
-from flask import Flask, render_template, g, send_file, url_for, request, redirect, session
-import asyncio
-from config import config
-from backend import DBSession
-from backend.project import *
 import logging
 import os
 import platform
+import asyncio
+import werkzeug
+from flask import Flask, render_template, g, send_file, url_for, request, redirect, session
 
-logging.basicConfig(filename="log.log", level=logging.DEBUG if config['debug_mode'] else logging.INFO)
+from config import config
+from backend import DBSession
+from backend.project import Project, HazardImpact, HazardLikelihood, GoalComparison
+from backend.spine.db import SpineDBSession
 
 if platform.system()=='Windows':
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
@@ -43,29 +43,29 @@ hazard_risk_colors = ['#9fff8c', '#FFEE90', '#FFD27E', '#FFA482']
 
 @app.before_request
 def before_request():
-    g.__setattr__('db_session', DBSession())
+    g.db_session = DBSession()
     if PROJECT_ID_KEY in session:
-        g.__setattr__('project', Project.get_by_id(g.db_session, session[PROJECT_ID_KEY]))
+        g.project = Project.get_by_id(g.db_session, session[PROJECT_ID_KEY])
     else:
-        g.__setattr__('project', None)
+        g.project = None
 
-    g.__setattr__('spine_db_session', SpineDBSession())
+    g.spine_db_session = SpineDBSession()
 
     if USE_OKTA and oidc.user_loggedin:
         async def _f():
             user, _, _ = await okta_client.get_user(oidc.user_getfield("sub"))
             # https://developer.okta.com/docs/reference/api/users/#example
-            g.__setattr__('user', user)
+            g.user = user
         asyncio.run(_f())
     elif USE_OKTA:
-        logging.info('User is not logged in!')
-        g.__setattr__('user', None)
+        logging.info('User is not logged in.')
+        g.user = None
     else:
-        logging.warning('Operating in unauthenticated mode.')
+        logging.info('Operating in unauthenticated mode.')
         user = SimpleNamespace()
         user.use_okta = False
         user.id = 'default'
-        g.__setattr__('user', user)
+        g.user = user
 
 @app.after_request
 def after_request(response):
@@ -80,18 +80,18 @@ def index():
         projects = Project.get_all_for_user(g.db_session, g.user.id)
     else:
         logging.debug("Anonymous user.")
-    logging.info(request.form)
+    logging.debug(request.form)
     if request.method == "POST":
         if len(projects) == 0 or request.form["projNameValAdd"] != "":
             if len(projects) > 0:
                 sys_name = request.form["projNameValAdd"]
             else:
                 sys_name = request.form["projNameVal"]
-            project = Project.build(g.db_session, g.spine_db_session, sys_name, g.user.id)
+            project = Project.build(g.db_session, sys_name, g.user.id)
             session[PROJECT_ID_KEY] = project.id
         else:
             try:
-                # grabs id of whatever project's "edit" was clicked
+                # Grabs id of whatever project's "edit" was clicked
                 session[PROJECT_ID_KEY] = request.form["edit"]
             except werkzeug.exceptions.BadRequestKeyError:
                 Project.get_by_id(g.db_session, request.form["delete"]).delete(g.db_session)
@@ -108,15 +108,16 @@ def qualities():
             file = request.files['system_spreadsheet']
             if allowed_file(file.filename):
                 try:
-                    result = g.project.import_system(g.db_session, g.spine_db_session, file, is_baseline=True)
+                    g.project.import_system(g.db_session, g.spine_db_session, file, is_baseline=True)
+                    result = 'System imported.'
                 except Exception as exception: #pylint: disable=W0718
                     logging.exception(exception)
                     return render_template("qualities.html", result=[], errors=["ERROR: unable to import system!"]), 500
 
             else:
-                logging.info(f'{file.filename} not allowed.')
+                logging.error('Tried to upload a file %s but this file type is not allowed.', file.filename)
         else:
-            logging.info('Did not find system_spreadsheet in posted files.')
+            logging.error('Did not find system_spreadsheet in posted files.')
     return render_template("qualities.html", result=result)
 
 @app.route('/download-template', methods=["GET"])
@@ -127,7 +128,6 @@ def download_template():
 @app.route('/initial-system', methods=["GET"])
 def initial_system():
     sys, rels = g.project.get_system(g.spine_db_session, baseline=True)
-    logging.debug(f'Sys: {sys}')
     return render_template("initial-system.html", system=sys, relationships=rels)
 
 @app.route('/hazards', methods=["GET", "POST"])
@@ -155,14 +155,13 @@ def goals():
         goal_comparisons = request.form.getlist('goalComparison')
         goal_target_values = request.form.getlist('goalTargetValue')
 
-        print(goal_names, goal_comparisons, goal_target_values)
-
         for n, c, tv in zip(goal_names, goal_comparisons, goal_target_values):
             hazard_name, goal_name = n.split('.')
             try:
                 g.project.update_goal(g.db_session, hazard_name, goal_name, c, float(tv))
-            except ValueError:
-                print(f'Could not convert {tv} to float for goal {n}.')
+            except ValueError as err:
+                logging.exception('Could not convert %s to float for goal %s.', str(tv), n)
+                logging.exception(err)
 
         return redirect("/spineopt")
     return render_template("goals.html", base_hazard=g.project.get_base_hazard(), hazards=sorted(g.project.get_hazards(), reverse=True, key=lambda x: x.get_risk_level().value), goal_comparisons=GoalComparison.get_all(), colors=hazard_risk_colors)
@@ -174,16 +173,16 @@ def spineopt():
     if request.method == "POST":
         # Update system objects
         if 'system_spreadsheet' in request.files and request.files['system_spreadsheet'].filename:
-            print('Importing spreadsheet, ignoring manual entries.')
+            logging.warning('Importing spreadsheet, ignoring manual entries.')
             file = request.files['system_spreadsheet']
             if allowed_file(file.filename):
                 g.project.import_system(g.db_session, g.spine_db_session, file, is_baseline=False)
                 sys, rels = g.project.get_system(g.spine_db_session)
                 logging.debug(sys)
             else:
-                print(f'{file.filename} not allowed.')
+                logging.error('Tried to upload a file %s but this file type is not allowed.', file.filename)
         else:
-            print('Doing GUI parameter updates.')
+            logging.info('Doing GUI parameter updates.')
             for k, v in request.form.items():
                 words = k.split('.')
                 if words[0] == 'obj':
@@ -201,14 +200,19 @@ def spineopt():
 def run_spineopt():
     spine_output = g.project.run_spineopt()
     session["spine_output"] = spine_output
-    print(type(session["spine_output"]))
+    logging.info(type(session["spine_output"]))
+    g.project.load_results(g.spine_db_session)
     return redirect("/results")
 
 @app.route('/results', methods=["GET"])
 def results():
     g.project.load_results(g.spine_db_session, baseline=False)
     g.project.load_results(g.spine_db_session, baseline=True)
-    return render_template("results.html", base_hazard=g.project.get_base_hazard(), hazards=sorted(g.project.get_hazards(), reverse=True, key=lambda x: x.get_risk_level().value), goal_comparisons=GoalComparison.get_all(), colors=hazard_risk_colors)
+    return render_template("results.html", 
+                           base_hazard=g.project.get_base_hazard(), 
+                           hazards=sorted(g.project.get_hazards(), reverse=True, key=lambda x: x.get_risk_level().value), 
+                           goal_comparisons=GoalComparison.get_all(), 
+                           colors=hazard_risk_colors)
 
 @app.route('/changes', methods=["GET"])
 def changes():
