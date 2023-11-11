@@ -9,7 +9,7 @@ This tool is implemented as a Flask (Python) web application. It is currently pr
 ### Linux
 1. Clone the project and submodules.
 
-    `git clone --recurse-submodules https://github.inl.gov/miracle/resilience_calculator.git`
+    `git clone --recurse-submodules https://github.com/idaholab/ResDEEDS.git`
 
 1. Run the install script.
 
