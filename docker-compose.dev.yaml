@@ -4,9 +4,9 @@ services:
   resilience:
     build:
       context: .
-      dockerfile: Dockerfiles/Dockerfile.ubuntu
+      dockerfile: Dockerfiles/Dockerfile.dev
     command: "tail -f /dev/null"
     ports:
       - 5000:5000
     volumes:
-      - ".:/opt"
+      - ".:/opt/resilience_calculator"
