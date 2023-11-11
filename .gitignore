@@ -19,3 +19,5 @@ client_secrets.json
 *.log
 
 .vscode
+
+*.crt
