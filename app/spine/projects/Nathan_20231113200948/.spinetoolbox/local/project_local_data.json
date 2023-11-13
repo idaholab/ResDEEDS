@@ -1,0 +1,46 @@
+{
+    "items": {
+        "SpineOptdb": {
+            "url": {
+                "username": "",
+                "password": ""
+            }
+        },
+        "SpineOptOut": {
+            "url": {
+                "username": "",
+                "password": ""
+            }
+        },
+        "SpineOpt_template": {
+            "url": {
+                "username": "",
+                "password": ""
+            }
+        },
+        "system": {
+            "db_credentials": {}
+        },
+        "hazards": {
+            "db_credentials": {}
+        },
+        "miracl_db": {
+            "url": {
+                "username": "",
+                "password": ""
+            }
+        },
+        "hazard_def": {
+            "url": {
+                "username": "",
+                "password": ""
+            }
+        },
+        "MIRACL_template": {
+            "url": {
+                "username": "",
+                "password": ""
+            }
+        }
+    }
+}

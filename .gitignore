@@ -1,23 +1,32 @@
+# Dependencies
 node_modules
-
 __pycache__
 .pyc
-
 .DS_Store
 
+# Databases
 *.db
 *.db-journal
 
+# Local
 spine/projects/*
 spine/Spine-Database-API
 spine/Spine-Toolbox
-venv
-.vscode
+
+# Secrets
 local.json
 client_secrets.json
 
+# Configuration
 *.log
-
 .vscode
 
+# Virtual Environments
+venv
+bin
+lib
+Scripts
+Lib
+
+# Certificates
 *.crt

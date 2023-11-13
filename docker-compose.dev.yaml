@@ -3,10 +3,10 @@ version: "3"
 services:
   resilience:
     build:
-      context: .
+      context: app
       dockerfile: Dockerfiles/Dockerfile.dev
     command: "tail -f /dev/null"
     ports:
       - 5000:5000
     volumes:
-      - ".:/opt/resilience_calculator"
+      - "./app:/opt/resilience_calculator"
