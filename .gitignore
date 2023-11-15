@@ -15,6 +15,7 @@ app/spine/spine-items
 app/spine/spinedb-api
 app/spine/spinetoolbox
 **/share/*
+**/include/*
 
 # Secrets
 local.json
