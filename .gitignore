@@ -24,6 +24,7 @@ client_secrets.json
 # Configuration
 *.log
 .vscode
+*.cfg
 
 # Virtual Environments
 venv
