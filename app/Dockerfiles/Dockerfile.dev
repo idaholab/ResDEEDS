@@ -9,24 +9,24 @@ RUN apt-get install -y wget python3 python3-pip git
 WORKDIR /opt/resilience_calculator
 COPY . .
 
-# Certificates
-RUN wget -q -P /usr/local/share/ca-certificates/ http://certstore.inl.gov/pki/CAINLROOT_B64.crt
-RUN /usr/sbin/update-ca-certificates
-RUN pip config set global.cert /usr/local/share/ca-certificates/CAINLROOT_B64.crt
-
 # App dependencies
 RUN pip install -r requirements.dev.txt
-RUN pip install --src spine -r requirements.spine.txt
+RUN pip install --src /opt/spine -r requirements.spine.txt
+ENV PATH=$PATH:/opt/spine
 
-# Config
+# # Config
 RUN mkdir -p /root/.spinetoolbox/SpineProject
 COPY ./install/SpineToolbox.conf /root/.spinetoolbox/SpineProject
 
-# Julia
+# # Julia
 WORKDIR /opt
 RUN wget https://julialang-s3.julialang.org/bin/linux/x64/1.9/julia-1.9.3-linux-x86_64.tar.gz
 RUN tar zxvf julia-1.9.3-linux-x86_64.tar.gz
 ENV PATH=$PATH:/opt/julia-1.9.3/bin
 RUN . ./resilience_calculator/install/julia.sh
 
-ENTRYPOINT [ "./entrypoint.local.sh" ]
+# Environment
+ENV QT_QPA_PLATFORM="offscreen"
+ENV FLASK_APP=./src/app.py
+
+WORKDIR /opt/resilience_calculator
