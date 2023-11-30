@@ -1,0 +1,16 @@
+{
+    "name": "compute_metrics",
+    "tooltype": "julia",
+    "includes": [
+        "compute_metrics.jl"
+    ],
+    "description": "",
+    "inputfiles": [],
+    "inputfiles_opt": [],
+    "outputfiles": [
+        "metrics.csv"
+    ],
+    "cmdline_args": [],
+    "execute_in_work": false,
+    "includes_main_path": "../../.."
+}
