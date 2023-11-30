@@ -9,7 +9,7 @@ This tool is implemented as a Flask (Python) web application. It is currently pr
 ### Linux
 1. Clone the project and submodules.
 
-    `git clone --recurse-submodules https://github.com/idaholab/ResDEEDS.git`
+    `git clone https://github.com/idaholab/ResDEEDS.git`
 
 1. Run the install script.
 
@@ -25,7 +25,7 @@ This tool is implemented as a Flask (Python) web application. It is currently pr
 #### Steps
 1. Using Git Bash, clone the project and submodules.
 
-    `git clone --recurse-submodules https://github.com/idaholab/ResDEEDS.git`
+    `git clone https://github.com/idaholab/ResDEEDS.git`
 
 1. Create and activate a Python virtual environment for the project.
 
