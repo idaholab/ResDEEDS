@@ -13,7 +13,7 @@ This tool is implemented as a Flask (Python) web application. It is currently pr
 
 1. Run the install script.
 
-    `cd resilience_calculator`
+    `cd ResDEEDS`
 
     `sudo install/install.sh`
 
@@ -29,7 +29,7 @@ This tool is implemented as a Flask (Python) web application. It is currently pr
 
 1. Create and activate a Python virtual environment for the project.
 
-    `cd resilience_calculator`
+    `cd ResDEEDS`
 
     `py -m venv venv`
 
@@ -71,7 +71,7 @@ This tool is implemented as a Flask (Python) web application. It is currently pr
 
     `cd $PROJECT_ROOT`
 
-    where `$PROJECT_ROOT` is your `resilience_calculator` folder. On at least some version of Windows, you can also navigate to the folder in File Explorer, right-click on a blank space, and select `Open in Terminal`.
+    where `$PROJECT_ROOT` is your `ResDEEDS` folder. On at least some version of Windows, you can also navigate to the folder in File Explorer, right-click on a blank space, and select `Open in Terminal`.
 
 1. Activate the Python virtual environment.
 
