@@ -49,19 +49,19 @@ This tool is implemented as a Flask (Python) web application. It is currently pr
 
 1. Install Julia dependencies.
 
-    `~/AppData/Local/Programs/Julia-1.9.0/bin/julia.exe -e 'using Pkg; Pkg.add(url="https://github.com/spine-tools/SpineInterface.jl.git")'`
+    `~/AppData/Local/julias/bin/julia.cmd -e 'using Pkg; Pkg.add(url="https://github.com/spine-tools/SpineInterface.jl.git")'`
 
-    `~/AppData/Local/Programs/Julia-1.9.0/bin/julia.exe -e 'using Pkg; Pkg.add(url="https://github.com/spine-tools/SpineOpt.jl.git")'`
+    `~/AppData/Local/julias/bin/julia.cmd -e 'using Pkg; Pkg.add(url="https://github.com/spine-tools/SpineOpt.jl.git")'`
 
-    `~/AppData/Local/Programs/Julia-1.9.0/bin/julia.exe -e 'using Pkg; Pkg.add(["XLSX", "DataFrames", "Distributions", "CSV", "Revise", "Cbc", "Clp"])'`
+    `~/AppData/Local/julias/bin/julia.cmd -e 'using Pkg; Pkg.add(["XLSX", "DataFrames", "Distributions", "CSV", "Revise", "Cbc", "Clp"])'`
 
 1. Run Spine Toolbox to initialize configuration. You can close it after it opens.
 
-    `python -m toolbox &`
+    `python -m spinetoolbox &`
 
 1. Configure Spine Toolbox's Julia paths.
 
-    `python venv/src/spinetoolbox/bin/configure_julia.py "C:/Users/$(whoami)/AppData/Local/Programs/Julia-1.9.0/bin/julia.exe" ""`
+    `python venv/src/spinetoolbox/bin/configure_julia.py "C:/Users/$(whoami)/AppData/Local/julias/bin/julia.cmd" ""`
 
 1. Create `config/local.json` and override default config settings as needed. At a minimum, override `"app_secret_key"` with a random string.
 
