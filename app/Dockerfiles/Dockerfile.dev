@@ -11,7 +11,7 @@ COPY . .
 
 # App dependencies
 RUN pip install -r requirements.dev.txt
-RUN pip install --src /opt/spine -r requirements.spine.txt
+RUN pip install --src /opt/resilience_calculator/spine -r requirements.spine.txt
 ENV PATH=$PATH:/opt/spine
 
 # # Config
@@ -20,9 +20,7 @@ COPY ./install/SpineToolbox.conf /root/.spinetoolbox/SpineProject
 
 # # Julia
 WORKDIR /opt
-RUN wget https://julialang-s3.julialang.org/bin/linux/x64/1.9/julia-1.9.3-linux-x86_64.tar.gz
-RUN tar zxvf julia-1.9.3-linux-x86_64.tar.gz
-ENV PATH=$PATH:/opt/julia-1.9.3/bin
+RUN python3 -m jill install --confirm
 RUN . ./resilience_calculator/install/julia.sh
 
 # Environment
