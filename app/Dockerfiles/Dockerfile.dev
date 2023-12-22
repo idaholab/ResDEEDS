@@ -10,15 +10,15 @@ WORKDIR /opt/resilience_calculator
 COPY . .
 
 # App dependencies
-RUN pip install -r requirements.dev.txt
+RUN pip install -r requirements.docker.txt
 RUN pip install --src /opt/resilience_calculator/spine -r requirements.spine.txt
-ENV PATH=$PATH:/opt/spine
+ENV PATH=$PATH:/opt/resilience_calculator/spine
 
-# # Config
+# Config
 RUN mkdir -p /root/.spinetoolbox/SpineProject
 COPY ./install/SpineToolbox.conf /root/.spinetoolbox/SpineProject
 
-# # Julia
+# Julia
 WORKDIR /opt
 RUN python3 -m jill install --confirm
 RUN . ./resilience_calculator/install/julia.sh
