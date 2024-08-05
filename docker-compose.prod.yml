@@ -1,0 +1,8 @@
+services:
+  rescalc:
+    image: rescalc
+    build:
+      context: .
+      dockerfile: ./install/Dockerfile
+    ports:
+      - 5000:5000
