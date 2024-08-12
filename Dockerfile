@@ -1,4 +1,4 @@
-FROM python:3.11
+FROM python:3.9.13
 
 WORKDIR /app
 
@@ -18,11 +18,12 @@ RUN apt update &&  apt install -y \
     build-essential \
     gcc \
     libpq-dev \
-    postgresql-devel \
+    postgresql-server-dev-all \
     python3-dev
 
 # Install python dependencies
 RUN pip install --upgrade pip setuptools wheel
-RUN pip install spinedb_api --verbose
+# RUN pip install spinetoolbox==0.7.4 --verbose
+RUN pip install PySide6==6.5.2 spinetoolbox==0.7.4
 
 ENTRYPOINT [ "python", "src/app.py" ]
