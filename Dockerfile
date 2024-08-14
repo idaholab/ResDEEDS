@@ -1,4 +1,4 @@
-FROM python:3.9.13
+FROM python:3.10
 
 WORKDIR /app
 
@@ -14,7 +14,7 @@ ENV SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
 ENV SSL_CERT_DIR=/etc/ssl/certs/
 
 # Install server dependencies
-RUN apt update &&  apt install -y \
+RUN apt-get update &&  apt-get install -y \
     build-essential \
     gcc \
     libpq-dev \
@@ -23,7 +23,9 @@ RUN apt update &&  apt install -y \
 
 # Install python dependencies
 RUN pip install --upgrade pip setuptools wheel
-# RUN pip install spinetoolbox==0.7.4 --verbose
-RUN pip install PySide6==6.5.2 spinetoolbox==0.7.4
+RUN pip install --no-deps \
+    spinetoolbox==0.7.4 \
+    spine_engine==0.23.4 
+RUN pip install -r requirements.txt
 
-ENTRYPOINT [ "python", "src/app.py" ]
+# ENTRYPOINT ["python", "src/app.py" ]

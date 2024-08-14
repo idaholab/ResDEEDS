@@ -1,11 +1,19 @@
+dagster==1.7.16
 flask==2.3.3
-# flask_oidc
-# jill
-# okta
-# pytest
-sqlalchemy
-spinetoolbox==0.7.4
-# -e git+https://github.com/spine-tools/spine-engine.git@7be63302466f2826ab80ffa0730e31a052770fc4#egg=spine_engine
-# -e git+https://github.com/spine-tools/spine-items.git@f08c405fdcc4effc36da93d96239caf211718e92#egg=spine_items
-# -e git+https://github.com/spine-tools/Spine-Database-API.git@c147f787f314413356ce3a59cf608d6bbcd4bfa4#egg=spinedb_api
-# -e git+https://github.com/Spine-project/Spine-Toolbox.git@ee6c75e046f38f09e43314da9dfcf5bca8303d4a#egg=spinetoolbox
+flask_oidc==1.4.0
+jill==0.11.5
+jupyter-client>=6.0
+matplotlib>= 3.5
+networkx>=2.6
+numpy==1.26.4
+okta==2.9.5
+pygments>=2.8
+pytest
+spine_items==0.21.5
+spinedb_api==0.30.5
+pandas>=1.3.2
+pyzmq >=21.0
+pyside6==6.6.3.1
+qtconsole>=5.1
+scipy>=1.7.1
+sqlalchemy>=1.3
