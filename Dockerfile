@@ -25,7 +25,9 @@ RUN apt-get update &&  apt-get install -y \
 RUN pip install --upgrade pip setuptools wheel
 RUN pip install --no-deps \
     spinetoolbox==0.7.4 \
-    spine_engine==0.23.4 
+    spine_engine==0.23.4 \
+    spine_items==0.21.5 \
+    spinedb_api==0.30.5
 RUN pip install -r requirements.txt
 
 # ENTRYPOINT ["python", "src/app.py" ]
