@@ -1,4 +1,4 @@
-FROM python:3.10
+FROM python:3.11
 
 WORKDIR /app
 
@@ -30,4 +30,4 @@ RUN pip install --no-deps \
     spinedb_api==0.30.5
 RUN pip install -r requirements.txt
 
-# ENTRYPOINT ["python", "src/app.py" ]
+ENTRYPOINT ["python", "src/app.py" ]
