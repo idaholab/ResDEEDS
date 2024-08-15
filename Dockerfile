@@ -1,4 +1,4 @@
-FROM python:3.11
+FROM python:3.9
 
 WORKDIR /app
 
@@ -22,12 +22,13 @@ RUN apt-get update &&  apt-get install -y \
     python3-dev
 
 # Install python dependencies
-RUN pip install --upgrade pip setuptools wheel
-RUN pip install --no-deps \
-    spinetoolbox==0.7.4 \
-    spine_engine==0.23.4 \
-    spine_items==0.21.5 \
-    spinedb_api==0.30.5
-RUN pip install -r requirements.txt
+# RUN pip install --upgrade pip setuptools wheel
+# RUN pip install --no-deps \
+#     spinetoolbox==0.7.4 \
+#     spine_engine==0.23.4 \
+#     spine_items==0.21.5 \
+#     spinedb_api==0.30.5
+# RUN pip install -r requirements.txt
+RUN pip install gdx2py>=2.1.0 --verbose
 
-ENTRYPOINT ["python", "src/app.py" ]
+# ENTRYPOINT ["python", "src/app.py" ]
