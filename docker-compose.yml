@@ -2,5 +2,6 @@ services:
   rescalc:
     build:
       context: .
+    container_name: rescalc
     ports:
       - 5000:5000
