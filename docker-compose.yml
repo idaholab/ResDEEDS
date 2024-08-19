@@ -1,9 +1,7 @@
-
 services:
   rescalc:
-    image: rescalc
     build:
       context: .
-      dockerfile: ./install/Dockerfile
+    container_name: rescalc
     ports:
       - 5000:5000
