@@ -12,7 +12,7 @@ build:
 
 # target: up - Start the docker container.
 up:
-	docker compose up
+	docker compose up -d
 
 # target: down - Stop the docker container.
 down:
@@ -21,3 +21,11 @@ down:
 # target: run - Run local web server.
 run:
 	python src/app.py
+
+# target: attach - Attach to the running container.
+attach:
+	docker attach rescalc
+
+# target: bash - Run bash in the container.
+bash:
+	docker exec -it rescalc bash

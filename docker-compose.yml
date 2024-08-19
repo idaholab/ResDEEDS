@@ -3,5 +3,13 @@ services:
     build:
       context: .
     container_name: rescalc
+    stdin_open: true
+    tty: true
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - .:/app
     ports:
       - 5000:5000
+    env_file:
+      - .env
