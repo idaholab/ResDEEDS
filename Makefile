@@ -14,6 +14,10 @@ build:
 up:
 	docker compose up -d
 
+# target: stop - Stop the docker container.
+stop:
+	docker compose stop
+
 # target: down - Stop the docker container.
 down:
 	docker compose down -v
