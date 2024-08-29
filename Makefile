@@ -33,3 +33,7 @@ attach:
 # target: bash - Run bash in the container.
 bash:
 	docker exec -it rescalc bash
+
+# target: shell - Run shell in the container.
+shell:
+	docker exec -it rescalc flask shell
