@@ -3,7 +3,6 @@ dagster==0.12.8
 datapackage >=1.15.2
 faker>=8.1.2
 flask==1.1.4
-flask_oidc==1.4.0
 gdx2py>=2.1.1
 ijson>=3.1.4
 jill==0.11.5

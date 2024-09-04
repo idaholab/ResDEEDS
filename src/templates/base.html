@@ -46,8 +46,6 @@
 				{% if g.user.use_okta is not defined or g.user.use_okta %}
 					{% if not g.user %}
 					<a class="p-2 text-light" href="/login">Log In / Register</a>
-					{% else %}
-					<a class="p-2 text-light" href="/logout">Hi, {{ g.user.profile.firstName }}! Logout?</a>
 					{% endif %}
 				{% endif %}
 			</nav>
