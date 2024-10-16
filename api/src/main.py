@@ -1,8 +1,9 @@
-from flask import Flask
+from fastapi import FastAPI
 
-app = Flask(__name__)
+app = FastAPI(title="ResDEEDS")
 
 
-@app.route("/")
-def hello_world():
-    return "<p>Hello, World!</p>"
+@app.get("/")
+def read_root():
+    """Hello World root."""
+    return {"Hello": "World"}
