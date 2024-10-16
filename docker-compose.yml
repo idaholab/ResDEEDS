@@ -4,8 +4,8 @@ services:
       context: ./web
       dockerfile: web/Dockerfile
     container_name: resdeeds-web
-    depends_on:
-      - api
+    # depends_on:
+    #   - api
     ports:
       - 4200:4200
     stdin_open: true
@@ -15,7 +15,7 @@ services:
   api:
     build:
       context: ./api
-      dockerfile: api/Dockerfile
+      dockerfile: Dockerfile
     container_name: resdeeds-api
     env_file:
       - ./api/.env

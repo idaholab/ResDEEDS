@@ -4,9 +4,6 @@
 # MacOS
 .DS_Store
 
-# Node
-node_modules
-
 # Python
 *.pyc
 __pycache__
