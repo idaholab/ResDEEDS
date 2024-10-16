@@ -1,15 +1,25 @@
 services:
-  rescalc:
+  web:
     build:
-      context: .
-    container_name: rescalc
+      context: ./web
+      dockerfile: web/Dockerfile
+    container_name: resdeeds-web
+    depends_on:
+      - api
+    ports:
+      - 4200:4200
     stdin_open: true
     tty: true
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
     volumes:
-      - .:/app
+      - ./web:/var/www
+  api:
+    build:
+      context: ./api
+      dockerfile: api/Dockerfile
+    container_name: resdeeds-api
+    env_file:
+      - ./api/.env
     ports:
       - 5000:5000
-    env_file:
-      - .env
+    volumes:
+      - ./api:/var/www

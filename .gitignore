@@ -1,22 +1,18 @@
-node_modules
+# Environment Variables
+.env
 
-__pycache__
-.pyc
-
+# MacOS
 .DS_Store
 
-*.db
-*.db-journal
+# Node
+node_modules
 
-spine/projects/*
-spine/Spine-Database-API
-spine/Spine-Toolbox
-.env
-.venv
-.vscode
-local.json
-client_secrets.json
+# Python
+*.pyc
+__pycache__
 
-*.log
+# Virtual Environment
+.venv/
 
-.vscode
+# Visual Studio Code
+.vscode/
