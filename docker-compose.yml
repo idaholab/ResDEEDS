@@ -2,7 +2,7 @@ services:
   web:
     build:
       context: ./web
-      dockerfile: web/Dockerfile
+      dockerfile: Dockerfile
     container_name: resdeeds-web
     # depends_on:
     #   - api
@@ -12,6 +12,7 @@ services:
     tty: true
     volumes:
       - ./web:/var/www
+      - node_modules:/var/www/node_modules
   api:
     build:
       context: ./api
@@ -23,3 +24,6 @@ services:
       - 5000:5000
     volumes:
       - ./api:/var/www
+
+volumes:
+  node_modules:
