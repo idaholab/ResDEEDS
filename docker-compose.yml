@@ -18,12 +18,24 @@ services:
       context: ./api
       dockerfile: Dockerfile
     container_name: resdeeds-api
+    depends_on:
+      - mongodb
     env_file:
       - ./api/.env
     ports:
       - 5000:5000
     volumes:
       - ./api:/var/www
+  mongodb:
+    container_name: resdeeds-mongodb
+    env_file:
+      - ./api/.env
+    image: mongo:8.0
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodb_data:/data/db
 
 volumes:
   node_modules:
+  mongodb_data:
