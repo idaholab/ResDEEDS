@@ -1,5 +1,5 @@
 .PHONY: run
-include .env
+include api/.env
 export
 
 # target: help - Display callable targets.
