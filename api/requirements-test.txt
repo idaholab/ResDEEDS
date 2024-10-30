@@ -1,3 +1,4 @@
 --requirement requirements.txt
 black
+debugpy
 ipdb
