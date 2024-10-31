@@ -4,8 +4,9 @@ WORKDIR /var/www
 
 COPY . /var/www
 
+# Install dependencies
 RUN pip install --upgrade pip \
-    && pip install -r requirements.txt
+    && pip install -r requirements-test.txt
 
 COPY ./etc/entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod a+x /usr/local/bin/entrypoint.sh

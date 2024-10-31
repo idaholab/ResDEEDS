@@ -1,6 +1,6 @@
 from pydantic import EmailStr
 
-from api.src.database.models import BaseDBModel
+from src.database.models import BaseDBModel
 
 
 class UserModel(BaseDBModel):

@@ -24,6 +24,9 @@ services:
       - ./api/.env
     ports:
       - 5000:5000
+      - 5678:5678
+    stdin_open: true
+    tty: true
     volumes:
       - ./api:/var/www
   mongodb:
