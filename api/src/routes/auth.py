@@ -1,5 +1,10 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends, HTTPException, status
 
+from src.bll.auth import (
+    JWTBearer,
+    sign_jwt,
+    verify_password,
+)
 from src.database.collection import user_document
 from src.routes.models.auth_models import UserDeleteModel, UserModel, UserUpdateModel
 
@@ -16,10 +21,19 @@ async def register_user(user: UserModel):
 @router.post("/login/")
 async def login_user(user: UserModel):
     """Login a user."""
-    return user_document().get({"email": user.email})
+    user_data = user_document().get({"email": user.email})
+    if not user_data or not verify_password(user.password, user_data["password"]):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid email or password"
+        )
+
+    return {
+        "access_token": sign_jwt(user.email),
+        "token_type": "bearer",
+    }
 
 
-@router.post("/update/")
+@router.post("/update/", dependencies=[Depends(JWTBearer())])
 async def update_user(user: UserUpdateModel):
     """Update a user."""
     return user_document().update(
@@ -27,7 +41,7 @@ async def update_user(user: UserUpdateModel):
     )
 
 
-@router.post("/delete/")
+@router.post("/delete/", dependencies=[Depends(JWTBearer())])
 async def delete_user(user: UserDeleteModel):
     """Delete a user."""
     return user_document().delete({"email": user.email})
