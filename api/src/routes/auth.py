@@ -7,7 +7,10 @@ from src.bll.auth import (
     verify_password,
 )
 from src.database.collection import user_document
-from src.routes.models.auth_models import UserDeleteModel, UserModel, UserUpdateModel
+from src.routes.payload_models.auth_models import (
+    UserModel,
+    UserUpdateModel,
+)
 
 
 router = APIRouter()
@@ -40,11 +43,8 @@ async def login_user(user: UserModel):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid email or password"
         )
-
     return {
-        "access_token": sign_jwt(
-            user_email=user.email, role="admin" if user_data["is_admin"] else "user"
-        ),
+        "access_token": sign_jwt(user_email=user.email, role=user_data["role"]),
         "token_type": "bearer",
     }
 
@@ -57,8 +57,14 @@ async def update_user(user: UserUpdateModel):
     )
 
 
-@router.post("/delete/", dependencies=[Depends(JWTBearer())])
-async def delete_user(user: UserDeleteModel):
+@router.delete("/delete/", dependencies=[Depends(JWTBearer())])
+async def delete_user(token: str = Depends(JWTBearer())):
     """Delete a user."""
-    user_document().delete({"email": user.email})
+    token_data = decode_jwt(token)
+    if not token_data:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You do not have permission to access this resource",
+        )
+    user_document().delete({"email": token_data["user_email"]})
     return {"message": "User deleted"}
