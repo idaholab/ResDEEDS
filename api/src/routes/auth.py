@@ -44,4 +44,5 @@ async def update_user(user: UserUpdateModel):
 @router.post("/delete/", dependencies=[Depends(JWTBearer())])
 async def delete_user(user: UserDeleteModel):
     """Delete a user."""
-    return user_document().delete({"email": user.email})
+    user_document().delete({"email": user.email})
+    return {"message": "User deleted"}

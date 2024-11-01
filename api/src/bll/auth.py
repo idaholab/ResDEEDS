@@ -5,6 +5,7 @@ from typing import Optional
 from fastapi import HTTPException, Request
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 import jwt
+from jwt.exceptions import DecodeError
 
 
 ALGORITHM = "HS256"
@@ -49,8 +50,11 @@ class JWTBearer(HTTPBearer):
 
 
 def decode_jwt(token: str) -> dict:
-    decoded_token = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-    return decoded_token if decoded_token["expires"] >= time() else {}
+    try:
+        decoded_token = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        return decoded_token if decoded_token["expires"] >= time() else {}
+    except DecodeError:
+        raise HTTPException(status_code=403, detail="Invalid or expired token.")
 
 
 def sign_jwt(user_email: str) -> dict[str, str]:
