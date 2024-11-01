@@ -1,5 +1,5 @@
 import os
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional, Type
 
 from pydantic import BaseModel
@@ -32,7 +32,7 @@ class Document:
 
     def update(self, query: dict, data: dict) -> Optional[dict]:
         """Update a document."""
-        data["updated_at"] = datetime.now()
+        data["updated_at"] = datetime.now(timezone.utc)
         return self.collection.find_one_and_update(query, {"$set": data})
 
     def delete(self, query: dict) -> None:
