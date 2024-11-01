@@ -8,5 +8,5 @@ class UserModel(BaseDBModel):
     """User model."""
 
     email: EmailStr
-    password: str
+    password: bytes
     role: Literal["user", "admin"] = "user"

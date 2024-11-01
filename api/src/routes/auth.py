@@ -3,6 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from src.bll.auth import (
     JWTBearer,
     decode_jwt,
+    hash_password,
     sign_jwt,
     verify_password,
 )
@@ -32,7 +33,9 @@ async def get_all_users(token: str = Depends(JWTBearer())):
 @router.post("/register/")
 async def register_user(user: UserModel):
     """Register a new user."""
-    return user_document().create(user.model_dump())
+    payload = user.model_dump()
+    payload["password"] = hash_password(user.password)
+    return user_document().create(payload)
 
 
 @router.post("/login/")
@@ -53,9 +56,10 @@ async def login_user(user: UserModel):
 async def update_user(user: UserUpdateModel, token: str = Depends(JWTBearer())):
     """Update a user."""
     token_data = decode_jwt(token)
-    return user_document().update(
-        {"email": token_data["user_email"]}, user.model_dump(exclude_none=True)
-    )
+    payload = user.model_dump(exclude_none=True)
+    if "password" in payload:
+        payload["password"] = hash_password(payload["password"])
+    return user_document().update({"email": token_data["user_email"]}, payload)
 
 
 @router.delete("/delete/", dependencies=[Depends(JWTBearer())])

@@ -2,6 +2,7 @@ from time import time
 import os
 from typing import Optional
 
+import bcrypt
 from fastapi import HTTPException, Request
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 import jwt
@@ -12,9 +13,14 @@ ALGORITHM = "HS256"
 SECRET_KEY = os.getenv("SECRET_KEY", "")
 
 
-def verify_password(plain_password: str, hashed_password: str) -> bool:
+def hash_password(password: str) -> bytes:
+    """Hash password."""
+    return bcrypt.hashpw(str.encode(password), bcrypt.gensalt(14))
+
+
+def verify_password(plain_password: str, hashed_password: bytes) -> bool:
     """Verify password."""
-    return plain_password == hashed_password
+    return bcrypt.checkpw(str.encode(plain_password), hashed_password)
 
 
 class JWTBearer(HTTPBearer):

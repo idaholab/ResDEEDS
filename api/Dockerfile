@@ -5,6 +5,8 @@ WORKDIR /var/www
 COPY . /var/www
 
 # Install dependencies
+RUN apt-get update \
+    && apt-get install -y build-essential cargo
 RUN pip install --upgrade pip \
     && pip install -r requirements-test.txt
 

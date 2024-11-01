@@ -1,5 +1,3 @@
-from bson import json_util
-import json
 import os
 from datetime import datetime, timezone
 from typing import Optional, Type
@@ -59,7 +57,13 @@ class Document:
         """Return JSON data."""
         if not data:
             return None
-        return json.loads(json_util.dumps(data))
+        if isinstance(data, dict) and "_id" in data:
+            data["_id"] = str(data["_id"])
+        if isinstance(data, list):
+            for item in data:
+                if "_id" in item:
+                    item["_id"] = str(item["_id"])
+        return data
 
     def _validate_data(self, data: dict) -> dict:
         """Validate data."""
