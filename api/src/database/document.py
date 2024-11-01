@@ -1,3 +1,5 @@
+from bson import json_util
+import json
 import os
 from datetime import datetime, timezone
 from typing import Optional, Type
@@ -21,9 +23,13 @@ class Document:
         self.model = model
         self.unique_field = unique_field
 
+    def all(self) -> list[dict]:
+        """Get all documents."""
+        return self._return_json(list(self.collection.find()))
+
     def get(self, query: dict) -> Optional[dict]:
         """Get a document."""
-        return self.collection.find_one(query)
+        return self._return_json(self.collection.find_one(query))
 
     def create(self, data: dict) -> str:
         """Create a new document."""
@@ -33,7 +39,9 @@ class Document:
     def update(self, query: dict, data: dict) -> Optional[dict]:
         """Update a document."""
         data["updated_at"] = datetime.now(timezone.utc)
-        return self.collection.find_one_and_update(query, {"$set": data})
+        return self._return_json(
+            self.collection.find_one_and_update(query, {"$set": data})
+        )
 
     def delete(self, query: dict) -> None:
         """Delete a document."""
@@ -43,6 +51,12 @@ class Document:
         """Create a unique index."""
         if self.unique_field:
             self.collection.create_index(self.unique_field, unique=True)
+
+    def _return_json(self, data: Optional[dict | list]) -> dict:
+        """Return JSON data."""
+        if not data:
+            return {}
+        return json.loads(json_util.dumps(data))
 
     def _validate_data(self, data: dict) -> dict:
         """Validate data."""

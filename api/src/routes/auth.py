@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 
 from src.bll.auth import (
     JWTBearer,
+    decode_jwt,
     sign_jwt,
     verify_password,
 )
@@ -10,6 +11,19 @@ from src.routes.models.auth_models import UserDeleteModel, UserModel, UserUpdate
 
 
 router = APIRouter()
+
+
+@router.get("/users/", dependencies=[Depends(JWTBearer())])
+async def get_all_users(token: str = Depends(JWTBearer())):
+    """Register a new user."""
+    token_data = decode_jwt(token)
+    if token_data["role"] != "admin":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You do not have permission to access this resource",
+        )
+
+    return user_document().all()
 
 
 @router.post("/register/")
@@ -28,7 +42,9 @@ async def login_user(user: UserModel):
         )
 
     return {
-        "access_token": sign_jwt(user.email),
+        "access_token": sign_jwt(
+            user_email=user.email, role="admin" if user_data["is_admin"] else "user"
+        ),
         "token_type": "bearer",
     }
 
