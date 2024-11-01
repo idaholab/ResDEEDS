@@ -50,10 +50,11 @@ async def login_user(user: UserModel):
 
 
 @router.post("/update/", dependencies=[Depends(JWTBearer())])
-async def update_user(user: UserUpdateModel):
+async def update_user(user: UserUpdateModel, token: str = Depends(JWTBearer())):
     """Update a user."""
+    token_data = decode_jwt(token)
     return user_document().update(
-        {"email": user.email}, user.model_dump(exclude_none=True)
+        {"email": token_data["user_email"]}, user.model_dump(exclude_none=True)
     )
 
 
