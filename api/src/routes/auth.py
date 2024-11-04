@@ -41,13 +41,15 @@ async def register_user(user: UserModel):
 @router.post("/login/")
 async def login_user(user: UserModel):
     """Login a user."""
-    user_data = user_document().get({"email": user.email})
+    user_data = user_document().get(query={"email": user.email})
     if not user_data or not verify_password(user.password, user_data["password"]):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid email or password"
         )
     return {
-        "access_token": sign_jwt(user_email=user.email, role=user_data["role"]),
+        "access_token": sign_jwt(
+            user_email=user.email, user_id=user_data["_id"], role=user_data["role"]
+        ),
         "token_type": "bearer",
     }
 
@@ -59,10 +61,11 @@ async def update_user(user: UserUpdateModel, token: str = Depends(JWTBearer())):
     payload = user.model_dump(exclude_none=True)
     if "password" in payload:
         payload["password"] = hash_password(payload["password"])
-    return user_document().update({"email": token_data["user_email"]}, payload)
+    user_data = user_document().update({"email": token_data["user_email"]}, payload)
+    return user_data["_id"] if user_data else {"detail": "User not found"}
 
 
-@router.delete("/delete/", dependencies=[Depends(JWTBearer())])
+@router.delete("/delete/")
 async def delete_user(token: str = Depends(JWTBearer())):
     """Delete a user."""
     token_data = decode_jwt(token)
@@ -72,4 +75,4 @@ async def delete_user(token: str = Depends(JWTBearer())):
             detail="You do not have permission to access this resource",
         )
     user_document().delete({"email": token_data["user_email"]})
-    return {"message": "User deleted"}
+    return {"detail": "User deleted"}

@@ -1,4 +1,5 @@
 import os
+from bson import ObjectId
 from datetime import datetime, timezone
 from typing import Optional, Type
 
@@ -26,8 +27,10 @@ class Document:
         data = self._return_json(list(self.collection.find()))
         return data if isinstance(data, list) else []
 
-    def get(self, query: dict) -> Optional[dict]:
+    def get(self, document_id: str = "", query: dict = {}) -> Optional[dict]:
         """Get a document."""
+        if document_id:
+            query["_id"] = ObjectId(document_id)
         data = self._return_json(self.collection.find_one(query))
         return data if isinstance(data, dict) else {}
 

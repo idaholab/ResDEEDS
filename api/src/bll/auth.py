@@ -63,8 +63,13 @@ def decode_jwt(token: str) -> dict:
         raise HTTPException(status_code=403, detail="Invalid or expired token.")
 
 
-def sign_jwt(user_email: str, role: str) -> dict[str, str]:
-    payload = {"user_email": user_email, "expires": time() + 600, "role": role}
+def sign_jwt(user_email: str, user_id: str, role: str) -> dict[str, str]:
+    payload = {
+        "user_email": user_email,
+        "user_id": user_id,
+        "expires": time() + 600,
+        "role": role,
+    }
     token = jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
 
     return {"access_token": token}
