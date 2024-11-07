@@ -1,4 +1,4 @@
-.PHONY: run
+.PHONY: build up stop down
 include api/.env
 export
 
@@ -26,7 +26,7 @@ down:
 attach-web:
 	docker attach resdeeds-web
 
-# target: attack-api - Attach to the running container.
+# target: attach-api - Attach to the running container.
 attach-api:
 	docker attach resdeeds-api
 
