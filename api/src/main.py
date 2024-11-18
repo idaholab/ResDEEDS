@@ -9,6 +9,6 @@ app.include_router(projects.router, tags=["Projects"], prefix="/api/projects")
 
 
 @app.get("/")
-def read_root():
+def health_check():
     """Hello World root."""
     return {"Hello": "World"}
