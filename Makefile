@@ -34,6 +34,6 @@ attach-api:
 bash-api:
 	docker exec -it resdeeds-api bash
 
-# target: shell - Run shell in the container.
-shell:
-	docker exec -it resdeeds-api flask shell
+# target: run-api - Run the api locally
+run-api:
+	cd api && uvicorn src.main:app --host 0.0.0.0 --port 5000 --reload
