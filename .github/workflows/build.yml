@@ -1,0 +1,29 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  IMAGE: ${{ secrets.IMAGE_URL }}
+  PAT: ${{ secrets.PAT }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Registry login
+        run: echo $PAT | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
+
+      - name: Pull Docker Image
+        run: docker pull $IMAGE/api:latest
+
+      - name: Tag Docker Image
+        run: docker build . --tag $IMAGE/api:latest --cache-from $IMAGE:latest
+
+      - name: Push Docker Image
+        run: docker push $IMAGE/api:latest
