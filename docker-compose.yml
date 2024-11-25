@@ -5,9 +5,9 @@ services:
       dockerfile: Dockerfile
     image: ghcr.io/idaholab/resdeeds/web
     container_name: resdeeds-web
-    depends_on:
-      - api
     ports:
+      - 80:80
+      - 443:443
       - 4200:4200
     stdin_open: true
     tty: true
