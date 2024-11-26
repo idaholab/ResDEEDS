@@ -4,6 +4,9 @@
 # MacOS
 .DS_Store
 
+# Logs
+*.log
+
 # Python
 *.pyc
 __pycache__

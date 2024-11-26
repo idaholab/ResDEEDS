@@ -14,6 +14,9 @@ services:
     volumes:
       - ./web:/var/www
       - node_modules:/var/www/node_modules
+      - ./etc/ssl:/etc/ssl
+      - ./etc/nginx:/etc/nginx/conf.d
+      - ./etc/nginx/log/:/var/log/nginx
   api:
     build:
       context: ./api
