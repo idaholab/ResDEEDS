@@ -9,7 +9,7 @@ dzdo docker pull ghcr.io/idaholab/resdeeds/web:latest
 echo "Launching latest container"
 dzdo docker run -d --rm \
     --env-file .env \
-    -p 80:80 -p 443:433 \
+    -p 80:80 -p 443:443 \
     --name resdeeds-web \
     -v ./etc/ssl:/etc/ssl \
     -v ./etc/nginx:/etc/nginx/conf.d \
