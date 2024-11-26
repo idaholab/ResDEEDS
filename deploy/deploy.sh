@@ -11,7 +11,9 @@ dzdo docker run -d --rm \
     --env-file .env \
     -p 80:80 -p 443:433 \
     --name resdeeds-web \
-    -v ./etc/ssl:/etc/ssl
+    -v ./etc/ssl:/etc/ssl \
+    -v ./etc/nginx:/etc/nginx/conf.d \
+    -v /var/log/nginx:/var/log/nginx \
     ghcr.io/idaholab/resdeeds/web:latest
 
 echo "Deployed"
