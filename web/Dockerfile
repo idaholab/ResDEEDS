@@ -23,9 +23,6 @@ FROM nginx:alpine
 
 COPY etc/nginx.conf /etc/nginx/conf.d/default.conf
 
-COPY etc/*.cer /etc/ssl/certs/
-COPY etc/*.key /etc/ssl/private/
-
 COPY --from=build /var/www/dist/resdeeds /usr/share/nginx/html
 
 EXPOSE 80 443 4200
