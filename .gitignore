@@ -8,6 +8,10 @@
 *.pyc
 __pycache__
 
+# Secrets
+*.key
+*.cer
+
 # Virtual Environment
 .venv/
 
