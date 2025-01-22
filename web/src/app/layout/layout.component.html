@@ -1,0 +1,64 @@
+
+<div class="layout-container flex w-100 root">
+    <!-- Header -->
+    <div class="layout-header flex w-100 color-primary">
+        <div class="hader-title flex" (click)="navigate('dashboard')">
+            Resdeeds 
+            <p style="font-size: 7px;">
+                logo image needed
+            </p>
+        </div>
+        <div class="header-right-items flex">
+            <!-- <button mat-button [matMenuTriggerFor]="menu">
+                <mat-icon class="header-icons" fontIcon="settings"></mat-icon></button>
+            <mat-menu #menu="matMenu">
+                <button mat-menu-item>Item 1</button>
+                <button mat-menu-item>Item 2</button>
+              </mat-menu> -->
+              <div class="header-username-container">
+                <span> {{userName}}</span>
+              </div>
+              <button class="header-settings-icon" (click)="navigate('dashboard')" mat-icon-button >
+                <mat-icon >home</mat-icon>
+              </button>
+              <button class="header-settings-icon" (click)="navigate('about')" mat-icon-button >
+                <mat-icon >question_mark</mat-icon>
+              </button>
+              <button class="header-settings-icon" mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+                <mat-icon >menu</mat-icon>
+              </button>
+              <mat-menu #menu="matMenu">
+                <button mat-menu-item (click)="navigate('user')">
+                  <mat-icon>person</mat-icon>
+                  <span>User</span>
+                </button>
+                <button mat-menu-item (click)="navigate('settings')">
+                    <mat-icon>settings</mat-icon>
+                    <span>Settings</span>
+                </button>
+                <button mat-menu-item (click)="navigate('about')">
+                  <mat-icon>help</mat-icon>
+                  <span>About</span>
+                </button>
+                <button mat-menu-item (click)="logout()">
+                  <mat-icon>help</mat-icon>
+                  <span>Logout</span>
+                </button>
+              </mat-menu>
+        </div>
+
+    </div>
+
+
+    <!-- Body -->
+    <div class="layout-body color-background">
+      <router-outlet></router-outlet>
+    </div>
+
+    <!-- Footer -->
+    <footer class="layout-footer" >
+        My Footer
+    </footer>
+    <footer  >
+    </footer>
+  </div>

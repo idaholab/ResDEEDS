@@ -1,1 +1,175 @@
 /* You can add global styles to this file, and also import other style files */
+
+//================Base Colors===========================
+
+:root{
+    --primary-color:  #507d69;
+    --secondary-color:#6ead90;
+    --tertiary-color: #738A80;
+    --tertiary-color-dark: #4B5043;
+    --button-main-color: #218263; 
+    --button-secondary-color: var(--white); 
+    --link: #2b7dcf;
+    --black: #090909;
+    --white: #f0f0f0;
+    --light-gray: #e0e0e0;
+    --card-background: #d0d0d0;
+
+    --card-spacing: .2em;
+}
+
+.color-primary{
+    background-color: var(--primary-color);
+    color: var(--black);
+}
+
+.color-secondary{
+
+}
+
+.color-background{
+    background-color: var(--light-gray);
+}
+
+
+//================General Layout========================
+
+//Flex
+.flex{
+    display: flex;
+}
+
+
+//Width decimal
+.w-100{
+    width: 100%;
+}
+.w-75{
+    width: 75%;
+}
+.w-50{
+    width: 50%;
+}
+.w-25{
+    width: 25%;
+}
+.w-10{
+    width: 10%;
+}
+//Width Duodecimal
+.w-1{
+    width: 8.3%;
+}
+.w-2{
+    width: 16.6%;
+}
+.w-3{
+    width: 25%;
+}
+.w-4{
+    width: 33.2%;
+}
+.w-5{
+    width: 41.6%;
+}
+.w-6{
+    width: 50%;
+}
+.w-7{
+    width: 58.3%;
+}
+.w-8{
+    width: 66.7%;
+}
+.w-9{
+    width: 75%;
+}
+.w-10{
+    width: 83.3%;
+}
+.w-11{
+    width: 91.6%;
+}
+.w-12{
+    width: 100%;
+}
+
+.centered {
+    margin: auto;
+}
+
+.clickable-text{
+    color: var(--link);
+    cursor: pointer;;
+}
+.clickable-text:hover{
+    text-decoration: underline;
+}
+
+.btn-main{
+    background-color: var(--button-main-color) !important;
+    color: var(--white) !important;
+}
+.btn-secondary{
+    background-color: var(--button-secondary-color) !important;
+    color: var(--black) !important;
+}
+
+.card-row{
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 1em;
+    flex-basis: 95%;
+    max-height: 33%;
+}
+
+.card{
+    display: flex;
+    flex-grow: 1;
+    flex-direction: column;
+    background-color: var(--card-background);
+    font-size: 150%;
+    border-radius: 20px;
+}
+
+.card-header{    
+    border-radius: 20px 20px  0 0 ;
+    width:100;
+    padding: .45em .75em;
+    background-color: var(--tertiary-color);
+    color: car(--tertiary-color-dark);
+}
+.card-body{    
+    padding: 1em;
+    display: flex;
+    padding: 1em;
+    flex-grow: 1;
+    height: calc(100% - 4em);
+}
+.card-item {
+    padding: 1em;
+    font-size: 70%;;
+}
+
+
+.card-row > .card{
+    margin: 0 var(--card-spacing);
+}
+.card-row > .card:first-child{
+    margin-left: 0em;
+}
+.card-row > .card:last-child{
+    margin-right: 0em;
+}
+
+// .card-row .card:first{
+//     margin-left: 0;
+// }
+
+.clickable-mat-row{
+    cursor: pointer;
+}
+.clickable-mat-row:hover{
+    background-color: var(--light-gray);
+    cursor: pointer;
+}

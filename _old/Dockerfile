@@ -28,13 +28,13 @@ RUN apt-get update &&  apt-get install -y \
     python3-dev
 
 # # Install Python dependencies
-RUN pip install --upgrade pip setuptools wheel
-RUN pip install --no-deps \
+RUN pip install --trusted-host pypi.org --upgrade pip setuptools wheel
+RUN pip install --trusted-host pypi.org --no-deps \
     spinetoolbox==0.7.4 \
     spine_engine==0.23.4 \
     spine_items==0.21.5 \
     spinedb_api==0.30.5
-RUN pip install -r requirements.txt
+RUN pip install --trusted-host pypi.org -r requirements.txt
 
 # # Install Julia, SpineInterface and SpineOpt
 RUN python -m jill install --confirm

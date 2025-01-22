@@ -2,8 +2,8 @@
 # Copyright 2023, Battelle Energy Alliance, LLC
 apt update
 apt install python3 python3-pip git -y
-python3 -m pip install pip --upgrade
-python3 -m pip install -r requirements.txt
+python3 -m pip install --trusted-host pip --upgrade
+python3 -m pip install --trusted-host -r requirements.txt
 python3 -m jill install --confirm
 # should lock this to a commit hash
 julia -e 'using Pkg; Pkg.rm("SpineInterface")' || true

@@ -1,0 +1,15 @@
+.dash-container{
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    padding: 1em;
+    height: calc(100% - 1em);
+    max-width: 1180px;
+    margin: auto;
+}
+.dash-header{
+    display: flex;
+    flex-direction: column;
+
+    border-bottom: solid 1px var(--black);
+}

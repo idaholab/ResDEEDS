@@ -1,0 +1,8 @@
+.recent-item-table{
+    overflow-y: scroll;
+}
+.recent-items-container{
+    overflow: auto;
+    display: flex;
+    flex-grow: 1;
+}

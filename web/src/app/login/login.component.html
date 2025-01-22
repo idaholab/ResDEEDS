@@ -1,0 +1,48 @@
+
+<div class="card login-card centered">
+    <div class="card-header">Login</div>
+    <div class="card-body"> 
+        <div class="card-item">
+            <div class="login-instructions">
+                <p style="margin-top: 0;">
+                    Please enter your login information to accesse the Resdeeds application. 
+                </p>
+                <p>
+                    If you do not have an account, please click <span class="clickable-text" (click)="register()">here</span> to register an account.
+                </p>
+            </div>
+            <div class="example-container" [formGroup]="loginFormGroup">
+                <mat-form-field class="login-form-field">
+                    <mat-label>User Name</mat-label>
+                    <input formControlName="userName" matInput >
+                  </mat-form-field>
+                <mat-form-field class="login-form-field">
+                  <mat-label>Enter your password</mat-label>
+                  <input formControlName="password" (keyup.enter)="login()" matInput [type]="hide() ? 'password' : 'text'" />
+                  <button
+                    mat-icon-button
+                    matSuffix
+                    (click)="clickEvent($event)"
+                    [attr.aria-label]="'Hide password'"
+                    [attr.aria-pressed]="hide()"
+                  >
+                    <mat-icon>{{hide() ? 'visibility_off' : 'visibility'}}</mat-icon>
+                  </button>
+                </mat-form-field>
+                <div *ngIf="(showError | async) == true" >
+                    {{errorMessage}}
+                    <!-- {errorMessage} -->
+                </div>
+                <div class="login-buttons">
+                    <section>
+                        <div class="example-button-row">
+                            <button class="btn btn-main" mat-raised-button  (keyup.enter)="login()" (click)="login()">Login</button>
+                            <!-- <button class="btn btn-secondary" mat-raised-button>Login</button> -->
+                        </div>
+                      </section>
+                </div>
+              
+              </div>
+        </div>
+    </div>
+</div>
