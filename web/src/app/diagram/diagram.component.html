@@ -1,0 +1,57 @@
+<ejs-diagram width="100%" height="850px" [getNodeDefaults]='nodeDefaults'>
+    <e-nodes>
+        <e-node id='node1' [offsetY]=100 [shape]='terminatorShape'>
+            <e-node-annotations>
+                <e-node-annotation content='Battery'></e-node-annotation>
+            </e-node-annotations>
+        </e-node>
+        <e-node id='node2' [offsetY]=200 [shape]='processShape'>
+            <e-node-annotations>
+                <e-node-annotation content='var i = 0;'></e-node-annotation>
+            </e-node-annotations>
+        </e-node>
+        <e-node id='node3' [offsetY]=300 [shape]='decisionShape'>
+            <e-node-annotations>
+                <e-node-annotation content='i > 10?'></e-node-annotation>
+            </e-node-annotations>
+        </e-node>
+        <e-node id='node4' [offsetY]=400 [shape]='preDefinedProcessShape'>
+            <e-node-annotations>
+                <e-node-annotation content='print(\"Syncfusion!!\");'>
+                </e-node-annotation>
+            </e-node-annotations>
+        </e-node>
+        <e-node id='node5' [offsetY]=500 [shape]='processShape'>
+            <e-node-annotations>
+                <e-node-annotation content='i++;'></e-node-annotation>
+            </e-node-annotations>
+        </e-node>
+        <e-node id='node6' [offsetY]=600 [shape]='terminatorShape'>
+            <e-node-annotations>
+                <e-node-annotation content='End'></e-node-annotation>
+            </e-node-annotations>
+        </e-node>    
+    </e-nodes>
+    <e-connectors>
+        <e-connector sourceID='node1' targetID='node2'></e-connector>
+        <e-connector sourceID='node2' targetID='node3'></e-connector>
+        <e-connector sourceID='node3' targetID='node6' type="Orthogonal"
+        [segments]='segment1'>
+        <e-connector-annotations>
+            <e-connector-annotation content='Yes'
+            [margin]="annotationMargin"></e-connector-annotation>
+        </e-connector-annotations>
+        </e-connector>
+        <e-connector sourceID='node3' targetID='node4'>
+            <e-connector-annotations>
+                <e-connector-annotation content='No'
+                [margin]="annotationMargin"></e-connector-annotation>
+            </e-connector-annotations>
+        </e-connector>
+        <e-connector sourceID='node4' targetID='node5'></e-connector>
+        <e-connector sourceID='node5' targetID='node3' type="Orthogonal"
+        [segments]='segment2'>
+        </e-connector>
+    </e-connectors>
+        
+</ejs-diagram>

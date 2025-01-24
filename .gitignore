@@ -4,9 +4,16 @@
 # MacOS
 .DS_Store
 
+# Logs
+*.log
+
 # Python
 *.pyc
 __pycache__
+
+# Secrets
+*.key
+*.cer
 
 # Virtual Environment
 .venv/

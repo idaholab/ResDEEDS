@@ -3,20 +3,25 @@ services:
     build:
       context: ./web
       dockerfile: Dockerfile
+    image: ghcr.io/idaholab/resdeeds/web
     container_name: resdeeds-web
-    # depends_on:
-    #   - api
     ports:
+      - 80:80
+      - 443:443
       - 4200:4200
     stdin_open: true
     tty: true
     volumes:
       - ./web:/var/www
       - node_modules:/var/www/node_modules
+      - ./web/etc/ssl:/etc/ssl
+      - ./web/etc/nginx/conf.d:/etc/nginx/conf.d
+      - ./web/etc/nginx/log:/var/log/nginx
   api:
     build:
       context: ./api
       dockerfile: Dockerfile
+    image: ghcr.io/idaholab/resdeeds/api
     container_name: resdeeds-api
     depends_on:
       - mongodb
@@ -24,7 +29,6 @@ services:
       - ./api/.env
     ports:
       - 5000:5000
-      - 5678:5678
     stdin_open: true
     tty: true
     volumes:

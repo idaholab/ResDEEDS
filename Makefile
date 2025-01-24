@@ -1,4 +1,4 @@
-.PHONY: run
+.PHONY: build up stop down
 include api/.env
 export
 
@@ -26,7 +26,7 @@ down:
 attach-web:
 	docker attach resdeeds-web
 
-# target: attack-api - Attach to the running container.
+# target: attach-api - Attach to the running container.
 attach-api:
 	docker attach resdeeds-api
 
@@ -34,6 +34,6 @@ attach-api:
 bash-api:
 	docker exec -it resdeeds-api bash
 
-# target: shell - Run shell in the container.
-shell:
-	docker exec -it resdeeds-api flask shell
+# target: run-api - Run the api locally
+run-api:
+	cd api && uvicorn src.main:app --host 0.0.0.0 --port 5000 --reload
