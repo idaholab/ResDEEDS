@@ -5,11 +5,10 @@ import {
 } from "@syncfusion/ej2-angular-diagrams";
 
 @Component({
-  selector: 'app-diagram',
-  standalone: true,
-  imports: [DiagramModule],
-  templateUrl: './diagram.component.html',
-  styleUrl: './diagram.component.scss'
+    selector: 'app-diagram',
+    imports: [DiagramModule],
+    templateUrl: './diagram.component.html',
+    styleUrl: './diagram.component.scss'
 })
 export class DiagramComponent {
   public nodeDefaults(node: NodeModel): NodeModel {
