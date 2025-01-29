@@ -11,16 +11,22 @@ export class AuthService {
 
     constructor(private http: HttpClient, private router: Router) { }
 
-    isLoggedIn(): boolean {
-        return !!localStorage.getItem('token');
-    }
-
     get isLoggedInSignalValue() {
         return this.isLoggedInSignal;
     }
 
+    isLoggedIn() {
+        return this.isLoggedInSignal();
+    }
+
     login(email: string, password: string) {
-        return this.http.post(`${this.apiUrl}/api/auth/login/`, { email, password });
+        const resp = this.http.post(`${this.apiUrl}/api/auth/login/`, { email, password });
+
+        if (resp) {
+            this.isLoggedInSignal.set(true);
+        }
+
+        return resp
     }
 
     signup(email: string, password: string) {
@@ -30,6 +36,7 @@ export class AuthService {
     logout() {
         localStorage.removeItem('token');
         this.router.navigate(['/']);
+        this.isLoggedInSignal.set(false);
         return this.isLoggedInSignal();
     }
 }

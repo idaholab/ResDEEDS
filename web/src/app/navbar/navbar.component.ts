@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 import { CommonModule } from '@angular/common';
 
@@ -10,11 +10,8 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./navbar.component.css']
 })
 export class NavbarComponent {
-  isLoggedIn: boolean = false;
-
-  constructor(private authService: AuthService) {
-    this.isLoggedIn = this.authService.isLoggedInSignalValue();
-  }
+  authService = inject(AuthService);
+  isLoggedIn = this.authService.isLoggedInSignalValue;
 
   logout() {
     this.authService.logout();
