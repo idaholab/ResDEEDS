@@ -2,16 +2,18 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 @Component({
-  imports: [FormsModule],
+  imports: [CommonModule, FormsModule],
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
-  email = '';
-  password = '';
+  email: string = '';
+  password: string = '';
+  errorMessage: string = '';
 
   constructor(private authService: AuthService, private router: Router) { }
 
@@ -23,6 +25,7 @@ export class LoginComponent {
       },
       error: (error) => {
         console.error('Login failed', error);
+        this.errorMessage = 'Incorrect email or password. Please try again.'
       }
     });
   }

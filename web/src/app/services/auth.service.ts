@@ -30,7 +30,7 @@ export class AuthService {
     }
 
     signup(email: string, password: string) {
-        return this.http.post(`${this.apiUrl}api/auth/register/`, { email, password });
+        return this.http.post(`${this.apiUrl}/api/auth/register/`, { email, password });
     }
 
     logout() {

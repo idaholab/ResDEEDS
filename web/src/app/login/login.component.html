@@ -8,6 +8,9 @@
         <div class="mb-3">
           <input type="password" class="form-control" placeholder="Password" [(ngModel)]="password" name="password" required>
         </div>
+        <div *ngIf="errorMessage" class="alert alert-danger">
+          {{ errorMessage }}
+        </div>
         <button type="submit" class="btn btn-primary w-100">Login</button>
       </form>
     </div>
