@@ -21,7 +21,7 @@ export class LoginComponent {
     const loginSuccess = await this.authService.login(this.email, this.password);
 
     if (loginSuccess) {
-      this.router.navigate(['/hello-world']);
+      this.router.navigate(['/projects']);
     } else {
       this.errorMessage = 'Login failed';
     }
