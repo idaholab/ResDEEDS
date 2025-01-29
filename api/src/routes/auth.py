@@ -46,12 +46,9 @@ async def login_user(user: UserModel):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid email or password"
         )
-    return {
-        "access_token": sign_jwt(
-            user_email=user.email, user_id=user_data["_id"], role=user_data["role"]
-        ),
-        "token_type": "bearer",
-    }
+    return sign_jwt(
+        user_email=user.email, user_id=user_data["_id"], role=user_data["role"]
+    )
 
 
 @router.post("/update/", dependencies=[Depends(JWTBearer())])

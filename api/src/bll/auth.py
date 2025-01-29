@@ -72,4 +72,4 @@ def sign_jwt(user_email: str, user_id: str, role: str) -> dict[str, str]:
     }
     token = jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
 
-    return {"access_token": token}
+    return {"access_token": token, "token_type": "bearer"}
