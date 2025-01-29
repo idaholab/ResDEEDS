@@ -33,18 +33,21 @@ export class SignupComponent {
     return password === verifyPassword ? null : { mismatch: true };
   }
 
-  onSubmit() {
+  async onSubmit() {
     if (this.signupForm.valid) {
       const { email, password } = this.signupForm.value;
-      this.authService.signup(email, password).subscribe({
-        next: (response) => {
-          console.log('Signup successful', response);
-          this.router.navigate(['/login']); // Redirect to login page after successful signup
-        },
-        error: (error) => {
-          console.error('Signup failed', error);
+
+      try {
+        const signupSuccess = await this.authService.signup(email, password);
+
+        if (signupSuccess) {
+          this.router.navigate(['/login']);
+        } else {
+          console.error('Signup failed');
         }
-      });
+      } catch (error) {
+        console.error('Signup failed', error);
+      }
     }
   }
 }

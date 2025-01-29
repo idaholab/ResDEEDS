@@ -17,16 +17,13 @@ export class LoginComponent {
 
   constructor(private authService: AuthService, private router: Router) { }
 
-  onSubmit() {
-    this.authService.login(this.email, this.password).subscribe({
-      next: (response: any) => {
-        localStorage.setItem('token', response.token);
-        this.router.navigate(['/hello-world']);
-      },
-      error: (error) => {
-        console.error('Login failed', error);
-        this.errorMessage = 'Incorrect email or password. Please try again.'
-      }
-    });
+  async onSubmit() {
+    const loginSuccess = await this.authService.login(this.email, this.password);
+    console.log('loginSuccess', loginSuccess);
+    if (loginSuccess) {
+      this.router.navigate(['/hello-world']);
+    } else {
+      this.errorMessage = 'Login failed';
+    }
   }
 }

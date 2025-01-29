@@ -19,18 +19,56 @@ export class AuthService {
         return this.isLoggedInSignal();
     }
 
-    login(email: string, password: string) {
-        const resp = this.http.post(`${this.apiUrl}/api/auth/login/`, { email, password });
+    async login(email: string, password: string): Promise<boolean> {
+        try {
+            const response = await fetch(`${this.apiUrl}/api/auth/login/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email, password })
+            });
 
-        if (resp) {
-            this.isLoggedInSignal.set(true);
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            const data = await response.json();
+
+            if (data.access_token) {
+                localStorage.setItem('token', data.access_token); // Store the token
+                this.isLoggedInSignal.set(true); // Update the logged-in state
+                return true; // Login successful
+            }
+        } catch (error) {
+            console.error('Login failed', error);
         }
-
-        return resp
+        return false; // Login failed
     }
 
-    signup(email: string, password: string) {
-        return this.http.post(`${this.apiUrl}/api/auth/register/`, { email, password });
+    async signup(email: string, password: string): Promise<boolean> {
+        try {
+            const response = await fetch(`${this.apiUrl}/api/auth/register/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email, password })
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            const data = await response.json();
+
+            if (data) {
+                return true; // Signup successful
+            }
+        } catch (error) {
+            console.error('Signup failed:', error);
+        }
+        return false; // Signup failed
     }
 
     logout() {
