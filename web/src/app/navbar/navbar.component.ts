@@ -11,7 +11,6 @@ import { CommonModule } from '@angular/common';
 })
 export class NavbarComponent {
   authService = inject(AuthService);
-  isLoggedIn = this.authService.isLoggedInSignalValue;
 
   logout() {
     this.authService.logout();

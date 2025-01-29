@@ -19,7 +19,7 @@ export class LoginComponent {
 
   async onSubmit() {
     const loginSuccess = await this.authService.login(this.email, this.password);
-    console.log('loginSuccess', loginSuccess);
+
     if (loginSuccess) {
       this.router.navigate(['/hello-world']);
     } else {

@@ -1,5 +1,4 @@
 import { Injectable, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 
 @Injectable({
@@ -8,15 +7,18 @@ import { Router } from '@angular/router';
 export class AuthService {
     private apiUrl = 'http://localhost:5050';
     private isLoggedInSignal = signal(false);
+    private loggedInState: boolean;
 
-    constructor(private http: HttpClient, private router: Router) { }
+    constructor(private router: Router) {
+        this.loggedInState = !!localStorage.getItem('token');
+    }
 
     get isLoggedInSignalValue() {
         return this.isLoggedInSignal;
     }
 
-    isLoggedIn() {
-        return this.isLoggedInSignal();
+    isAuthenticated(): boolean {
+        return this.loggedInState || !!localStorage.getItem('token');
     }
 
     async login(email: string, password: string): Promise<boolean> {
@@ -63,6 +65,7 @@ export class AuthService {
             const data = await response.json();
 
             if (data) {
+                this.router.navigate(['/']);
                 return true; // Signup successful
             }
         } catch (error) {
@@ -75,6 +78,7 @@ export class AuthService {
         localStorage.removeItem('token');
         this.router.navigate(['/']);
         this.isLoggedInSignal.set(false);
+        this.loggedInState = false;
         return this.isLoggedInSignal();
     }
 }

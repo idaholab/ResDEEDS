@@ -2,9 +2,13 @@
     <h1 class="display-5 fw-bold text-body-emphasis">Welcome to ResDEEDS</h1>
     <div class="col-lg-6 mx-auto">
       <p class="lead mb-4">The Resilience Development for Electric Energy Delivery Systems (ResDEEDS) tool walks users through the process of evaluating electric energy delivery systems (EEDS) for resiliency. It implements the steps of the INL Resilience Framework for EEDS and provides automated tracking of resilience planning and suggestions for mitigating hazards.</p>
-      <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
-        <a type="button" class="btn btn-primary btn-lg px-4 gap-3" href="/signup">Sign Up</a>
-        <a type="button" class="btn btn-outline-secondary btn-lg px-4" href="/login">Login</a>
+      <div *ngIf="!authService.isAuthenticated(); else loggedIn"class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+          <a type="button" class="btn btn-primary btn-lg px-4 gap-3" href="/signup">Sign Up</a>
+          <a type="button" class="btn btn-outline-secondary btn-lg px-4" href="/login">Login</a>
       </div>
+      <ng-template #loggedIn>
+        <a type="button" class="btn btn-primary btn-lg px-4 gap-3" href="/hello-world">Dashboard</a>
+        <a type="button" class="btn btn-outline-secondary btn-lg px-4" (click)="logout()">Logout</a>
+      </ng-template>
     </div>
   </div>

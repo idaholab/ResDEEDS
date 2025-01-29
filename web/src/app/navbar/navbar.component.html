@@ -4,13 +4,16 @@
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto">
           <li class="nav-item">
-              <a *ngIf="!isLoggedIn()" class="nav-link" href="/login">Login</a>
+              <a *ngIf="!authService.isAuthenticated()" class="nav-link" href="/login">Login</a>
           </li>
           <li class="nav-item">
-            <a *ngIf="!isLoggedIn()" class="nav-link" href="/signup">Sign Up</a>
+            <a *ngIf="!authService.isAuthenticated()" class="nav-link" href="/signup">Sign Up</a>
           </li>
           <li class="nav-item">
-              <a *ngIf="isLoggedIn()" class="nav-link" (click)="logout()">Logout</a>
+            <a *ngIf="authService.isAuthenticated()" class="nav-link" href="/hello-world">Dashboard</a>
+        </li>
+          <li class="nav-item">
+              <a *ngIf="authService.isAuthenticated()" class="nav-link" (click)="logout()">Logout</a>
           </li>
         </ul>
       </div>
