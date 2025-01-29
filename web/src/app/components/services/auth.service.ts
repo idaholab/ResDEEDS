@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
     providedIn: 'root'
 })
 export class AuthService {
-    private apiUrl = 'http://localhost:5050';
+    private apiUrl = 'http://localhost:5000';
     private isLoggedInSignal = signal(false);
     private loggedInState: boolean;
 

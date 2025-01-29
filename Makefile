@@ -36,4 +36,4 @@ bash-api:
 
 # target: run-api - Run the api locally
 run-api:
-	cd api && uvicorn src.main:app --host 0.0.0.0 --port 5050 --reload
+	cd api && uvicorn src.main:app --host 0.0.0.0 --port 5000 --reload
