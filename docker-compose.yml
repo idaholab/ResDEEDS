@@ -11,6 +11,8 @@ services:
       - 4200:4200
     stdin_open: true
     tty: true
+    networks:
+      - resdeeds-network
     volumes:
       - ./web:/var/www
       - node_modules:/var/www/node_modules
@@ -31,6 +33,8 @@ services:
       - 5000:5000
     stdin_open: true
     tty: true
+    networks:
+      - resdeeds-network
     volumes:
       - ./api:/var/www
   mongodb:
@@ -40,8 +44,14 @@ services:
     image: mongo:8.0
     ports:
       - 27017:27017
+    networks:
+      - resdeeds-network
     volumes:
       - mongodb_data:/data/db
+
+networks:
+  resdeeds-network:
+    driver: bridge
 
 volumes:
   node_modules:
