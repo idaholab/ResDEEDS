@@ -1,4 +1,4 @@
 export const environment = {
     production: true,
-    apiUrl: 'http://resdeeds-api:5000',
+    apiUrl: 'http://api:5000',
 };
