@@ -1,16 +1,18 @@
 import { Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
+import { environment } from '../../environments/environment';
 
 @Injectable({
     providedIn: 'root'
 })
 export class AuthService {
-    private apiUrl = 'http://localhost:5000';
+    private apiUrl = environment.apiUrl;
     private isLoggedInSignal = signal(false);
     private loggedInState: boolean;
 
     constructor(private router: Router) {
         this.loggedInState = !!localStorage.getItem('token');
+        console.log("API URL: ", this.apiUrl)
     }
 
     get isLoggedInSignalValue() {
