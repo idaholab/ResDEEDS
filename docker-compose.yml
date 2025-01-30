@@ -28,7 +28,7 @@ services:
     env_file:
       - ./api/.env
     ports:
-      - 5050:5050
+      - 5000:5000
     stdin_open: true
     tty: true
     volumes:
