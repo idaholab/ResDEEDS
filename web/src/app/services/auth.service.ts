@@ -25,7 +25,7 @@ export class AuthService {
 
     async login(email: string, password: string): Promise<boolean> {
         try {
-            const response = await fetch(`${this.apiUrl}/api/auth/login/`, {
+            const response = await fetch(`${this.apiUrl}/auth/login/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -52,7 +52,7 @@ export class AuthService {
 
     async signup(email: string, password: string): Promise<boolean> {
         try {
-            const response = await fetch(`${this.apiUrl}/api/auth/register/`, {
+            const response = await fetch(`${this.apiUrl}/auth/register/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
