@@ -37,3 +37,7 @@ bash-api:
 # target: run-api - Run the api locally
 run-api:
 	cd api && uvicorn src.main:app --host 0.0.0.0 --port 5000 --reload
+
+# target: run-web - Run the web locally
+run-web:
+	cd web && ng serve

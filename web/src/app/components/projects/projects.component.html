@@ -1,7 +1,40 @@
-<div class="container">
+<div class="container mt-5">
+  <!-- Button to open the modal -->
+  <button class="btn btn-primary mb-3" (click)="openModal()">Create New Project</button>
+
+  <!-- List of projects in Bootstrap cards -->
   <div class="row">
-    <div class="col-md-12">
-      <h1>Projects</h1>
-      <p>Here we have a list of projects!</p>
+    <div class="col-md-4 mb-3" *ngFor="let project of projects">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">{{ project }}</h5>
+        </div>
+      </div>
     </div>
   </div>
+
+  <!-- Bootstrap Modal -->
+  <div class="modal fade" id="projectModal" tabindex="-1" aria-labelledby="projectModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="projectModalLabel">Create New Project</h5>
+          <button type="button" class="btn-close" (click)="closeModal()" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="projectName" class="form-label">Project Name</label>
+            <input type="text" class="form-control" id="projectName" [(ngModel)]="newProjectName">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancel</button>
+          <button type="button" class="btn btn-primary" (click)="saveProject()">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Backdrop -->
+  <div *ngIf="isModalOpen" class="modal-backdrop fade show"></div>
+</div>
