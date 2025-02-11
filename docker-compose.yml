@@ -1,24 +1,24 @@
 services:
-  web:
-    build:
-      context: ./web
-      dockerfile: Dockerfile
-    image: ghcr.io/idaholab/resdeeds/web
-    container_name: resdeeds-web
-    ports:
-      - 80:80
-      - 443:443
-      - 4200:4200
-    stdin_open: true
-    tty: true
-    networks:
-      - resdeeds-network
-    volumes:
-      - ./web:/var/www
-      - node_modules:/var/www/node_modules
-      - ./web/etc/ssl:/etc/ssl
-      - ./web/etc/nginx/conf.d:/etc/nginx/conf.d
-      - ./web/etc/nginx/log:/var/log/nginx
+  # web:
+  #   build:
+  #     context: ./web
+  #     dockerfile: Dockerfile
+  #   image: ghcr.io/idaholab/resdeeds/web
+  #   container_name: resdeeds-web
+  #   ports:
+  #     - 80:80
+  #     - 443:443
+  #     - 4200:4200
+  #   stdin_open: true
+  #   tty: true
+  #   networks:
+  #     - resdeeds-network
+  #   volumes:
+  #     - ./web:/var/www
+  #     - node_modules:/var/www/node_modules
+  #     - ./web/etc/ssl:/etc/ssl
+  #     - ./web/etc/nginx/conf.d:/etc/nginx/conf.d
+  #     - ./web/etc/nginx/log:/var/log/nginx
   api:
     build:
       context: ./api

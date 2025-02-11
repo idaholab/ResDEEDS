@@ -11,6 +11,9 @@ from pymongo.collection import Collection
 
 def get_db() -> Database:
     """Get database client."""
+    print("--------------------------------------------")
+    print(os.environ["MONGO_URI"])
+    print("--------------------------------------------")
     return MongoClient(f"mongodb://{os.environ["MONGO_URI"]}", tz_aware=True).resdeeds
 
 

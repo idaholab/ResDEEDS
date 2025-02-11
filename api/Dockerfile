@@ -26,3 +26,5 @@ ENV PORT=5000
 EXPOSE 5000
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+# ENTRYPOINT ["uvicorn src.main:app --host 0.0.0.0 --port 5000 --reload"]
+# ENTRYPOINT ["/bin/bash"]
