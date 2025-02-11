@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { HttpHeaders } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
+import { ProjectService } from '../../services/project.service';
 
 @Component({
   selector: 'app-projects',
@@ -13,29 +15,39 @@ export class ProjectsComponent {
   newProjectName: string = '';
   isModalOpen: boolean = false;
 
-  openModal() {
-    const modal = document.getElementById('projectModal');
-    if (modal) {
-      modal.classList.add('show');
-      modal.style.display = 'block';
-      modal.setAttribute('aria-modal', 'true');
+  constructor(private projectService: ProjectService) { }
+
+  private getAuthHeaders(): HttpHeaders {
+    const token = localStorage.getItem('token');
+    if (token) {
+      return new HttpHeaders({
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      });
     }
+    return new HttpHeaders({ 'Content-Type': 'application/json' });
   }
 
-  closeModal() {
-    const modal = document.getElementById('projectModal');
-    if (modal) {
-      modal.classList.remove('show');
-      modal.style.display = 'none';
-      modal.removeAttribute('aria-modal');
-    }
+  openModal(): void {
+    this.isModalOpen = true;
   }
 
-  saveProject() {
+  closeModal(): void {
+    this.isModalOpen = false;
+    this.newProjectName = ''; // Clear input on close
+  }
+
+  saveProject(): void {
     if (this.newProjectName) {
-      this.projects.push(this.newProjectName);
-      this.newProjectName = ''; // Reset the input field
-      this.closeModal();
+      this.projectService.createProject({ name: this.newProjectName }).subscribe(
+        (project) => {
+          this.projects.push(project.name);
+          this.closeModal();
+        },
+        () => {
+          console.log('Failed to create project');
+        }
+      );
     }
   }
 }

@@ -1,0 +1,41 @@
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { Project } from '../models/project.model';
+import { environment } from '../../environments/environment';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class ProjectService {
+  private apiUrl = `${environment.apiUrl}/projects`;
+
+  constructor(private http: HttpClient) { }
+
+  private getAuthHeaders(): HttpHeaders {
+    const token = localStorage.getItem('token');
+    if (token) {
+      return new HttpHeaders({
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      });
+    }
+    return new HttpHeaders({ 'Content-Type': 'application/json' });
+  }
+
+
+  // Fetch a list of existing projects
+  getProjects(): Observable<Project[]> {
+    return this.http.get<Project[]>(`${this.apiUrl}/`, { headers: this.getAuthHeaders() });
+  }
+
+  // Create a new project
+  createProject(project: Project): Observable<Project> {
+    return this.http.post<Project>(`${this.apiUrl}/project/create/`, project, { headers: this.getAuthHeaders() });
+  }
+
+  // Fetch a specific project by ID
+  getProjectById(projectId: string): Observable<Project> {
+    return this.http.get<Project>(`${this.apiUrl}/project/${projectId}/`, { headers: this.getAuthHeaders() });
+  }
+}

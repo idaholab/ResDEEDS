@@ -1,20 +1,32 @@
 <div class="container mt-5">
-  <!-- Button to open the modal -->
-  <button class="btn btn-primary mb-3" (click)="openModal()">Create New Project</button>
+  <div class="d-flex justify-content-end mb-3">
+    <button class="btn btn-primary" (click)="openModal()">Create New Project</button>
+  </div>
 
-  <!-- List of projects in Bootstrap cards -->
+  <!-- Projects List -->
   <div class="row">
     <div class="col-md-4 mb-3" *ngFor="let project of projects">
       <div class="card">
         <div class="card-body">
           <h5 class="card-title">{{ project }}</h5>
+          <div class="d-flex justify-content-between mt-3">
+            <button class="btn btn-sm btn-outline-secondary">Copy</button>
+            <button class="btn btn-sm btn-outline-info">Details</button>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
   <!-- Bootstrap Modal -->
-  <div class="modal fade" id="projectModal" tabindex="-1" aria-labelledby="projectModalLabel" aria-hidden="true">
+  <div class="modal fade" 
+       [class.show]="isModalOpen" 
+       [style.display]="isModalOpen ? 'block' : 'none'"
+       id="projectModal" 
+       tabindex="-1" 
+       aria-labelledby="projectModalLabel"
+       [attr.aria-hidden]="!isModalOpen"
+       [attr.aria-modal]="isModalOpen ? 'true' : null">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
@@ -36,5 +48,7 @@
   </div>
 
   <!-- Modal Backdrop -->
-  <div *ngIf="isModalOpen" class="modal-backdrop fade show"></div>
+  <div *ngIf="isModalOpen" 
+       class="modal-backdrop fade show" 
+       (click)="closeModal()"></div>
 </div>
