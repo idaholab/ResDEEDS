@@ -8,6 +8,11 @@ from src.database.collection import project_document
 router = APIRouter()
 
 
+@router.get("/projects/", dependencies=[Depends(JWTBearer())])
+async def get_projects(token: str = Depends(JWTBearer())):
+    return project_document().all()
+
+
 @router.post("/project/create/", dependencies=[Depends(JWTBearer())])
 async def register_user(project: ProjectModel, token: str = Depends(JWTBearer())):
     """Register a new user."""
