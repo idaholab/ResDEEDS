@@ -14,7 +14,7 @@ async def get_projects(token: str = Depends(JWTBearer())):
 
 
 @router.post("/project/create/", dependencies=[Depends(JWTBearer())])
-async def register_user(project: ProjectModel, token: str = Depends(JWTBearer())):
+async def create_project(project: ProjectModel, token: str = Depends(JWTBearer())):
     """Register a new user."""
 
     payload = project.model_dump()
