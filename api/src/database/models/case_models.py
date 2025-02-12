@@ -7,4 +7,4 @@ class CaseModel(BaseDBModel):
 
     name: str
     project_id: str
-    diagram_data: dict[Any, Any]
+    diagram_data: str

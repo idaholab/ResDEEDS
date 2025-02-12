@@ -22,9 +22,9 @@ class Document:
         self.model = model
         self.unique_field = unique_field
 
-    def all(self) -> list[dict]:
+    def all(self, query: dict = {}) -> list[dict]:
         """Get all documents."""
-        data = self._return_json(list(self.collection.find()))
+        data = self._return_json(list(self.collection.find(query)))
         return data if isinstance(data, list) else []
 
     def get(self, document_id: str = "", query: dict = {}) -> Optional[dict]:
