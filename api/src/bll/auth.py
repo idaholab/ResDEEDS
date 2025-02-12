@@ -67,7 +67,7 @@ def sign_jwt(user_email: str, user_id: str, role: str) -> dict[str, str]:
     payload = {
         "user_email": user_email,
         "user_id": user_id,
-        "expires": time() + 600,
+        "expires": time() + 2400,
         "role": role,
     }
     token = jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
