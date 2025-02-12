@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Project } from '../models/project.model';
 import { environment } from '../../environments/environment';
+import { Case } from '../models/case.model';
 
 
 @Injectable({
@@ -50,6 +51,18 @@ export class ProjectService {
   // Delete a project by ID
   deleteProject(projectId: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/project/${projectId}/delete/`, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  // Fetch a list of cases for a specific project
+  getCases(projectId: string): Observable<Case[]> {
+    return this.http.get<Case[]>(`${this.apiUrl}/project/${projectId}/cases/`, { headers: this.getAuthHeaders() });
+  }
+
+  // Create a new case for a specific project
+  createCase(projectId: string, caseData: Case): Observable<Case> {
+    return this.http.post<Case>(`${this.apiUrl}/project/${projectId}/case/create/`, caseData, {
       headers: this.getAuthHeaders()
     });
   }

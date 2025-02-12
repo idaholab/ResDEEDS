@@ -11,7 +11,7 @@
     </li>
     <!-- Plus sign triggers modal -->
     <li class="nav-item">
-      <a class="nav-link" (click)="openModal()" style="cursor: pointer;">+</a>
+      <a class="nav-link" (click)="openNewTabModal()" style="cursor: pointer;">+</a>
     </li>
 </ul>
   
@@ -29,7 +29,7 @@
     <div class="modal-content">
     <div class="modal-header">
         <h5 class="modal-title">Add a New Case</h5>
-        <button type="button" class="btn-close" (click)="closeModal()" aria-label="Close"></button>
+        <button type="button" class="btn-close" (click)="closeNewTabModal()" aria-label="Close"></button>
     </div>
     <div class="modal-body">
         <label for="tabSelector" class="form-label">Select Hazard:</label>
@@ -42,7 +42,7 @@
         </div>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancel</button>
+        <button type="button" class="btn btn-secondary" (click)="closeNewTabModal()">Cancel</button>
         <button type="button" class="btn btn-primary" (click)="addTabFromModal()">Add Hazard Case</button>
     </div>
     </div>
