@@ -38,21 +38,36 @@ export class ProjectsComponent {
 
   closeCreateModal(): void {
     this.isModalOpen = false;
-    this.newProjectName = ''; // Clear input on close
+    this.newProjectName = '';
   }
 
   saveProject(): void {
     if (this.newProjectName) {
-      this.projectService.createProject({ name: this.newProjectName }).subscribe(
-        (project) => {
-          this.projects.push(project);
+      this.projectService.createProject({ name: this.newProjectName }).subscribe({
+        next: (project) => {
+          this.projects = [...this.projects, project];
           this.closeCreateModal();
         },
-        () => {
-          console.log('Failed to create project');
+        error: (err) => {
+          console.error('Failed to create project:', err);
         }
+      }
       );
     }
+  }
+
+  copyProject(project: Project): void {
+    // Append " (copy)" to the original project name and create a new project
+    const copyName = project.name + ' (copy)';
+    this.projectService.createProject({ name: copyName }).subscribe({
+      next: (newProject) => {
+        this.projects = [...this.projects, newProject];
+      },
+      error: (err) => {
+        console.error('Failed to copy project:', err);
+      }
+    }
+    );
   }
 
   deleteProject(project: Project): void {
