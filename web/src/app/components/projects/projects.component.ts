@@ -1,19 +1,21 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ProjectService } from '../../services/project.service';
 import { Project } from '../../models/project.model';
 
 @Component({
   selector: 'app-projects',
+  standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './projects.component.html',
   styleUrls: ['./projects.component.css']
 })
-export class ProjectsComponent {
+export class ProjectsComponent implements OnInit {
   projects: Project[] = [];
   newProjectName: string = '';
   isModalOpen: boolean = false;
+  errorMsg: string = '';
 
   constructor(private projectService: ProjectService) { }
 
@@ -22,14 +24,14 @@ export class ProjectsComponent {
   }
 
   private loadProjects(): void {
-    this.projectService.getProjects().subscribe(
-      (projects) => {
+    this.projectService.getProjects().subscribe({
+      next: (projects) => {
         this.projects = projects;
       },
-      () => {
+      error: () => {
         console.log('Failed to load projects');
       }
-    );
+    });
   }
 
   openCreateModal(): void {
@@ -42,17 +44,21 @@ export class ProjectsComponent {
   }
 
   saveProject(): void {
-    if (this.newProjectName) {
-      this.projectService.createProject({ name: this.newProjectName }).subscribe({
-        next: (project) => {
-          this.projects = [...this.projects, project];
+    const trimmedName = this.newProjectName.trim();
+    if (trimmedName) {
+      // Create a new project object
+      const newProject = { name: trimmedName };
+      this.projectService.createProject(newProject).subscribe({
+        next: () => {
+          // Refresh the projects component after saving the project
+          this.loadProjects();
           this.closeCreateModal();
         },
         error: (err) => {
           console.error('Failed to create project:', err);
+          this.errorMsg = 'Failed to create project';
         }
-      }
-      );
+      });
     }
   }
 
@@ -60,27 +66,27 @@ export class ProjectsComponent {
     // Append " (copy)" to the original project name and create a new project
     const copyName = project.name + ' (copy)';
     this.projectService.createProject({ name: copyName }).subscribe({
-      next: (newProject) => {
-        this.projects = [...this.projects, newProject];
+      next: () => {
+        // Refresh the projects component after copying the project
+        this.loadProjects();
       },
       error: (err) => {
         console.error('Failed to copy project:', err);
+        this.errorMsg = 'Failed to copy project';
       }
-    }
-    );
+    });
   }
 
   deleteProject(project: Project): void {
-    console.log('Deleting project:', project);
     if (!project._id) {
       console.error('Cannot delete project without ID');
       return;
     }
-
     if (confirm(`Are you sure you want to delete "${project.name}"?`)) {
       this.projectService.deleteProject(project._id).subscribe({
         next: () => {
-          this.projects = this.projects.filter(p => p._id !== project._id);
+          // Refresh the projects component after deleting the project
+          this.loadProjects();
         },
         error: (err) => {
           console.error('Failed to delete project:', err);

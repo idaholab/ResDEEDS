@@ -6,10 +6,18 @@
 
   <!-- Projects List -->
   <div class="row">
+    <div *ngIf="errorMsg" class="alert alert-danger">
+      {{ errorMsg }}
+    </div>
     <div class="col-md-4 mb-3" *ngFor="let project of projects">
       <div class="card">
         <div class="card-body">
-          <h5 class="card-title">{{ project.name }}</h5>
+          <h5 class="card-title"><i class="bi bi-lightning-charge me-2"></i>{{ project.name }}</h5>
+          <p class="card-text">
+            <small class="text-muted">
+              Created: {{ project.created_at | date:'mediumDate' }}
+            </small>
+          </p>
           <div class="d-flex justify-content-between mt-3">
             <button class="btn btn-sm btn-outline-secondary" (click)="copyProject(project)">Copy</button>
             <button class="btn btn-sm btn-outline-info">Diagram</button>
