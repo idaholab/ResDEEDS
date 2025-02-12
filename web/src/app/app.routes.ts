@@ -12,7 +12,7 @@ export const routes: Routes = [
     { path: 'login', component: LoginComponent },
     { path: 'signup', component: SignupComponent },
     { path: 'projects', component: ProjectsComponent, canActivate: [AuthGuard] },
-    { path: 'diagram', component: ProjectDiagramComponent, canActivate: [AuthGuard] },
+    { path: 'project/:id/diagram', component: ProjectDiagramComponent, canActivate: [AuthGuard] },
     { path: '**', redirectTo: '' }
 ];
 

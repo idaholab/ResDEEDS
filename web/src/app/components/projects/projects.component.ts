@@ -129,7 +129,11 @@ export class ProjectsComponent implements OnInit {
     this.editedProjectName = '';
   }
 
-  launchDiagram(): void {
-    this.router.navigate(['/diagram']);
+  launchProject(project: Project): void {
+    if (!project._id) {
+      console.error('Cannot launch project without ID');
+      return;
+    }
+    this.router.navigate(['/project', project._id, 'diagram']);
   }
 }
