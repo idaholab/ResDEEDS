@@ -8,7 +8,7 @@ from src.database.collection import project_document
 router = APIRouter()
 
 
-@router.get("/projects/", dependencies=[Depends(JWTBearer())])
+@router.get("/", dependencies=[Depends(JWTBearer())])
 async def get_projects(token: str = Depends(JWTBearer())):
     return project_document().all()
 
@@ -34,3 +34,16 @@ async def get_project(project_id: str, token: str = Depends(JWTBearer())):
             detail="You do not have permission to access this resource",
         )
     return project_data
+
+
+@router.delete("/project/{project_id}/delete/", dependencies=[Depends(JWTBearer())])
+async def delete_project(project_id: str, token: str = Depends(JWTBearer())):
+    """Delete a project."""
+    token_data = decode_jwt(token)
+    project_data = project_document().get(document_id=project_id)
+    if not project_data or token_data["user_id"] not in project_data["user_ids"]:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You do not have permission to access this resource",
+        )
+    return project_document().delete(document_id=project_id)

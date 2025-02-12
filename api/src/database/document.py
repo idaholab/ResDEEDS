@@ -47,8 +47,10 @@ class Document:
         )
         return ret_data if isinstance(ret_data, dict) else {}
 
-    def delete(self, query: dict) -> None:
+    def delete(self, document_id="", query: dict = {}) -> None:
         """Delete a document."""
+        if document_id:
+            query["_id"] = ObjectId(document_id)
         self.collection.delete_one(query)
 
     def _create_unique_index(self):
