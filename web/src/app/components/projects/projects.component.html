@@ -12,7 +12,22 @@
     <div class="col-md-4 mb-3" *ngFor="let project of projects">
       <div class="card">
         <div class="card-body">
-          <h5 class="card-title"><i class="bi bi-lightning-charge me-2"></i>{{ project.name }}</h5>
+          <h5 class="card-title">
+            <i class="bi bi-lightning-charge me-2"></i>
+            <!-- Display an input field if this project is being edited -->
+            <span *ngIf="editingProjectId !== project._id" (click)="startEditing(project)" style="cursor: pointer;">
+              {{ project.name }}
+            </span>
+            <span *ngIf="editingProjectId === project._id">
+              <input type="text" [(ngModel)]="editedProjectName"
+                     (blur)="updateProjectName(project)" 
+                     (keyup.enter)="updateProjectName(project)" 
+                     (keyup.escape)="cancelEditing()"
+                     autofocus
+                     class="form-control d-inline-block" 
+                     style="width: auto; display: inline;" />
+            </span>
+          </h5>
           <p class="card-text">
             <small class="text-muted">
               Created: {{ project.created_at | date:'mediumDate' }}

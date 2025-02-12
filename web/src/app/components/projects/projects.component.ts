@@ -16,6 +16,8 @@ export class ProjectsComponent implements OnInit {
   newProjectName: string = '';
   isModalOpen: boolean = false;
   errorMsg: string = '';
+  editingProjectId: string | null = null;
+  editedProjectName: string = '';
 
   constructor(private projectService: ProjectService) { }
 
@@ -93,5 +95,36 @@ export class ProjectsComponent implements OnInit {
         }
       });
     }
+  }
+
+  // Enable inline editing for a project name
+  startEditing(project: Project): void {
+    this.editingProjectId = project._id || null;
+    this.editedProjectName = project.name;
+  }
+
+  // Update the project's name via the service. This method is invoked on blur or enter.
+  updateProjectName(project: Project): void {
+    const trimmedName = this.editedProjectName.trim();
+    if (trimmedName && project._id) {
+      this.projectService.updateProject(project._id, { name: trimmedName }).subscribe({
+        next: () => {
+          this.loadProjects();
+          this.cancelEditing();
+        },
+        error: (err) => {
+          console.error('Failed to update project:', err);
+          this.errorMsg = 'Failed to update project name';
+        }
+      });
+    } else {
+      this.cancelEditing();
+    }
+  }
+
+  // Cancel inline editing mode
+  cancelEditing(): void {
+    this.editingProjectId = null;
+    this.editedProjectName = '';
   }
 }

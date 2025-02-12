@@ -40,6 +40,13 @@ export class ProjectService {
     return this.http.get<Project>(`${this.apiUrl}/project/${projectId}/`, { headers: this.getAuthHeaders() });
   }
 
+  // Update a project by ID
+  updateProject(projectId: string, project: Project): Observable<Project> {
+    return this.http.put<Project>(`${this.apiUrl}/project/${projectId}/update/`, project, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
   // Delete a project by ID
   deleteProject(projectId: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/project/${projectId}/delete/`, {

@@ -41,10 +41,14 @@ class Document:
 
     def update(self, query: dict, data: dict) -> Optional[dict]:
         """Update a document."""
+        if "_id" in query and isinstance(query["_id"], str):
+            query["_id"] = ObjectId(query["_id"])
+
         data["updated_at"] = datetime.now(timezone.utc)
         ret_data = self._return_json(
             self.collection.find_one_and_update(query, {"$set": data})
         )
+
         return ret_data if isinstance(ret_data, dict) else {}
 
     def delete(self, document_id="", query: dict = {}) -> None:
