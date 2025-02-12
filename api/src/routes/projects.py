@@ -21,7 +21,18 @@ async def create_project(project: ProjectModel, token: str = Depends(JWTBearer()
     payload = project.model_dump()
     token_data = decode_jwt(token)
     payload["user_ids"] = [token_data["user_id"]]
-    return project_document().create(payload)
+    project_id = project_document().create(payload)
+
+    # Create the default Base Case
+    case_document().create(
+        {
+            "project_id": project_id,
+            "name": "Base Case",
+            "diagram_data": '{"nodes": [], "links": []}',
+        }
+    )
+
+    return project_id
 
 
 @router.get("/project/{project_id}/", dependencies=[Depends(JWTBearer())])
@@ -63,6 +74,12 @@ async def delete_project(project_id: str, token: str = Depends(JWTBearer())):
             status_code=status.HTTP_403_FORBIDDEN,
             detail="You do not have permission to access this resource",
         )
+
+    # Delete all cases associated with the project
+    cases = case_document().all({"project_id": project_id})
+    for case in cases:
+        case_document().delete(document_id=case["_id"])
+
     return project_document().delete(document_id=project_id)
 
 

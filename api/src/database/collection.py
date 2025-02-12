@@ -11,7 +11,7 @@ def project_document() -> Document:
 
 def case_document() -> Document:
     """Get case document."""
-    return Document(collection="cases", model=CaseModel, unique_field="name")
+    return Document(collection="cases", model=CaseModel)
 
 
 def user_document() -> Document:
