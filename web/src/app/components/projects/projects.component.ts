@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { HttpHeaders } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { ProjectService } from '../../services/project.service';
+import { Project } from '../../models/project.model';
 
 @Component({
   selector: 'app-projects',
@@ -11,28 +11,32 @@ import { ProjectService } from '../../services/project.service';
   styleUrls: ['./projects.component.css']
 })
 export class ProjectsComponent {
-  projects: string[] = [];
+  projects: Project[] = [];
   newProjectName: string = '';
   isModalOpen: boolean = false;
 
   constructor(private projectService: ProjectService) { }
 
-  private getAuthHeaders(): HttpHeaders {
-    const token = localStorage.getItem('token');
-    if (token) {
-      return new HttpHeaders({
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
-      });
-    }
-    return new HttpHeaders({ 'Content-Type': 'application/json' });
+  ngOnInit(): void {
+    this.loadProjects();
   }
 
-  openModal(): void {
+  private loadProjects(): void {
+    this.projectService.getProjects().subscribe(
+      (projects) => {
+        this.projects = projects;
+      },
+      () => {
+        console.log('Failed to load projects');
+      }
+    );
+  }
+
+  openCreateModal(): void {
     this.isModalOpen = true;
   }
 
-  closeModal(): void {
+  closeCreateModal(): void {
     this.isModalOpen = false;
     this.newProjectName = ''; // Clear input on close
   }
@@ -41,13 +45,32 @@ export class ProjectsComponent {
     if (this.newProjectName) {
       this.projectService.createProject({ name: this.newProjectName }).subscribe(
         (project) => {
-          this.projects.push(project.name);
-          this.closeModal();
+          this.projects.push(project);
+          this.closeCreateModal();
         },
         () => {
           console.log('Failed to create project');
         }
       );
+    }
+  }
+
+  deleteProject(project: Project): void {
+    console.log('Deleting project:', project);
+    if (!project._id) {
+      console.error('Cannot delete project without ID');
+      return;
+    }
+
+    if (confirm(`Are you sure you want to delete "${project.name}"?`)) {
+      this.projectService.deleteProject(project._id).subscribe({
+        next: () => {
+          this.projects = this.projects.filter(p => p._id !== project._id);
+        },
+        error: (err) => {
+          console.error('Failed to delete project:', err);
+        }
+      });
     }
   }
 }

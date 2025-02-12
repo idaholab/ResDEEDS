@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { Project } from '../models/project.model';
 import { environment } from '../../environments/environment';
 
+
 @Injectable({
   providedIn: 'root'
 })
@@ -37,5 +38,12 @@ export class ProjectService {
   // Fetch a specific project by ID
   getProjectById(projectId: string): Observable<Project> {
     return this.http.get<Project>(`${this.apiUrl}/project/${projectId}/`, { headers: this.getAuthHeaders() });
+  }
+
+  // Delete a project by ID
+  deleteProject(projectId: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/project/${projectId}/delete/`, {
+      headers: this.getAuthHeaders()
+    });
   }
 }
