@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ProjectService } from '../../services/project.service';
 import { Project } from '../../models/project.model';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-projects',
@@ -19,7 +20,7 @@ export class ProjectsComponent implements OnInit {
   editingProjectId: string | null = null;
   editedProjectName: string = '';
 
-  constructor(private projectService: ProjectService) { }
+  constructor(private projectService: ProjectService, private router: Router) { }
 
   ngOnInit(): void {
     this.loadProjects();
@@ -126,5 +127,9 @@ export class ProjectsComponent implements OnInit {
   cancelEditing(): void {
     this.editingProjectId = null;
     this.editedProjectName = '';
+  }
+
+  launchDiagram(): void {
+    this.router.navigate(['/diagram']);
   }
 }
