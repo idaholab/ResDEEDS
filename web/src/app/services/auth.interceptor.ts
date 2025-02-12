@@ -18,7 +18,6 @@ export class AuthInterceptor implements HttpInterceptor {
         const token = localStorage.getItem('token');
 
         if (token) {
-            console.log(this.authService.isTokenExpired(token))
             // Check if the token is expired using the manual decode logic
             if (this.authService.isTokenExpired(token)) {
                 this.authService.logout();
