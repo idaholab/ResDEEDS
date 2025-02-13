@@ -14,7 +14,7 @@ interface Tab {
   selector: 'app-project-diagram',
   imports: [CommonModule, FormsModule, DiagramComponent],
   templateUrl: './project-diagram.component.html',
-  styleUrls: ['./project-diagram.component.css']
+  styleUrls: ['./project-diagram.component.scss']
 })
 export class ProjectDiagramComponent implements OnInit {
   // Default tab list.
@@ -39,12 +39,15 @@ export class ProjectDiagramComponent implements OnInit {
 
   projectId: string = '';
 
+  projectName: string = '';
   cases: Case[] = [];
+
 
   constructor(private _projectService: ProjectService, private _route: ActivatedRoute) { }
 
   ngOnInit(): void {
     this.projectId = this._route.snapshot.paramMap.get('id') || ''
+    this.loadProject()
     this.loadCases()
   }
 
@@ -59,6 +62,17 @@ export class ProjectDiagramComponent implements OnInit {
       },
       error: () => {
         console.log('Failed to load cases');
+      }
+    });
+  }
+
+  private loadProject(): void {
+    this._projectService.getProjectById(this.projectId).subscribe({
+      next: (project) => {
+        this.projectName = project.name;
+      },
+      error: () => {
+        console.log('Failed to load project name');
       }
     });
   }
