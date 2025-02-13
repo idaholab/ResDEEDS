@@ -11,7 +11,8 @@ router = APIRouter()
 
 @router.get("/", dependencies=[Depends(JWTBearer())])
 async def get_projects(token: str = Depends(JWTBearer())):
-    return project_document().all()
+    token_data = decode_jwt(token)
+    return project_document().all({"user_ids": token_data["user_id"]})
 
 
 @router.post("/project/create/", dependencies=[Depends(JWTBearer())])
