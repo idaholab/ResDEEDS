@@ -11,13 +11,14 @@ router = APIRouter()
 
 @router.get("/", dependencies=[Depends(JWTBearer())])
 async def get_projects(token: str = Depends(JWTBearer())):
+    """Get all projects by user id."""
     token_data = decode_jwt(token)
     return project_document().all({"user_ids": token_data["user_id"]})
 
 
 @router.post("/project/create/", dependencies=[Depends(JWTBearer())])
 async def create_project(project: ProjectModel, token: str = Depends(JWTBearer())):
-    """Register a new user."""
+    """Create a new project."""
 
     payload = project.model_dump()
     token_data = decode_jwt(token)
@@ -34,6 +35,31 @@ async def create_project(project: ProjectModel, token: str = Depends(JWTBearer()
     )
 
     return project_id
+
+
+@router.post("/project/{project_id}/copy/", dependencies=[Depends(JWTBearer())])
+async def copy_project(
+    project_id: str, project: ProjectModel, token: str = Depends(JWTBearer())
+):
+    """Create a new project from an existing project."""
+
+    payload = project.model_dump()
+    token_data = decode_jwt(token)
+    payload["user_ids"] = [token_data["user_id"]]
+    new_project_id = project_document().create(payload)
+    case_documents = case_document().all({"project_id": project_id})
+
+    # Generate all cases from the existing project
+    for case in case_documents:
+        case_document().create(
+            {
+                "project_id": new_project_id,
+                "name": case["name"],
+                "diagram_data": case["diagram_data"],
+            }
+        )
+
+    return new_project_id
 
 
 @router.get("/project/{project_id}/", dependencies=[Depends(JWTBearer())])

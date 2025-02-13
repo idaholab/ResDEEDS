@@ -66,9 +66,14 @@ export class ProjectsComponent implements OnInit {
   }
 
   copyProject(project: Project): void {
+    if (!project._id) {
+      console.error('Cannot delete project without ID');
+      return;
+    }
+
     // Append " (copy)" to the original project name and create a new project
     const copyName = project.name + ' (copy)';
-    this.projectService.createProject({ name: copyName }).subscribe({
+    this.projectService.copyProject(project._id, { name: copyName }).subscribe({
       next: () => {
         // Refresh the projects component after copying the project
         this.loadProjects();

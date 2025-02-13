@@ -36,6 +36,11 @@ export class ProjectService {
     return this.http.post<Project>(`${this.apiUrl}/project/create/`, project, { headers: this.getAuthHeaders() });
   }
 
+  // Copy an existing project
+  copyProject(projectId: string, project: Project): Observable<Project> {
+    return this.http.post<Project>(`${this.apiUrl}/project/${projectId}/copy/`, project, { headers: this.getAuthHeaders() });
+  }
+
   // Fetch a specific project by ID
   getProjectById(projectId: string): Observable<Project> {
     return this.http.get<Project>(`${this.apiUrl}/project/${projectId}/`, { headers: this.getAuthHeaders() });
