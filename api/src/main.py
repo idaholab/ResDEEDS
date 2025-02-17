@@ -1,7 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from src.routes import auth, projects
+from src.routes import auth
+from src.routes.projects import projects, cases, analysis
 
 app = FastAPI(title="ResDEEDS")
 
@@ -16,6 +17,8 @@ app.add_middleware(
 
 app.include_router(auth.router, tags=["Auth"], prefix="/api/auth")
 app.include_router(projects.router, tags=["Projects"], prefix="/api/projects")
+app.include_router(cases.router, tags=["Cases"], prefix="/api/projects")
+app.include_router(analysis.router, tags=["Analysis"], prefix="/api/projects")
 
 
 @app.get("/")
