@@ -66,8 +66,15 @@ export class ProjectService {
   }
 
   // Create a new case for a specific project
-  createCase(projectId: string, caseData: Case): Observable<Case> {
-    return this.http.post<Case>(`${this.apiUrl}/project/${projectId}/case/create/`, caseData, {
+  createCase(projectId: string, caseData: Case): Observable<string> {
+    return this.http.post<string>(`${this.apiUrl}/project/${projectId}/case/create/`, caseData, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  // Delete a case by ID
+  deleteCase(projectId: string, caseId: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/project/${projectId}/case/${caseId}/delete/`, {
       headers: this.getAuthHeaders()
     });
   }

@@ -8,6 +8,7 @@ import { ActivatedRoute } from '@angular/router';
 
 interface Tab {
   title: string;
+  _id?: string; // store the case id so we can delete it
 }
 
 @Component({
@@ -18,9 +19,7 @@ interface Tab {
 })
 export class ProjectDiagramComponent implements OnInit {
   // Default tab list.
-  tabs: Tab[] = [
-    { title: 'Base Case' }
-  ];
+  tabs: Tab[] = [{ title: "Base Case", _id: "id" }];
 
   // Active tab index.
   activeTabIndex: number = 0;
@@ -42,22 +41,20 @@ export class ProjectDiagramComponent implements OnInit {
   projectName: string = '';
   cases: Case[] = [];
 
-
   constructor(private _projectService: ProjectService, private _route: ActivatedRoute) { }
 
   ngOnInit(): void {
-    this.projectId = this._route.snapshot.paramMap.get('id') || ''
-    this.loadProject()
-    this.loadCases()
+    this.projectId = this._route.snapshot.paramMap.get('id') || '';
+    this.loadProject();
+    this.loadCases();
   }
 
   private loadCases(): void {
     this._projectService.getCases(this.projectId).subscribe({
       next: (cases) => {
         this.cases = cases;
-
         if (this.cases.length > 0) {
-          this.tabs = this.cases.map(c => ({ title: c.name }));
+          this.tabs = this.cases.map(c => ({ title: c.name, _id: c._id }));
         }
       },
       error: () => {
@@ -89,35 +86,68 @@ export class ProjectDiagramComponent implements OnInit {
     this.showModal = false;
   }
 
-  // Add a new tab from modal selection.
   addTabFromModal(): void {
     const tabTitle = this.selectedTabName === 'Custom'
       ? (this.customTabName.trim() ? this.customTabName : 'Custom Case')
       : this.selectedTabName;
 
-    this.tabs.push({
-      title: tabTitle
-    });
-    // Activate new tab.
-    this.activeTabIndex = this.tabs.length - 1;
-
-    // Create new Case:
-    // TODO: Implement diagram data.
+    // Create new Case
     this._projectService.createCase(this.projectId, { name: tabTitle, diagram_data: "{'test': 'test'}" }).subscribe({
-      next: (newCase) => {
-        console.log('Case created:', newCase);
+      next: (caseId: string) => {
+        // Append the new case to the cases array
+        this.cases = [...this.cases, { name: tabTitle, _id: caseId }];
+        // Regenerate the tabs array from the updated cases
+        this.tabs = this.cases.map(c => ({ title: c.name, _id: c._id }));
+
+        // Activate the new tab
+        this.activeTabIndex = this.tabs.length - 1;
       },
       error: () => {
-        console.log('Failed to load cases');
+        console.log('Failed to create case');
       }
     });
 
-    // Close the modal.
+    // Close the modal
     this.closeNewTabModal();
   }
 
   // Activate a tab.
   activateTab(index: number): void {
     this.activeTabIndex = index;
+  }
+
+  // Delete the active tab and call deleteCase from ProjectService.
+  deleteTab(index: number): void {
+    const tabToDelete = this.tabs[index];
+    if (!tabToDelete._id) {
+      console.log('Cannot delete tab without a valid case id.');
+      return;
+    }
+
+    const confirmed = confirm(`Are you sure you want to delete ${tabToDelete.title}?`);
+    if (!confirmed) {
+      return;
+    }
+
+    this._projectService.deleteCase(this.projectId, tabToDelete._id).subscribe({
+      next: () => {
+        // Remove the case from the tabs array.
+        this.tabs.splice(index, 1);
+
+        // Find and remove the corresponding case from this.cases
+        const caseIndex = this.cases.findIndex(c => c._id === tabToDelete._id);
+        if (caseIndex !== -1) {
+          this.cases.splice(caseIndex, 1);
+        }
+
+        // Adjust active tab index if necessary.
+        if (this.activeTabIndex >= this.tabs.length) {
+          this.activeTabIndex = this.tabs.length - 1;
+        }
+      },
+      error: () => {
+        console.log('Failed to delete case');
+      }
+    });
   }
 }
