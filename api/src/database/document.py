@@ -25,9 +25,9 @@ class Document:
         self.model = model
         self.unique_field = unique_field
 
-    def all(self) -> list[dict]:
+    def all(self, query: dict = {}) -> list[dict]:
         """Get all documents."""
-        data = self._return_json(list(self.collection.find()))
+        data = self._return_json(list(self.collection.find(query)))
         return data if isinstance(data, list) else []
 
     def get(self, document_id: str = "", query: dict = {}) -> Optional[dict]:
@@ -44,14 +44,20 @@ class Document:
 
     def update(self, query: dict, data: dict) -> Optional[dict]:
         """Update a document."""
+        if "_id" in query and isinstance(query["_id"], str):
+            query["_id"] = ObjectId(query["_id"])
+
         data["updated_at"] = datetime.now(timezone.utc)
         ret_data = self._return_json(
             self.collection.find_one_and_update(query, {"$set": data})
         )
+
         return ret_data if isinstance(ret_data, dict) else {}
 
-    def delete(self, query: dict) -> None:
+    def delete(self, document_id="", query: dict = {}) -> None:
         """Delete a document."""
+        if document_id:
+            query["_id"] = ObjectId(document_id)
         self.collection.delete_one(query)
 
     def _create_unique_index(self):

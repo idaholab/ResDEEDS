@@ -1,25 +1,67 @@
 <div class="container mt-5">
-  <!-- Button to open the modal -->
-  <button class="btn btn-primary mb-3" (click)="openModal()">Create New Project</button>
+  <h1>Projects</h1>
+  <div class="d-flex justify-content-end mb-3">
+    <button class="btn btn-primary" (click)="openCreateModal()">Create New Project</button>
+  </div>
 
-  <!-- List of projects in Bootstrap cards -->
+  <!-- Projects List -->
   <div class="row">
+    <div *ngIf="errorMsg" class="alert alert-danger">
+      {{ errorMsg }}
+    </div>
     <div class="col-md-4 mb-3" *ngFor="let project of projects">
       <div class="card">
         <div class="card-body">
-          <h5 class="card-title">{{ project }}</h5>
+          <h5 class="card-title">
+            <i class="bi bi-lightning-charge me-2"></i>
+            <!-- Display an input field if this project is being edited -->
+            <span *ngIf="editingProjectId !== project._id" (click)="startEditing(project)" style="cursor: pointer;">
+              {{ project.name }}
+            </span>
+            <span *ngIf="editingProjectId === project._id">
+              <input type="text" [(ngModel)]="editedProjectName"
+                     (blur)="updateProjectName(project)" 
+                     (keyup.enter)="updateProjectName(project)" 
+                     (keyup.escape)="cancelEditing()"
+                     autofocus
+                     class="form-control d-inline-block" 
+                     style="width: auto; display: inline;" />
+            </span>
+          </h5>
+          <p class="card-text">
+            <small class="text-muted">
+              Created: {{ project.created_at | date:'mediumDate' }}
+            </small>
+          </p>
+          <div class="d-flex justify-content-between mt-3">
+            <button class="btn btn-sm btn-outline-secondary" (click)="copyProject(project)">Copy</button>
+            <button class="btn btn-sm btn-outline-info" (click)="launchProject(project)">Diagram</button>
+            <button 
+            class="btn btn-sm btn-outline-danger" 
+            (click)="deleteProject(project)"
+          >
+            Delete
+          </button>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
   <!-- Bootstrap Modal -->
-  <div class="modal fade" id="projectModal" tabindex="-1" aria-labelledby="projectModalLabel" aria-hidden="true">
+  <div class="modal fade" 
+       [class.show]="isModalOpen" 
+       [style.display]="isModalOpen ? 'block' : 'none'"
+       id="projectModal" 
+       tabindex="-1" 
+       aria-labelledby="projectModalLabel"
+       [attr.aria-hidden]="!isModalOpen"
+       [attr.aria-modal]="isModalOpen ? 'true' : null">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="projectModalLabel">Create New Project</h5>
-          <button type="button" class="btn-close" (click)="closeModal()" aria-label="Close"></button>
+          <button type="button" class="btn-close" (click)="closeCreateModal()" aria-label="Close"></button>
         </div>
         <div class="modal-body">
           <div class="mb-3">
@@ -28,7 +70,7 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancel</button>
+          <button type="button" class="btn btn-secondary" (click)="closeCreateModal()">Cancel</button>
           <button type="button" class="btn btn-primary" (click)="saveProject()">Save</button>
         </div>
       </div>
@@ -36,5 +78,7 @@
   </div>
 
   <!-- Modal Backdrop -->
-  <div *ngIf="isModalOpen" class="modal-backdrop fade show"></div>
+  <div *ngIf="isModalOpen" 
+       class="modal-backdrop fade show" 
+       (click)="closeCreateModal()"></div>
 </div>

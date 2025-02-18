@@ -1,0 +1,22 @@
+::ng-deep .container {
+  margin-top: 20px;
+  max-width: 2000px;
+}
+
+.nav-tabs .nav-link:last-child {
+  font-weight: bold;
+  color: #0d6efd;
+}
+
+/* Modal styling tweaks */
+.modal-backdrop {
+  z-index: 1040;
+}
+
+.modal {
+  z-index: 1050;
+}
+
+.modal-dialog {
+  max-width: 500px;
+}
