@@ -78,7 +78,17 @@ def add_line(network: Network, name: str, bus0: str, bus1: str, length: float) -
     Returns:
         None: Adds the line to the network.
     """
-    network.add("Line", name, bus0=bus0, bus1=bus1, length=length)
+    network.add(
+        "Line",
+        name,
+        bus0=bus0,
+        bus1=bus1,
+        length=length,
+        x=0.1100,
+        r=0.1000,
+        g=0,
+        b=0.00005,
+    )
 
 
 def add_load(
@@ -121,6 +131,7 @@ def add_diesel_generator(
     network: Network,
     name: str,
     bus: str,
+    control: str,
     nominal_power_kva: float,
     power_factor: float = 0.8,
     units: int = 1,
@@ -133,6 +144,7 @@ def add_diesel_generator(
     - network (pypsa.Network): The PyPSA network object.
     - name (str): Name of the diesel generator.
     - bus (str): Bus to which the generator is connected.
+    - control (str): P,Q,V control strategy for PF, must be "PQ", "PV" or "Slack".
     - nominal_power_kva (float): Nominal power in kVA (required).
     - power_factor (float, optional): Power factor. Defaults to 0.8.
     - units (int, optional): Number of identical units. Defaults to 1.
@@ -152,7 +164,9 @@ def add_diesel_generator(
         "Generator",
         f"{name} - Diesel Generator",
         bus=bus,
+        control=control,
         p_nom=total_nominal_power_mw,  # Total nominal power (MW)
+        p_set=total_nominal_power_mw,
         efficiency=0.4,  # Example efficiency (40%)
         marginal_cost=0,  # Cost per MWh
         p_max_pu=1.0,  # Allow full nominal output

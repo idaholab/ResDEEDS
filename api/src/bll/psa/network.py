@@ -52,22 +52,52 @@ def create_network(case_name: str) -> Network:
 
     # Add diesel generators
     add_diesel_generator(
-        network, name="Diesel 1", bus="Main", nominal_power_kva=3850, power_factor=0.85
+        network,
+        name="Diesel 1",
+        bus="Main",
+        control="Slack",
+        nominal_power_kva=3850,
+        power_factor=0.85,
     )
     add_diesel_generator(
-        network, name="Diesel 2", bus="Main", nominal_power_kva=3851, power_factor=0.85
+        network,
+        name="Diesel 2",
+        bus="Main",
+        control="PV",
+        nominal_power_kva=3851,
+        power_factor=0.85,
     )
     add_diesel_generator(
-        network, name="Diesel 3", bus="Main", nominal_power_kva=3851, power_factor=0.85
+        network,
+        name="Diesel 3",
+        bus="Main",
+        control="PV",
+        nominal_power_kva=3851,
+        power_factor=0.85,
     )
     add_diesel_generator(
-        network, name="Diesel 4", bus="Main", nominal_power_kva=1875, power_factor=0.85
+        network,
+        name="Diesel 4",
+        bus="Main",
+        control="PV",
+        nominal_power_kva=1875,
+        power_factor=0.85,
     )
     add_diesel_generator(
-        network, name="Diesel 5", bus="Main", nominal_power_kva=906, power_factor=0.85
+        network,
+        name="Diesel 5",
+        bus="Main",
+        control="PV",
+        nominal_power_kva=906,
+        power_factor=0.85,
     )
     add_diesel_generator(
-        network, name="Standby", bus="Main", nominal_power_kva=1887, power_factor=0.8
+        network,
+        name="Standby",
+        bus="Main",
+        control="PV",
+        nominal_power_kva=1887,
+        power_factor=0.8,
     )
 
     # Add renewable generators (connected to the Renewable Field Bus)
