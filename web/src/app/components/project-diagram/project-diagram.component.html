@@ -10,12 +10,20 @@
         <div class="my-diagram-buttton diagram-button" (click)="addLoad()">Add Load</div>
     </div>
     <div class="diagram-wrapper">
+        <div class="diagram-hazards-tab-wrapper">
+            <div class="diagram-hazards-tab"> Base </div>
+            <div class="diagram-hazards-tab" [ngClass]="{'node-data-tab-selected': true}"> Fire </div>
+            <div class="diagram-hazards-tab"> Flood </div>
+            <div class="diagram-hazards-tab add-hazard-tab"> + </div>
+
+        </div>
         <div #drawflow class="drawflow-container drawing-board main-diagram"></div>
 
         <div class="node-data" > 
             <div class="node-data-tabs">
                 <div class="node-data-tab diagram-button" [ngClass]="{'node-data-tab-selected': tabSelected == 'info'}" (click)="setTab('info')">Info</div>
                 <div class="node-data-tab diagram-button" [ngClass]="{'node-data-tab-selected': tabSelected == 'connections'}"(click)="setTab('connections')">Connections</div>
+                <div class="node-data-tab diagram-button" [ngClass]="{'node-data-tab-selected': tabSelected == 'hazards'}"(click)="setTab('hazards')">Hazards</div>
             </div>
             
             @if (tabSelected == 'info') {
@@ -158,6 +166,41 @@
                         inputs
                     } -->
                 </div>
+            }
+            @if (tabSelected == 'hazards') {
+                Hazard - Fire
+                @if (workingNode?.data?.type == 'Load' ) {
+                    <div class="generic-node-data">
+                        
+                        <label for="powerFactor">Load Field One: </label>
+                        <input id="powerFactor" type="number">
+                        <label for="powerFactor">Critical : </label>
+                        <input type="checkbox" id="horns" name="horns" />
+                        
+                        <label for="reduction">Other Load Data: </label>
+                        <input id="reduction" type="number" >
+                        
+                        <label for="timeAllowedForOutage">Time Allowed For Outage : </label>
+                        <input id="timeAllowedForOutage" type="number" >
+    
+                    </div> 
+                }
+                
+                @if (workingNode?.data?.type == 'Line' ) {
+                    <div class="generic-node-data">
+                        
+                        <label for="powerFactor">Percent Loss allowed: </label>
+                        <input id="powerFactor" type="number">
+                        
+                        <label for="reduction">My Line Hazard Data: </label>
+                        <input id="reduction" type="number" >
+                        
+                        <label for="timeAllowedForOutage">Other Data : </label>
+                        <input id="timeAllowedForOutage" type="number" >
+    
+                    </div> 
+                    
+                }
             }
         </div>
     </div>

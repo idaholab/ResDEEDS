@@ -278,7 +278,7 @@ export class ProjectDiagramComponent implements OnInit, AfterViewInit {
       console.log(Object.keys(this.workingNode.inputs))
       //asd
       this.generateFormGroup(this.workingNode['data'])
-      this.setTab('info');
+      // this.setTab('info');
       this.nodeSelected = true;
     })
     this._projectService.editor.on('nodeUnselected', (id: any) =>{
@@ -295,7 +295,7 @@ export class ProjectDiagramComponent implements OnInit, AfterViewInit {
     console.log(this.projectId)
   }
   test(){
-    console.log(this._projectService.editor.getNodesFromName("UtilitySource").length)
+    console.log(this._projectService.editor.export())
   }
   saveWorkingNode(){
     console.log("Saving")
@@ -382,6 +382,7 @@ export class ProjectDiagramComponent implements OnInit, AfterViewInit {
     }
     return "gen node HTML error"
   }
+
 
   public addNode(jsonData: any = {}){
     console.log("Adding")
