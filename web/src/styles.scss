@@ -565,9 +565,11 @@
 }
 
 .drawflow .drawflow-node .drawflow_content_node {
-    width: 100%;
+    width: auto;
     display: block;
     padding: 8px;
+    overflow-y: hidden !important;
+    overflow-x: hidden !important;
 }
 
 .drawflow .drawflow-node .input,.drawflow .drawflow-node .output {
@@ -997,7 +999,6 @@
   }
   .drawflow_content_node:has(.green-node){
     background-color: rgb(39, 190, 112);
-
   }
 .red-node{
 }

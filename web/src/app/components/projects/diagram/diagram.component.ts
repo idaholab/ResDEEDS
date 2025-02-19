@@ -5,7 +5,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { ProjectService } from '../../../services/project.service';
 import { CommonModule } from '@angular/common';
 import { DiagramService } from '../../../services/diagram.service';
-import { getTestData } from "./diagram-test-data";
+import { getTestData, getAnalysisTestData } from "./diagram-test-data";
 
 @Component({
   selector: 'app-diagram',
@@ -38,9 +38,17 @@ export class DiagramComponent implements OnInit, AfterViewInit {
     this.tabSelected = inputTab
     return
   }
+
+public baseStylingObject(){
+  return {
+    height: "40px",
+    width: "200px"
+  }
+}
   
   public addUtilitySource(){    
     var jsonData = {
+      styling: this.baseStylingObject(),
       color: "",
       type: "UtilitySource",
       name: "UtilitySource",
@@ -56,6 +64,7 @@ export class DiagramComponent implements OnInit, AfterViewInit {
   }
   public addLine(){    
     var jsonData = {
+      styling: this.baseStylingObject(),
       color: "",
       type: "Line",
       name: "Line",
@@ -72,6 +81,7 @@ export class DiagramComponent implements OnInit, AfterViewInit {
   }
   public addDieselGenerator(){    
     var jsonData = {
+      styling: this.baseStylingObject(),
       color: "",
       type: "DieselGenerator",
       name: "DieselGenerator",
@@ -85,6 +95,7 @@ export class DiagramComponent implements OnInit, AfterViewInit {
   }
   public addWindGenerator(){    
     var jsonData = {
+      styling: this.baseStylingObject(),
       color: "",
       type: "WindGenerator",
       name: "WindGenerator",
@@ -99,6 +110,7 @@ export class DiagramComponent implements OnInit, AfterViewInit {
   }
   public addSolarGenerator(){    
     var jsonData = {
+      styling: this.baseStylingObject(),
       color: "",
       type: "SolarGenerator",
       name: "SolarGenerator",
@@ -112,6 +124,7 @@ export class DiagramComponent implements OnInit, AfterViewInit {
   }
   public addBattery(){    
     var jsonData = {
+      styling: this.baseStylingObject(),
       color: "",
       type: "Battery",
       name: "Battery",
@@ -126,6 +139,7 @@ export class DiagramComponent implements OnInit, AfterViewInit {
   }
   public addBus(){    
     var jsonData = {
+      styling: this.baseStylingObject(),
       color: "",
       type: "Bus",
       name: "Bus",
@@ -137,6 +151,7 @@ export class DiagramComponent implements OnInit, AfterViewInit {
   }
   public addLoad(){    
     var jsonData = {
+      styling: this.baseStylingObject(),
       color: "",
       type: "Load",
       name: "Load",
@@ -331,7 +346,7 @@ export class DiagramComponent implements OnInit, AfterViewInit {
     console.log(this._projectService.editor.export())
   }
   import(){
-    console.log("Importingh")
+    console.log("Importing")
     var importData = getTestData();
     console.log(importData);
     this._projectService.editor.import(importData);
@@ -345,6 +360,23 @@ export class DiagramComponent implements OnInit, AfterViewInit {
       // this.generateNodeHTML(this._projectService.editor.drawflow.drawflow.Home.data[dataId].data)
     });
     // this.generateNodeHTML()
+  }
+  importForDemo(){
+    console.log("Importing")
+    var importData = getAnalysisTestData();
+    console.log(importData);
+    this._projectService.editor.import(importData);
+    console.log(this._projectService.editor.drawflow.drawflow.Home.data);
+    Object.keys(this._projectService.editor.drawflow.drawflow.Home.data)
+    .forEach((objectKey: any) => {
+      var nodeId = this._projectService.editor.drawflow.drawflow.Home.data[objectKey].id
+      var t = document.querySelector(".drawflow-node[id='node-"+ nodeId +"'] .drawflow_content_node")
+      if(t)
+        t.innerHTML = this.generateNodeHTML(this.getNodeInfo(nodeId).data)
+      // this.generateNodeHTML(this._projectService.editor.drawflow.drawflow.Home.data[dataId].data)
+    });
+    // this.generateNodeHTML()
+
   }
   saveWorkingNode(){
     console.log("Saving")
@@ -375,11 +407,51 @@ export class DiagramComponent implements OnInit, AfterViewInit {
     this.updateHTML(this.workingNode.id)
   }
 
+  setNodeHeight(modifier: any){
+    var increaseValue = 20;
+    var minSize = 20;
+    var node = this._projectService.editor.drawflow.drawflow.Home.data[this.workingNode.id];
+    var height = Number(node.data.styling.height.substring(0,node.data.styling.height.indexOf('px')));
+
+    if(modifier == "+"){
+      height += increaseValue
+    }
+    if(modifier == "-"){
+      height -= increaseValue
+    }
+    if(height <= minSize){return;}
+    var stringHeight = height + "px";
+    // this.workingNode.data.styling.height = stringHeight;
+    node.data.styling.height = stringHeight 
+    this.updateHTML(this.workingNode.id);
+  }
+  setNodeWidth(modifier: any){
+    var increaseValue = 20;
+    var minSize = 80;
+    var node = this._projectService.editor.drawflow.drawflow.Home.data[this.workingNode.id];
+    var width = Number(node.data.styling.width.substring(0,node.data.styling.width.indexOf('px')));
+
+    if(modifier == "+"){
+      width += increaseValue
+    }
+    if(modifier == "-"){
+      width -= increaseValue
+    }
+    if(width <= minSize) return
+    var stringWidth = width + "px";
+    // this.workingNode.data.styling.height = stringHeight;
+    node.data.styling.width = stringWidth 
+    this.updateHTML(this.workingNode.id);
+  }
+  
+
 
   updateHTML(id: any){
     var t = document.querySelector(".drawflow-node[id='node-"+ id +"'] .drawflow_content_node");
-      if(t)
+      if(t){
+        console.log("Updating HTML: element found with id " + id);
         t.innerHTML = this.generateNodeHTML(this._projectService.editor.drawflow.drawflow.Home.data[this.workingNode.id].data)
+      }
   }
 
 
@@ -397,56 +469,56 @@ export class DiagramComponent implements OnInit, AfterViewInit {
 
     if(data['type'] == 'UtilitySource'){
       nodeHTML = `
-      <div class="diagram-node">
+      <div style="" class="diagram-node">
         ${data['title']} - US
       </div>
       `
     }
     if(data['type'] == 'Line'){
       nodeHTML = `
-      <div class="diagram-node">
+      <div style="" class="diagram-node">
         ${data['title']} - Line
       </div>
       `
     }
     if(data['type'] == 'DieselGenerator'){
       nodeHTML = `
-      <div class="diagram-node">
+      <div style="" class="diagram-node">
         ${data['title']} - Diesel Generator
       </div>
       `
     }
     if(data['type'] == 'WindGenerator'){
       nodeHTML = `
-      <div class="diagram-node">
+      <div style="" class="diagram-node">
         ${data['title']} - Wind Generator
       </div>
       `
     }
     if(data['type'] == 'SolarGenerator'){
       nodeHTML = `
-      <div class="diagram-node">
+      <div style="" class="diagram-node">
         ${data['title']} - Solar Generator
       </div>
       `
     }
     if(data['type'] == 'Battery'){
       nodeHTML = `
-      <div class="diagram-node">
+      <div style="" class="diagram-node">
         ${data['title']} - Battery
       </div>
       `
     }
     if(data['type'] == 'Bus'){
       nodeHTML = `
-      <div class="diagram-node">
+      <div style="" class="diagram-node">
         ${data['title']} - Bus
       </div>
       `
     }
     if(data['type'] == 'Load'){
       nodeHTML = `
-      <div class="diagram-node" style="height: 50px">
+      <div style="" class="diagram-node">
         ${data['title']} - Load
       </div>
       `      
@@ -454,13 +526,18 @@ export class DiagramComponent implements OnInit, AfterViewInit {
 
     var colorClass = ""
     if(data['color']){
-      colorClass = data['color'] + "-node"
-      console.log(nodeHTML.slice(0,nodeHTML.indexOf("class=")))
-      console.log(nodeHTML.indexOf("class="))
-      console.log(nodeHTML.substring(12,20))
-    
+      colorClass = data['color'] + "-node"    
       nodeHTML= nodeHTML.slice(0,nodeHTML.indexOf("class=") + 7) + colorClass +  " " + nodeHTML.slice(nodeHTML.indexOf("class=") + 7,nodeHTML.length)
     }
+
+    var inlineStyle = ""
+    Object.keys(data.styling).forEach(style => {
+      console.log(style)
+      inlineStyle += `${style}: ${data['styling'][style]};`
+    }); 
+    
+    nodeHTML= nodeHTML.slice(0,nodeHTML.indexOf("style=") + 7) + inlineStyle + nodeHTML.slice(nodeHTML.indexOf("style=") + 7,nodeHTML.length)
+
     console.log(nodeHTML)
 
 
@@ -472,7 +549,7 @@ export class DiagramComponent implements OnInit, AfterViewInit {
     console.log("Adding")
     console.log(jsonData)
     var html = `
-      <div class="diagram-node">
+      <div style="" class="diagram-node">
         Unassigned      
       </div>
       `
