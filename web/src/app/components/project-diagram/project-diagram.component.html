@@ -10,15 +10,21 @@
         <div class="my-diagram-buttton diagram-button" (click)="addLoad()">Add Load</div>
     </div>
     <div class="diagram-wrapper">
+        <div class="diagram-hazards-tab-wrapper">
+            <div class="diagram-hazards-tab"> Base </div>
+            <div class="diagram-hazards-tab" [ngClass]="{'node-data-tab-selected': true}"> Fire </div>
+            <div class="diagram-hazards-tab"> Flood </div>
+            <div class="diagram-hazards-tab add-hazard-tab"> + </div>
+
+        </div>
         <div #drawflow class="drawflow-container drawing-board main-diagram"></div>
 
-        <div class="node-data" > 
+        <!-- <div class="node-data" > 
             <div class="node-data-tabs">
                 <div class="node-data-tab diagram-button" [ngClass]="{'node-data-tab-selected': tabSelected == 'info'}" (click)="setTab('info')">Info</div>
                 <div class="node-data-tab diagram-button" [ngClass]="{'node-data-tab-selected': tabSelected == 'connections'}"(click)="setTab('connections')">Connections</div>
                 <div class="node-data-tab diagram-button" [ngClass]="{'node-data-tab-selected': tabSelected == 'hazards'}"(click)="setTab('hazards')">Hazards</div>
-
-            </div>
+            </div> -->
             
             @if (tabSelected == 'info') {
             <div class="node-specific-data" [formGroup]="workingFormGroup">
@@ -136,60 +142,76 @@
             @if (tabSelected == 'connections') {
                 <div class="node-connection-data">
 
-                    <div class="connection-title">                        
-                        <div>
-                            Inputs
-                        </div>
-                        <div (click)="addNodeConnection('input')" class="input-output-remove-button"> + </div>
-                    </div>
                     @for (input of inputConnections; track input.id){
-                        <div class="input-output-title">
-                            <div>Input {{input.id + 1}}</div>
-                            <div (click)="removeNodeConnection('input',input.id, input.connections.length == 0)" class="input-output-remove-button" [ngClass]="{'disabled-remove-button': input.connections.length > 0}"> - </div>
-                        </div>
-                        <div class="input-output-container">
-                            @for (connection of input.connections; track connection.node){
-                                {{connection.title}}
-                            }
-                        </div>                        
+                        {{input.title}}
+                        
+                        @for (connection of input.connections; track connection.node){
+                            {{connection.title}}
+                        }
                     }
                     <div>-----------</div>
-                    <div class="connection-title">
-                        <div>
-                            Outputs
-                        </div>
-                        <div (click)="addNodeConnection('output')" class="input-output-remove-button"> + </div>
-                    </div>                    
                     @for (output of outputConnections; track output.id){
-                        <div class="input-output-title">
-                            <div>Output {{output.id + 1}}</div>
-                            <div (click)="removeNodeConnection('output',output.id, output.connections.length == 0)" class="input-output-remove-button" [ngClass]="{'disabled-remove-button': output.connections.length > 0}"> - </div>
-                        </div>
-                        <div class="input-output-container">
-                            @for (connection of output.connections; track connection.node){
-                                <div class="input-output-connection">
-                                    {{connection.title}}
-                                </div>
-                            }
-                        </div>      
+                        {{output.title}}
                     }
+                    <!-- @for (input of workingNode.inputsArray; track input.id) {
+                        <div  (click)="getNodeTitle(input.id)"> X </div>>
+                    } -->
+                    <!-- @for (output of workingNode.outputsArray; track output.id) {
+                        out
+                    } -->
+                    <!-- @for (const [key, value] of Object.entries(workingNode.outputs; track key)) {
+                        test
+                    } -->
+                    <!-- @for (output of workingNode.outputs; track 1) {
+                        inputs
+                    } -->
                 </div>
+            }
+            @if (tabSelected == 'hazards') {
+                Hazard - Fire
+                @if (workingNode?.data?.type == 'Load' ) {
+                    <div class="generic-node-data">
+                        
+                        <label for="powerFactor">Load Field One: </label>
+                        <input id="powerFactor" type="number">
+                        <label for="powerFactor">Critical : </label>
+                        <input type="checkbox" id="horns" name="horns" />
+                        
+                        <label for="reduction">Other Load Data: </label>
+                        <input id="reduction" type="number" >
+                        
+                        <label for="timeAllowedForOutage">Time Allowed For Outage : </label>
+                        <input id="timeAllowedForOutage" type="number" >
+    
+                    </div> 
+                }
+                
+                @if (workingNode?.data?.type == 'Line' ) {
+                    <div class="generic-node-data">
+                        
+                        <label for="powerFactor">Percent Loss allowed: </label>
+                        <input id="powerFactor" type="number">
+                        
+                        <label for="reduction">My Line Hazard Data: </label>
+                        <input id="reduction" type="number" >
+                        
+                        <label for="timeAllowedForOutage">Other Data : </label>
+                        <input id="timeAllowedForOutage" type="number" >
+    
+                    </div> 
+                    
+                }
             }
         </div>
     </div>
     <div class="diagram-bottom-bar">
-        @if (true) {
+        @if (nodeSelected) {
             <div class="my-diagram-buttton" (click)="addNode()">Add Node</div>
-            <div class="my-diagram-buttton" (click)="test()">Export</div>
-            <div class="my-diagram-buttton" (click)="import()">Import</div>
-            <div class="my-diagram-buttton" (click)="importForDemo()">Analyze</div>
-            <div class="my-diagram-buttton" (click)="setColor('red')">Red</div>
-            <div class="my-diagram-buttton" (click)="setColor('green')">Green</div>
-            <div class="my-diagram-buttton" (click)="setNodeWidth('+')">Width +</div>
-            <div class="my-diagram-buttton" (click)="setNodeWidth('-')">Width -</div>
-            <div class="my-diagram-buttton" (click)="setNodeHeight('+')">Height +</div>
-            <div class="my-diagram-buttton" (click)="setNodeHeight('-')">Height -</div>
+            <div class="my-diagram-buttton" (click)="test()">Test</div>
         }
     </div>
 
 </div>
+
+
+

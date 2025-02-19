@@ -1,20 +1,22 @@
-import { Component, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { Component, OnInit,AfterViewInit, ViewChild, ElementRef } from '@angular/core';
+import {FormControl, FormGroup} from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { ReactiveFormsModule } from '@angular/forms';
-import { ProjectService } from '../../../services/project.service';
+import { ProjectService } from '../../services/project.service';
+import {ReactiveFormsModule} from '@angular/forms';
+import { DiagramNodeComponent } from '../diagram-node/diagram-node.component';
 import { CommonModule } from '@angular/common';
-import { DiagramService } from '../../../services/diagram.service';
-import { getTestData, getAnalysisTestData } from "./diagram-test-data";
+// import Drawflow from 'drawflow'
+// import 'drawflow/dist/drawflow.min.css'
 
 @Component({
-  selector: 'app-diagram',
+  selector: 'app-project-diagram',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
-  templateUrl: './diagram.component.html',
-  styleUrl: './diagram.component.scss'
+  imports: [ReactiveFormsModule,CommonModule],
+  templateUrl: './project-diagram.component.html',
+  // styleUrls: ['./project-diagram.component.scss','drawflow/dist/drawflow.min.css'],
+  styleUrl: './project-diagram.component.scss'
 })
-export class DiagramComponent implements OnInit, AfterViewInit {
+export class ProjectDiagramComponent implements OnInit, AfterViewInit {
   @ViewChild('drawflow', { static: true }) drawflowEl!: ElementRef;
   
   projectId: string = "0";
@@ -39,17 +41,8 @@ export class DiagramComponent implements OnInit, AfterViewInit {
     return
   }
 
-public baseStylingObject(){
-  return {
-    height: "40px",
-    width: "200px"
-  }
-}
-  
   public addUtilitySource(){    
     var jsonData = {
-      styling: this.baseStylingObject(),
-      color: "",
       type: "UtilitySource",
       name: "UtilitySource",
       title: "Utility Source " + (this._projectService.editor.getNodesFromName("UtilitySource").length + 1),
@@ -64,8 +57,6 @@ public baseStylingObject(){
   }
   public addLine(){    
     var jsonData = {
-      styling: this.baseStylingObject(),
-      color: "",
       type: "Line",
       name: "Line",
       title: "Line " + (this._projectService.editor.getNodesFromName("Line").length + 1),
@@ -81,8 +72,6 @@ public baseStylingObject(){
   }
   public addDieselGenerator(){    
     var jsonData = {
-      styling: this.baseStylingObject(),
-      color: "",
       type: "DieselGenerator",
       name: "DieselGenerator",
       title: "Diesel Generator " + (this._projectService.editor.getNodesFromName("DieselGenerator").length + 1),
@@ -95,8 +84,6 @@ public baseStylingObject(){
   }
   public addWindGenerator(){    
     var jsonData = {
-      styling: this.baseStylingObject(),
-      color: "",
       type: "WindGenerator",
       name: "WindGenerator",
       title: "Wind Generator " + (this._projectService.editor.getNodesFromName("WindGenerator").length + 1),
@@ -110,8 +97,6 @@ public baseStylingObject(){
   }
   public addSolarGenerator(){    
     var jsonData = {
-      styling: this.baseStylingObject(),
-      color: "",
       type: "SolarGenerator",
       name: "SolarGenerator",
       title: "Solar Generator " + (this._projectService.editor.getNodesFromName("SolarGenerator").length + 1),
@@ -124,8 +109,6 @@ public baseStylingObject(){
   }
   public addBattery(){    
     var jsonData = {
-      styling: this.baseStylingObject(),
-      color: "",
       type: "Battery",
       name: "Battery",
       title: "Battery " + (this._projectService.editor.getNodesFromName("Battery").length + 1),
@@ -139,8 +122,6 @@ public baseStylingObject(){
   }
   public addBus(){    
     var jsonData = {
-      styling: this.baseStylingObject(),
-      color: "",
       type: "Bus",
       name: "Bus",
       title: "Bus " + (this._projectService.editor.getNodesFromName("Bus").length + 1),
@@ -151,8 +132,6 @@ public baseStylingObject(){
   }
   public addLoad(){    
     var jsonData = {
-      styling: this.baseStylingObject(),
-      color: "",
       type: "Load",
       name: "Load",
       title: "Load " + (this._projectService.editor.getNodesFromName("Load").length + 1),
@@ -162,8 +141,6 @@ public baseStylingObject(){
       reduction: 50,
       timeAllowedForOutage: 5,
     }
-    console.log(jsonData)
-    console.log("TESTSET")
     this.addNode(jsonData)
   }
 
@@ -250,35 +227,14 @@ public baseStylingObject(){
 
 
   getNodeTitle(id: any){
+    console.log(id)
+    // return "test"
     return this._projectService.editor.getNodeFromId(id).data.title;
 
-  }
-  addNodeConnection(end: any){
-    if(end == "input"){
-      this._projectService.editor.addNodeInput(this.workingNode.id)
-    }
-    if(end == "output"){
-      this._projectService.editor.addNodeOutput(this.workingNode.id)
-    }
-    this.structureNodeInputOutputs(this.workingNode);
-    this.getNodeInfo(this.workingNode.id)
-    return;
-  }
-  removeNodeConnection(end: string,id: any, canRemove: boolean = true){
-    if(!canRemove) return;
-    if(end == "input"){      
-      this._projectService.editor.removeNodeInput(this.workingNode.id,`input_${id + 1}`)
-    }
-    if(end == "output"){      
-      this._projectService.editor.removeNodeOutput(this.workingNode.id,`output_${id + 1}`)
-    }
-    this.outputConnections.splice(id,1);
-    this.getNodeInfo(this.workingNode.id)
   }
 
   structureConnections(connections: any){
     connections.forEach((element: any, index: number) => {
-      element['title'] = "test"
       connections[index]['title'] = this.getNodeTitle(connections[index]['node'] as number)
     });
     return connections;
@@ -287,11 +243,12 @@ public baseStylingObject(){
   structureNodeInputOutputs(node: any){
     node['inputsArray'] = []
     node['outputsArray'] = []
+    console.log(node)
     if(node['inputs']){
       var inputKeys = Object.keys(node.inputs)
       inputKeys.forEach((element: any, index:number) => {
         node.inputsArray.push({
-          connections: this.structureConnections(node.inputs[element].connections),          
+          connections: this.structureConnections(node.inputs[element].connections),
           id: index
         })
       });
@@ -300,7 +257,7 @@ public baseStylingObject(){
       var outputKeys = Object.keys(node.outputs)
       outputKeys.forEach((element: any, index:number) => {
         node.outputsArray.push({
-          connections: this.structureConnections(node.outputs[element].connections),  
+          connections: node.outputs[element].connections,
           id: index
         })
       });
@@ -318,6 +275,7 @@ public baseStylingObject(){
     this._projectService.editor.on('nodeSelected', (id: any) =>{
       console.log("Node selected:" + id);
       this.workingNode = this.getNodeInfo(id);
+      console.log(Object.keys(this.workingNode.inputs))
       //asd
       this.generateFormGroup(this.workingNode['data'])
       // this.setTab('info');
@@ -330,12 +288,6 @@ public baseStylingObject(){
     this._projectService.editor.on('connectionSelected', function(id: any){
       console.log(id)
     })
-
-    this._projectService.editor.on('connectionRemoved', (outid: any, intid: any, outclass: any, inclass: any) => {
-      this.getNodeInfo(this.workingNode.id)
-      console.log()
-      
-    })
   }
 
   ngOnInit(): void {    
@@ -345,39 +297,6 @@ public baseStylingObject(){
   test(){
     console.log(this._projectService.editor.export())
   }
-  import(){
-    console.log("Importing")
-    var importData = getTestData();
-    console.log(importData);
-    this._projectService.editor.import(importData);
-    console.log(this._projectService.editor.drawflow.drawflow.Home.data);
-    Object.keys(this._projectService.editor.drawflow.drawflow.Home.data)
-    .forEach((objectKey: any) => {
-      var nodeId = this._projectService.editor.drawflow.drawflow.Home.data[objectKey].id
-      var t = document.querySelector(".drawflow-node[id='node-"+ nodeId +"'] .drawflow_content_node")
-      if(t)
-        t.innerHTML = this.generateNodeHTML(this.getNodeInfo(nodeId).data)
-      // this.generateNodeHTML(this._projectService.editor.drawflow.drawflow.Home.data[dataId].data)
-    });
-    // this.generateNodeHTML()
-  }
-  importForDemo(){
-    console.log("Importing")
-    var importData = getAnalysisTestData();
-    console.log(importData);
-    this._projectService.editor.import(importData);
-    console.log(this._projectService.editor.drawflow.drawflow.Home.data);
-    Object.keys(this._projectService.editor.drawflow.drawflow.Home.data)
-    .forEach((objectKey: any) => {
-      var nodeId = this._projectService.editor.drawflow.drawflow.Home.data[objectKey].id
-      var t = document.querySelector(".drawflow-node[id='node-"+ nodeId +"'] .drawflow_content_node")
-      if(t)
-        t.innerHTML = this.generateNodeHTML(this.getNodeInfo(nodeId).data)
-      // this.generateNodeHTML(this._projectService.editor.drawflow.drawflow.Home.data[dataId].data)
-    });
-    // this.generateNodeHTML()
-
-  }
   saveWorkingNode(){
     console.log("Saving")
     if(this.workingFormGroup.valid){
@@ -386,6 +305,7 @@ public baseStylingObject(){
       });
 
 
+      this._projectService.editor.drawflow.drawflow.Home.data[this.workingNode.id].html = "asdasdasd"
       var t = document.querySelector(".drawflow-node[id='node-"+this.workingNode.id+"'] .drawflow_content_node");
       if(t)
         t.innerHTML = this.generateNodeHTML(this.getNodeInfo(this.workingNode.id).data)
@@ -394,66 +314,6 @@ public baseStylingObject(){
 
     }
   }
-  setColor(inputColor: any){
-    this.workingNode.data['color'] = inputColor;
-    console.log(this._projectService.editor.drawflow.drawflow.Home.data[this.workingNode.id].data)
-    this._projectService.editor.drawflow.drawflow.Home.data[this.workingNode.id].data['color'] = inputColor
-    console.log(this._projectService.editor.drawflow.drawflow.Home.data[this.workingNode.id].data)
-    
-    // this._projectService.editor.drawflow.drawflow.Home.data['color'] = inputColor; 
-    // console.log(this.getNodeInfo(this.workingNode.id).data['color'] = inputColor)
-    // console.log(this.getNodeInfo(this.workingNode.id).data['color'])
-    // console.log(this.workingNode.data['color'])
-    this.updateHTML(this.workingNode.id)
-  }
-
-  setNodeHeight(modifier: any){
-    var increaseValue = 20;
-    var minSize = 20;
-    var node = this._projectService.editor.drawflow.drawflow.Home.data[this.workingNode.id];
-    var height = Number(node.data.styling.height.substring(0,node.data.styling.height.indexOf('px')));
-
-    if(modifier == "+"){
-      height += increaseValue
-    }
-    if(modifier == "-"){
-      height -= increaseValue
-    }
-    if(height <= minSize){return;}
-    var stringHeight = height + "px";
-    // this.workingNode.data.styling.height = stringHeight;
-    node.data.styling.height = stringHeight 
-    this.updateHTML(this.workingNode.id);
-  }
-  setNodeWidth(modifier: any){
-    var increaseValue = 20;
-    var minSize = 80;
-    var node = this._projectService.editor.drawflow.drawflow.Home.data[this.workingNode.id];
-    var width = Number(node.data.styling.width.substring(0,node.data.styling.width.indexOf('px')));
-
-    if(modifier == "+"){
-      width += increaseValue
-    }
-    if(modifier == "-"){
-      width -= increaseValue
-    }
-    if(width <= minSize) return
-    var stringWidth = width + "px";
-    // this.workingNode.data.styling.height = stringHeight;
-    node.data.styling.width = stringWidth 
-    this.updateHTML(this.workingNode.id);
-  }
-  
-
-
-  updateHTML(id: any){
-    var t = document.querySelector(".drawflow-node[id='node-"+ id +"'] .drawflow_content_node");
-      if(t){
-        console.log("Updating HTML: element found with id " + id);
-        t.innerHTML = this.generateNodeHTML(this._projectService.editor.drawflow.drawflow.Home.data[this.workingNode.id].data)
-      }
-  }
-
 
 
   public getNodeInfo(id: any){
@@ -464,84 +324,63 @@ public baseStylingObject(){
   }
 
   public generateNodeHTML(data: any){
-    var nodeHTML = "<div>Error Setting Node HTML</div>"
-    console.log(data)
-
     if(data['type'] == 'UtilitySource'){
-      nodeHTML = `
-      <div style="" class="diagram-node">
+      return `
+      <div class="diagram-node">
         ${data['title']} - US
       </div>
       `
     }
     if(data['type'] == 'Line'){
-      nodeHTML = `
-      <div style="" class="diagram-node">
+      return `
+      <div class="diagram-node">
         ${data['title']} - Line
       </div>
       `
     }
     if(data['type'] == 'DieselGenerator'){
-      nodeHTML = `
-      <div style="" class="diagram-node">
+      return `
+      <div class="diagram-node">
         ${data['title']} - Diesel Generator
       </div>
       `
     }
     if(data['type'] == 'WindGenerator'){
-      nodeHTML = `
-      <div style="" class="diagram-node">
+      return `
+      <div class="diagram-node">
         ${data['title']} - Wind Generator
       </div>
       `
     }
     if(data['type'] == 'SolarGenerator'){
-      nodeHTML = `
-      <div style="" class="diagram-node">
+      return `
+      <div class="diagram-node">
         ${data['title']} - Solar Generator
       </div>
       `
     }
     if(data['type'] == 'Battery'){
-      nodeHTML = `
-      <div style="" class="diagram-node">
+      return `
+      <div class="diagram-node">
         ${data['title']} - Battery
       </div>
       `
     }
     if(data['type'] == 'Bus'){
-      nodeHTML = `
-      <div style="" class="diagram-node">
+      return `
+      <div class="diagram-node">
         ${data['title']} - Bus
       </div>
       `
     }
     if(data['type'] == 'Load'){
-      nodeHTML = `
-      <div style="" class="diagram-node">
+      return `
+      <div class="diagram-node" style="height: 50px">
         ${data['title']} - Load
       </div>
-      `      
+      `
     }
-
-    var colorClass = ""
-    if(data['color']){
-      colorClass = data['color'] + "-node"    
-      nodeHTML= nodeHTML.slice(0,nodeHTML.indexOf("class=") + 7) + colorClass +  " " + nodeHTML.slice(nodeHTML.indexOf("class=") + 7,nodeHTML.length)
-    }
-
-    var inlineStyle = ""
-    Object.keys(data.styling).forEach(style => {
-      console.log(style)
-      inlineStyle += `${style}: ${data['styling'][style]};`
-    }); 
-    
-    nodeHTML= nodeHTML.slice(0,nodeHTML.indexOf("style=") + 7) + inlineStyle + nodeHTML.slice(nodeHTML.indexOf("style=") + 7,nodeHTML.length)
-
-    console.log(nodeHTML)
-
-
-    return nodeHTML;
+    return "gen node HTML error"
   }
 
 
@@ -549,7 +388,7 @@ public baseStylingObject(){
     console.log("Adding")
     console.log(jsonData)
     var html = `
-      <div style="" class="diagram-node">
+      <div class="diagram-node">
         Unassigned      
       </div>
       `

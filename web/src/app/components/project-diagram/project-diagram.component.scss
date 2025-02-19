@@ -6,6 +6,17 @@
     flex-direction: column;
     height: 80vh;
 }
+.diagram-hazards-tab{
+    background-color: rgba(0, 0, 0, 0.1);
+    width: 4em;
+    margin:6px;
+    border-radius: 10px;
+    padding: 1em;
+}
+.add-hazard-tab{
+    width: 3em;
+    background-color: rgba(0, 0, 0, 0.2);
+}
 
 .diagram-top-bar{
     display: flex;
@@ -73,42 +84,6 @@
     color: white;
     outline: solid 1px black;
 }
-.drawflow_content_node:has(div.diagram-node) { border: solid 3px red; }
-
-.connection-title{
-    display: flex;
-    flex-direction: row;
-}
-
-.input-output-title{
-    display: flex;
-    flex-direction: row;
-}
-.input-output-container{
-    display: flex;
-    flex-direction: column;
-}
-.input-output-connection{
-    display: flex;
-    padding-left: 1em;
-}
-.input-output-remove-button{
-    margin-left: auto;
-    margin-right: 1em;
-    padding: 0px 8px;
-    background-color: #4ea9ff;
-    color: black;
-    border-radius: 20em;
-    cursor: pointer;
-    
-}
-.disabled-remove-button{
-    color: white;
-    background-color: gray;
-    cursor: default;
-}
-
-
 .node-data{
     width:20%;
     display: flex;
@@ -134,15 +109,6 @@
     margin-bottom: 10px;
     border: #0e5ba3;
   }
-  
-.red-node{
-    background-color: red;
-    color: blue;
-}
-.green-node{
-    background-color: green;
-}
-
   
 //   .title-box {
 //     text-align: center;
