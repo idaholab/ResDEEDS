@@ -14,6 +14,7 @@ __pycache__
 # Secrets
 *.key
 *.cer
+*.ini
 
 # Virtual Environment
 .venv/

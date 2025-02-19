@@ -4,7 +4,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Project } from '../models/project.model';
 import { environment } from '../../environments/environment';
-import { Case } from '../models/case.model';
+import { Case, CaseResults } from '../models/case.model';
 
 
 @Injectable({
@@ -13,7 +13,7 @@ import { Case } from '../models/case.model';
 export class ProjectService {
 
   public editor: any;
-  
+
   initializeEditor(container: HTMLElement) {
     console.log("intializing drawflow editor")
     console.log(container)
@@ -23,39 +23,39 @@ export class ProjectService {
   }
 
   addNode(
-      name: string,
-      inputs: number,
-      outputs: number,
-      posX: number,
-      posY: number,
-      className: string,
-      data: any,
-      html: string,
-      typenode: boolean = false
+    name: string,
+    inputs: number,
+    outputs: number,
+    posX: number,
+    posY: number,
+    className: string,
+    data: any,
+    html: string,
+    typenode: boolean = false
   ) {
     console.log("adding Node")
-    
-      return this.editor.addNode(
-          name,
-          inputs,
-          outputs,
-          posX,
-          posY,
-          className,
-          data,
-          html,
-          typenode
-      );
+
+    return this.editor.addNode(
+      name,
+      inputs,
+      outputs,
+      posX,
+      posY,
+      className,
+      data,
+      html,
+      typenode
+    );
   }
 
   addConnection(
-      nodeId: number,
-      targetId: number,
-      outputId: string,
-      inputId: string
+    nodeId: number,
+    targetId: number,
+    outputId: string,
+    inputId: string
   ) {
     console.log("adding Connection")
-      this.editor.addConnection(nodeId, targetId, outputId, inputId);
+    this.editor.addConnection(nodeId, targetId, outputId, inputId);
   }
 
 
@@ -125,6 +125,13 @@ export class ProjectService {
   // Delete a case by ID
   deleteCase(projectId: string, caseId: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/project/${projectId}/case/${caseId}/delete/`, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  // Analyze a case by ID
+  analyzeCase(caseId: string): Observable<CaseResults> {
+    return this.http.get<CaseResults>(`${this.apiUrl}/case/${caseId}/analyze/`, {
       headers: this.getAuthHeaders()
     });
   }
