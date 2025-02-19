@@ -6,3 +6,9 @@ export interface Case {
     created_at?: string;
     updated_at?: string;
 }
+
+export interface CaseResults {
+    generators: any;
+    lines: any;
+    loads: any;
+}

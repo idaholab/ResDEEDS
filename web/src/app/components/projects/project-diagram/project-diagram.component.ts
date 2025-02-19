@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DiagramComponent } from '../diagram/diagram.component';
 import { ProjectService } from '../../../services/project.service';
-import { Case } from '../../../models/case.model';
+import { Case, CaseResults } from '../../../models/case.model';
 import { ActivatedRoute } from '@angular/router';
 
 interface Tab {
@@ -39,7 +39,14 @@ export class ProjectDiagramComponent implements OnInit {
   projectId: string = '';
 
   projectName: string = '';
+
   cases: Case[] = [];
+
+  analyzeResult: any = {};
+
+  showAnalyzeModal: boolean = false;
+
+  analyzing: boolean = false;
 
   constructor(private _projectService: ProjectService, private _route: ActivatedRoute) { }
 
@@ -149,5 +156,31 @@ export class ProjectDiagramComponent implements OnInit {
         console.log('Failed to delete case');
       }
     });
+  }
+
+  // analyze a case
+  analyzeCase(index: number): void {
+    const tabToAnalyze = this.tabs[index];
+    if (!tabToAnalyze._id) {
+      console.log('Cannot analyze tab without a valid case id.');
+      return;
+    }
+
+    this.showAnalyzeModal = true;
+    this.analyzing = true;
+    this._projectService.analyzeCase(tabToAnalyze._id).subscribe({
+      next: (results: CaseResults) => {
+        // Set results and display modal
+        this.analyzeResult = results;
+        this.analyzing = false;
+      },
+      error: () => {
+        console.log('Failed to analyze case');
+      }
+    });
+  }
+
+  closeAnalyzeModal(): void {
+    this.showAnalyzeModal = false;
   }
 }

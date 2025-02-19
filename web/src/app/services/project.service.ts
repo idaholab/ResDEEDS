@@ -3,7 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Project } from '../models/project.model';
 import { environment } from '../../environments/environment';
-import { Case } from '../models/case.model';
+import { Case, CaseResults } from '../models/case.model';
 
 
 @Injectable({
@@ -75,6 +75,13 @@ export class ProjectService {
   // Delete a case by ID
   deleteCase(projectId: string, caseId: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/project/${projectId}/case/${caseId}/delete/`, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  // Analyze a case by ID
+  analyzeCase(caseId: string): Observable<CaseResults> {
+    return this.http.get<CaseResults>(`${this.apiUrl}/case/${caseId}/analyze/`, {
       headers: this.getAuthHeaders()
     });
   }
