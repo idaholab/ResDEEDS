@@ -19,7 +19,7 @@ export class DiagramComponent implements OnInit, AfterViewInit {
   
   projectId: string = "0";
 
-  tabSelected = "connections";
+  tabSelected = "info";
 
   workingNode: any = null;
   workingFormGroup: FormGroup = new FormGroup({});
