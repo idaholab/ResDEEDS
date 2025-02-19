@@ -16,6 +16,8 @@
             <div class="node-data-tabs">
                 <div class="node-data-tab diagram-button" [ngClass]="{'node-data-tab-selected': tabSelected == 'info'}" (click)="setTab('info')">Info</div>
                 <div class="node-data-tab diagram-button" [ngClass]="{'node-data-tab-selected': tabSelected == 'connections'}"(click)="setTab('connections')">Connections</div>
+                <div class="node-data-tab diagram-button" [ngClass]="{'node-data-tab-selected': tabSelected == 'hazards'}"(click)="setTab('hazards')">Hazards</div>
+
             </div>
             
             @if (tabSelected == 'info') {
@@ -134,37 +136,54 @@
             @if (tabSelected == 'connections') {
                 <div class="node-connection-data">
 
+                    <div class="connection-title">                        
+                        <div>
+                            Inputs
+                        </div>
+                        <div (click)="addNodeConnection('input')" class="input-output-remove-button"> + </div>
+                    </div>
                     @for (input of inputConnections; track input.id){
-                        {{input.title}}
-                        
-                        @for (connection of input.connections; track connection.node){
-                            {{connection.title}}
-                        }
+                        <div class="input-output-title">
+                            <div>Input {{input.id + 1}}</div>
+                            <div (click)="removeNodeConnection('input',input.id, input.connections.length == 0)" class="input-output-remove-button" [ngClass]="{'disabled-remove-button': input.connections.length > 0}"> - </div>
+                        </div>
+                        <div class="input-output-container">
+                            @for (connection of input.connections; track connection.node){
+                                {{connection.title}}
+                            }
+                        </div>                        
                     }
                     <div>-----------</div>
+                    <div class="connection-title">
+                        <div>
+                            Outputs
+                        </div>
+                        <div (click)="addNodeConnection('output')" class="input-output-remove-button"> + </div>
+                    </div>                    
                     @for (output of outputConnections; track output.id){
-                        {{output.title}}
+                        <div class="input-output-title">
+                            <div>Output {{output.id + 1}}</div>
+                            <div (click)="removeNodeConnection('output',output.id, output.connections.length == 0)" class="input-output-remove-button" [ngClass]="{'disabled-remove-button': output.connections.length > 0}"> - </div>
+                        </div>
+                        <div class="input-output-container">
+                            @for (connection of output.connections; track connection.node){
+                                <div class="input-output-connection">
+                                    {{connection.title}}
+                                </div>
+                            }
+                        </div>      
                     }
-                    <!-- @for (input of workingNode.inputsArray; track input.id) {
-                        <div  (click)="getNodeTitle(input.id)"> X </div>>
-                    } -->
-                    <!-- @for (output of workingNode.outputsArray; track output.id) {
-                        out
-                    } -->
-                    <!-- @for (const [key, value] of Object.entries(workingNode.outputs; track key)) {
-                        test
-                    } -->
-                    <!-- @for (output of workingNode.outputs; track 1) {
-                        inputs
-                    } -->
                 </div>
             }
         </div>
     </div>
     <div class="diagram-bottom-bar">
-        @if (nodeSelected) {
+        @if (true) {
             <div class="my-diagram-buttton" (click)="addNode()">Add Node</div>
-            <div class="my-diagram-buttton" (click)="test()">Test</div>
+            <div class="my-diagram-buttton" (click)="test()">Export</div>
+            <div class="my-diagram-buttton" (click)="import()">Import</div>
+            <div class="my-diagram-buttton" (click)="setColor('red')">Red</div>
+            <div class="my-diagram-buttton" (click)="setColor('green')">Green</div>
         }
     </div>
 

@@ -991,6 +991,20 @@
     fill: #4ea9ff;
   }
   
+  .drawflow_content_node:has(.red-node){
+    background-color: rgb(218, 72, 72);
+
+  }
+  .drawflow_content_node:has(.green-node){
+    background-color: rgb(39, 190, 112);
+
+  }
+.red-node{
+}
+.green-node{
+}
+
+  
   
   /* Modal */
   .modal {

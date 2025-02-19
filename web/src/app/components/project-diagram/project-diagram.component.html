@@ -19,12 +19,12 @@
         </div>
         <div #drawflow class="drawflow-container drawing-board main-diagram"></div>
 
-        <div class="node-data" > 
+        <!-- <div class="node-data" > 
             <div class="node-data-tabs">
                 <div class="node-data-tab diagram-button" [ngClass]="{'node-data-tab-selected': tabSelected == 'info'}" (click)="setTab('info')">Info</div>
                 <div class="node-data-tab diagram-button" [ngClass]="{'node-data-tab-selected': tabSelected == 'connections'}"(click)="setTab('connections')">Connections</div>
                 <div class="node-data-tab diagram-button" [ngClass]="{'node-data-tab-selected': tabSelected == 'hazards'}"(click)="setTab('hazards')">Hazards</div>
-            </div>
+            </div> -->
             
             @if (tabSelected == 'info') {
             <div class="node-specific-data" [formGroup]="workingFormGroup">
