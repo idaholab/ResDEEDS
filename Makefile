@@ -1,4 +1,4 @@
-.PHONY: build up stop down
+.PHONY: build up stop down deploy
 include api/.env
 export
 
@@ -21,6 +21,10 @@ stop:
 # target: down - Stop the docker container.
 down:
 	docker compose down -v
+
+# target: deploy - deploy to resdeeds server
+deploy:
+	cd deploy && python main.py
 
 # target: attach-web - Attach to the running container.
 attach-web:
