@@ -2,7 +2,6 @@ import { Component, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angula
 import { FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { ReactiveFormsModule } from '@angular/forms';
-import { ProjectService } from '../../../services/project.service';
 import { CommonModule } from '@angular/common';
 import { DiagramService } from '../../../services/diagram.service';
 import { getTestData, getAnalysisTestData } from "./diagram-test-data";
@@ -31,7 +30,7 @@ export class DiagramComponent implements OnInit, AfterViewInit {
   nodeHasInput: boolean = false;
   nodeHasInputConnections = false;
 
-  constructor(private _route: ActivatedRoute, private _projectService: ProjectService) { }
+  constructor(private _route: ActivatedRoute, private _diagramService: DiagramService) { }
 
 
   public setTab(inputTab: string){
@@ -52,7 +51,7 @@ public baseStylingObject(){
       color: "",
       type: "UtilitySource",
       name: "UtilitySource",
-      title: "Utility Source " + (this._projectService.editor.getNodesFromName("UtilitySource").length + 1),
+      title: "Utility Source " + (this._diagramService.editor.getNodesFromName("UtilitySource").length + 1),
       inputs: 0,
       outputs: 1,
       nominalVoltage: 1000,
@@ -68,7 +67,7 @@ public baseStylingObject(){
       color: "",
       type: "Line",
       name: "Line",
-      title: "Line " + (this._projectService.editor.getNodesFromName("Line").length + 1),
+      title: "Line " + (this._diagramService.editor.getNodesFromName("Line").length + 1),
       inputs: 1,
       outputs: 1,
       steadyStateCurrentRating: 50,
@@ -85,7 +84,7 @@ public baseStylingObject(){
       color: "",
       type: "DieselGenerator",
       name: "DieselGenerator",
-      title: "Diesel Generator " + (this._projectService.editor.getNodesFromName("DieselGenerator").length + 1),
+      title: "Diesel Generator " + (this._diagramService.editor.getNodesFromName("DieselGenerator").length + 1),
       inputs: 1,
       outputs: 3,
       nominalPower: 50,
@@ -99,7 +98,7 @@ public baseStylingObject(){
       color: "",
       type: "WindGenerator",
       name: "WindGenerator",
-      title: "Wind Generator " + (this._projectService.editor.getNodesFromName("WindGenerator").length + 1),
+      title: "Wind Generator " + (this._diagramService.editor.getNodesFromName("WindGenerator").length + 1),
       inputs: 1,
       outputs: 1,
       nominalPower: 50,
@@ -114,7 +113,7 @@ public baseStylingObject(){
       color: "",
       type: "SolarGenerator",
       name: "SolarGenerator",
-      title: "Solar Generator " + (this._projectService.editor.getNodesFromName("SolarGenerator").length + 1),
+      title: "Solar Generator " + (this._diagramService.editor.getNodesFromName("SolarGenerator").length + 1),
       inputs: 1,
       outputs: 1,
       nominalPower: 50,
@@ -128,7 +127,7 @@ public baseStylingObject(){
       color: "",
       type: "Battery",
       name: "Battery",
-      title: "Battery " + (this._projectService.editor.getNodesFromName("Battery").length + 1),
+      title: "Battery " + (this._diagramService.editor.getNodesFromName("Battery").length + 1),
       inputs: 1,
       outputs: 1,
       rateOfCharge: 50,
@@ -143,7 +142,7 @@ public baseStylingObject(){
       color: "",
       type: "Bus",
       name: "Bus",
-      title: "Bus " + (this._projectService.editor.getNodesFromName("Bus").length + 1),
+      title: "Bus " + (this._diagramService.editor.getNodesFromName("Bus").length + 1),
       inputs: 1,
       outputs: 1,
     }
@@ -155,7 +154,7 @@ public baseStylingObject(){
       color: "",
       type: "Load",
       name: "Load",
-      title: "Load " + (this._projectService.editor.getNodesFromName("Load").length + 1),
+      title: "Load " + (this._diagramService.editor.getNodesFromName("Load").length + 1),
       inputs: 1,
       outputs: 1,
       powerFactor: 50,
@@ -250,15 +249,15 @@ public baseStylingObject(){
 
 
   getNodeTitle(id: any){
-    return this._projectService.editor.getNodeFromId(id).data.title;
+    return this._diagramService.editor.getNodeFromId(id).data.title;
 
   }
   addNodeConnection(end: any){
     if(end == "input"){
-      this._projectService.editor.addNodeInput(this.workingNode.id)
+      this._diagramService.editor.addNodeInput(this.workingNode.id)
     }
     if(end == "output"){
-      this._projectService.editor.addNodeOutput(this.workingNode.id)
+      this._diagramService.editor.addNodeOutput(this.workingNode.id)
     }
     this.structureNodeInputOutputs(this.workingNode);
     this.getNodeInfo(this.workingNode.id)
@@ -267,10 +266,10 @@ public baseStylingObject(){
   removeNodeConnection(end: string,id: any, canRemove: boolean = true){
     if(!canRemove) return;
     if(end == "input"){      
-      this._projectService.editor.removeNodeInput(this.workingNode.id,`input_${id + 1}`)
+      this._diagramService.editor.removeNodeInput(this.workingNode.id,`input_${id + 1}`)
     }
     if(end == "output"){      
-      this._projectService.editor.removeNodeOutput(this.workingNode.id,`output_${id + 1}`)
+      this._diagramService.editor.removeNodeOutput(this.workingNode.id,`output_${id + 1}`)
     }
     this.outputConnections.splice(id,1);
     this.getNodeInfo(this.workingNode.id)
@@ -312,10 +311,10 @@ public baseStylingObject(){
   }
   
   ngAfterViewInit() {
-    this._projectService.initializeEditor(this.drawflowEl.nativeElement);
+    this._diagramService.initializeEditor(this.drawflowEl.nativeElement);
     this.createFlowchart();
     
-    this._projectService.editor.on('nodeSelected', (id: any) =>{
+    this._diagramService.editor.on('nodeSelected', (id: any) =>{
       console.log("Node selected:" + id);
       this.workingNode = this.getNodeInfo(id);
       //asd
@@ -323,15 +322,15 @@ public baseStylingObject(){
       // this.setTab('info');
       this.nodeSelected = true;
     })
-    this._projectService.editor.on('nodeUnselected', (id: any) =>{
+    this._diagramService.editor.on('nodeUnselected', (id: any) =>{
       this.nodeSelected = false;
       console.log("Node unelected:" + id)
     })
-    this._projectService.editor.on('connectionSelected', function(id: any){
+    this._diagramService.editor.on('connectionSelected', function(id: any){
       console.log(id)
     })
 
-    this._projectService.editor.on('connectionRemoved', (outid: any, intid: any, outclass: any, inclass: any) => {
+    this._diagramService.editor.on('connectionRemoved', (outid: any, intid: any, outclass: any, inclass: any) => {
       this.getNodeInfo(this.workingNode.id)
       console.log()
       
@@ -343,21 +342,20 @@ public baseStylingObject(){
     console.log(this.projectId)
   }
   test(){
-    console.log(this._projectService.editor.export())
+    console.log(this._diagramService.editor.export())
   }
   import(){
     console.log("Importing")
     var importData = getTestData();
-    console.log(importData);
-    this._projectService.editor.import(importData);
-    console.log(this._projectService.editor.drawflow.drawflow.Home.data);
-    Object.keys(this._projectService.editor.drawflow.drawflow.Home.data)
+    this._diagramService.editor.import(importData);
+    console.log(this._diagramService.editor.drawflow.drawflow.Home.data);
+    Object.keys(this._diagramService.editor.drawflow.drawflow.Home.data)
     .forEach((objectKey: any) => {
-      var nodeId = this._projectService.editor.drawflow.drawflow.Home.data[objectKey].id
+      var nodeId = this._diagramService.editor.drawflow.drawflow.Home.data[objectKey].id
       var t = document.querySelector(".drawflow-node[id='node-"+ nodeId +"'] .drawflow_content_node")
       if(t)
         t.innerHTML = this.generateNodeHTML(this.getNodeInfo(nodeId).data)
-      // this.generateNodeHTML(this._projectService.editor.drawflow.drawflow.Home.data[dataId].data)
+      // this.generateNodeHTML(this._diagramService.editor.drawflow.drawflow.Home.data[dataId].data)
     });
     // this.generateNodeHTML()
   }
@@ -365,15 +363,15 @@ public baseStylingObject(){
     console.log("Importing")
     var importData = getAnalysisTestData();
     console.log(importData);
-    this._projectService.editor.import(importData);
-    console.log(this._projectService.editor.drawflow.drawflow.Home.data);
-    Object.keys(this._projectService.editor.drawflow.drawflow.Home.data)
+    this._diagramService.editor.import(importData);
+    console.log(this._diagramService.editor.drawflow.drawflow.Home.data);
+    Object.keys(this._diagramService.editor.drawflow.drawflow.Home.data)
     .forEach((objectKey: any) => {
-      var nodeId = this._projectService.editor.drawflow.drawflow.Home.data[objectKey].id
+      var nodeId = this._diagramService.editor.drawflow.drawflow.Home.data[objectKey].id
       var t = document.querySelector(".drawflow-node[id='node-"+ nodeId +"'] .drawflow_content_node")
       if(t)
         t.innerHTML = this.generateNodeHTML(this.getNodeInfo(nodeId).data)
-      // this.generateNodeHTML(this._projectService.editor.drawflow.drawflow.Home.data[dataId].data)
+      // this.generateNodeHTML(this._diagramService.editor.drawflow.drawflow.Home.data[dataId].data)
     });
     // this.generateNodeHTML()
 
@@ -382,25 +380,25 @@ public baseStylingObject(){
     console.log("Saving")
     if(this.workingFormGroup.valid){
       Object.keys(this.workingFormGroup.controls).forEach(key => {
-        this._projectService.editor.drawflow.drawflow.Home.data[this.workingNode.id].data[key] = this.workingFormGroup.controls[key].value;
+        this._diagramService.editor.drawflow.drawflow.Home.data[this.workingNode.id].data[key] = this.workingFormGroup.controls[key].value;
       });
 
 
       var t = document.querySelector(".drawflow-node[id='node-"+this.workingNode.id+"'] .drawflow_content_node");
       if(t)
         t.innerHTML = this.generateNodeHTML(this.getNodeInfo(this.workingNode.id).data)
-      // this._projectService.editor.getNodeFromId(this.workingNode.id).class = "TEST"
+      // this._diagramService.editor.getNodeFromId(this.workingNode.id).class = "TEST"
     } else {
 
     }
   }
   setColor(inputColor: any){
     this.workingNode.data['color'] = inputColor;
-    console.log(this._projectService.editor.drawflow.drawflow.Home.data[this.workingNode.id].data)
-    this._projectService.editor.drawflow.drawflow.Home.data[this.workingNode.id].data['color'] = inputColor
-    console.log(this._projectService.editor.drawflow.drawflow.Home.data[this.workingNode.id].data)
+    console.log(this._diagramService.editor.drawflow.drawflow.Home.data[this.workingNode.id].data)
+    this._diagramService.editor.drawflow.drawflow.Home.data[this.workingNode.id].data['color'] = inputColor
+    console.log(this._diagramService.editor.drawflow.drawflow.Home.data[this.workingNode.id].data)
     
-    // this._projectService.editor.drawflow.drawflow.Home.data['color'] = inputColor; 
+    // this._diagramService.editor.drawflow.drawflow.Home.data['color'] = inputColor; 
     // console.log(this.getNodeInfo(this.workingNode.id).data['color'] = inputColor)
     // console.log(this.getNodeInfo(this.workingNode.id).data['color'])
     // console.log(this.workingNode.data['color'])
@@ -410,7 +408,7 @@ public baseStylingObject(){
   setNodeHeight(modifier: any){
     var increaseValue = 20;
     var minSize = 20;
-    var node = this._projectService.editor.drawflow.drawflow.Home.data[this.workingNode.id];
+    var node = this._diagramService.editor.drawflow.drawflow.Home.data[this.workingNode.id];
     var height = Number(node.data.styling.height.substring(0,node.data.styling.height.indexOf('px')));
 
     if(modifier == "+"){
@@ -428,7 +426,7 @@ public baseStylingObject(){
   setNodeWidth(modifier: any){
     var increaseValue = 20;
     var minSize = 80;
-    var node = this._projectService.editor.drawflow.drawflow.Home.data[this.workingNode.id];
+    var node = this._diagramService.editor.drawflow.drawflow.Home.data[this.workingNode.id];
     var width = Number(node.data.styling.width.substring(0,node.data.styling.width.indexOf('px')));
 
     if(modifier == "+"){
@@ -450,14 +448,14 @@ public baseStylingObject(){
     var t = document.querySelector(".drawflow-node[id='node-"+ id +"'] .drawflow_content_node");
       if(t){
         console.log("Updating HTML: element found with id " + id);
-        t.innerHTML = this.generateNodeHTML(this._projectService.editor.drawflow.drawflow.Home.data[this.workingNode.id].data)
+        t.innerHTML = this.generateNodeHTML(this._diagramService.editor.drawflow.drawflow.Home.data[this.workingNode.id].data)
       }
   }
 
 
 
   public getNodeInfo(id: any){
-    var node = this._projectService.editor.getNodeFromId(id);
+    var node = this._diagramService.editor.getNodeFromId(id);
     node = this.structureNodeInputOutputs(node);
     console.log(node);
     return node;
@@ -558,7 +556,7 @@ public baseStylingObject(){
     }
     console.log(jsonData['inputs'])
     console.log(jsonData['inputs'] == 0)
-    const startNode = this._projectService.addNode(
+    const startNode = this._diagramService.addNode(
       jsonData['name'] ?? "No Name Assigned", 
       jsonData['inputs'] ?? 1,
       jsonData['outputs'] ?? 1,
@@ -571,7 +569,7 @@ public baseStylingObject(){
   }
 
   private createFlowchart() {
-      // const startNode = this._projectService.addNode(
+      // const startNode = this._diagramService.addNode(
       //     'start',
       //     0,
       //     1,
@@ -581,7 +579,7 @@ public baseStylingObject(){
       //     {},
       //     'Start',          
       // );
-      // const processNode = this._projectService.addNode(
+      // const processNode = this._diagramService.addNode(
       //     'process',
       //     1,
       //     1,
@@ -591,7 +589,7 @@ public baseStylingObject(){
       //     {},
       //     'Process'
       // );
-      // const endNode = this._projectService.addNode(
+      // const endNode = this._diagramService.addNode(
       //     'end',
       //     1,
       //     0,
@@ -602,13 +600,13 @@ public baseStylingObject(){
       //     'End'
       // );
 
-      // this._projectService.addConnection(
+      // this._diagramService.addConnection(
       //     startNode,
       //     processNode,
       //     'output_1',
       //     'input_1'
       // );
-      // this._projectService.addConnection(
+      // this._diagramService.addConnection(
       //     processNode,
       //     endNode,
       //     'output_1',
