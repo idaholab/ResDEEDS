@@ -37,6 +37,14 @@ services:
       - resdeeds-network
     volumes:
       - ./api:/var/www
+  drawio:
+    container_name: drawio
+    image: jgraph/drawio:latest
+    ports:
+      - "8080:8080"
+      - "8443:8443"
+    volumes:
+      - ./drawio:/config
   mongodb:
     container_name: resdeeds-mongodb
     env_file:
