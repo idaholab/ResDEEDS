@@ -6,9 +6,11 @@ import { AuthGuard } from './services/auth.guard';
 import { HomeComponent } from './components/home/home.component';
 import { ProjectsComponent } from './components/projects/projects.component';
 import { ProjectDiagramComponent } from './components/projects/project-diagram/project-diagram.component';
+import { DrawioDiagramComponent } from './components/drawio-diagram/drawio-diagram.component';
 
 export const routes: Routes = [
     { path: '', component: HomeComponent },
+    { path: 'drawio', component: DrawioDiagramComponent },
     { path: 'login', component: LoginComponent },
     { path: 'signup', component: SignupComponent },
     { path: 'projects', component: ProjectsComponent, canActivate: [AuthGuard] },

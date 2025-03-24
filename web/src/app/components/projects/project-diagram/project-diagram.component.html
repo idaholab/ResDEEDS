@@ -1,22 +1,17 @@
 <div class="container">
   <h1>{{ projectName }}</h1>
   <ul class="nav nav-tabs">
-      <li class="nav-item" *ngFor="let tab of tabs; let i = index">
-        <a 
-          class="nav-link" 
-          [class.active]="i === activeTabIndex" 
-          (click)="activateTab(i)"
-          style="cursor: pointer;"
-        >
-          {{ tab.title }}
-        </a>
-      </li>
-      <!-- Plus sign triggers modal -->
-      <li class="nav-item">
-        <a class="nav-link" (click)="openNewTabModal()" style="cursor: pointer;">+</a>
-      </li>
+    <li class="nav-item" *ngFor="let tab of tabs; let i = index">
+      <a class="nav-link" [class.active]="i === activeTabIndex" (click)="activateTab(i)" style="cursor: pointer;">
+        {{ tab.title }}
+      </a>
+    </li>
+    <!-- Plus sign triggers modal -->
+    <li class="nav-item">
+      <a class="nav-link" (click)="openNewTabModal()" style="cursor: pointer;">+</a>
+    </li>
   </ul>
-    
+
   <!-- Tab content: Display DiagramComponent in active tab -->
   <div class="tab-content border border-top-0 p-3">
     <div class="tab-pane fade show active">
@@ -24,20 +19,16 @@
         <h4>{{ tabs[activeTabIndex].title }} Diagram</h4>
         <div class="ms-auto d-flex gap-2">
           <button class="btn btn-secondary" (click)="analyzeCase(activeTabIndex)">Analyze</button>
-          <button *ngIf="tabs[activeTabIndex].title !== 'Base Case'" class="btn btn-danger" (click)="deleteTab(activeTabIndex)">Delete</button>
+          <button *ngIf="tabs[activeTabIndex].title !== 'Base Case'" class="btn btn-danger"
+            (click)="deleteTab(activeTabIndex)">Delete</button>
         </div>
       </div>
-      <app-diagram></app-diagram>
+      <app-drawio-diagram></app-drawio-diagram>
     </div>
   </div>
   <!-- Analyze Modal Dialog -->
-  <div
-    *ngIf="showAnalyzeModal"
-    class="modal fade show"
-    tabindex="-1"
-    role="dialog"
-    style="display: block; background: rgba(0, 0, 0, 0.5);"
-  >
+  <div *ngIf="showAnalyzeModal" class="modal fade show" tabindex="-1" role="dialog"
+    style="display: block; background: rgba(0, 0, 0, 0.5);">
     <div class="modal-dialog modal-lg" role="document">
       <div class="modal-content">
         <div class="modal-header">
@@ -69,26 +60,27 @@
   <div class="modal-backdrop fade show" *ngIf="showModal"></div>
   <div class="modal fade show d-block" tabindex="-1" *ngIf="showModal" role="dialog">
     <div class="modal-case-dialog" role="document">
-        <div class="modal-content">
+      <div class="modal-content">
         <div class="modal-header">
-            <h5 class="modal-title">Add a New Case</h5>
-            <button type="button" class="btn-close" (click)="closeNewTabModal()" aria-label="Close"></button>
+          <h5 class="modal-title">Add a New Case</h5>
+          <button type="button" class="btn-close" (click)="closeNewTabModal()" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-            <label for="tabSelector" class="form-label">Select Hazard:</label>
-            <select id="tabSelector" class="form-select" [(ngModel)]="selectedTabName">
+          <label for="tabSelector" class="form-label">Select Hazard:</label>
+          <select id="tabSelector" class="form-select" [(ngModel)]="selectedTabName">
             <option *ngFor="let name of availableTabs" [value]="name">{{ name }}</option>
-            </select>
-            <div *ngIf="selectedTabName === 'Custom'" class="mt-3">
-              <label for="customTabName" class="form-label">Custom Hazard:</label>
-              <input id="customTabName" type="text" class="form-control" [(ngModel)]="customTabName" placeholder="Enter custom tab name">
-            </div>
+          </select>
+          <div *ngIf="selectedTabName === 'Custom'" class="mt-3">
+            <label for="customTabName" class="form-label">Custom Hazard:</label>
+            <input id="customTabName" type="text" class="form-control" [(ngModel)]="customTabName"
+              placeholder="Enter custom tab name">
+          </div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" (click)="closeNewTabModal()">Cancel</button>
-            <button type="button" class="btn btn-primary" (click)="addTabFromModal()">Add Hazard Case</button>
+          <button type="button" class="btn btn-secondary" (click)="closeNewTabModal()">Cancel</button>
+          <button type="button" class="btn btn-primary" (click)="addTabFromModal()">Add Hazard Case</button>
         </div>
-        </div>
+      </div>
     </div>
   </div>
 </div>

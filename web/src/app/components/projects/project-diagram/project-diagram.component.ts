@@ -5,6 +5,7 @@ import { DiagramComponent } from '../diagram/diagram.component';
 import { ProjectService } from '../../../services/project.service';
 import { Case, CaseResults } from '../../../models/case.model';
 import { ActivatedRoute } from '@angular/router';
+import { DrawioDiagramComponent } from '../../drawio-diagram/drawio-diagram.component';
 
 interface Tab {
   title: string;
@@ -13,7 +14,7 @@ interface Tab {
 
 @Component({
   selector: 'app-project-diagram',
-  imports: [CommonModule, FormsModule, DiagramComponent],
+  imports: [CommonModule, FormsModule, DrawioDiagramComponent],
   templateUrl: './project-diagram.component.html',
   styleUrls: ['./project-diagram.component.scss']
 })
