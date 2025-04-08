@@ -10,11 +10,11 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 export class DrawioDiagramComponent {
   private baseUrl = 'http://localhost:8080/';
   drawioUrl: SafeResourceUrl;
+  private initialXml = `<mxGraphModel dx="1399" dy="886" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0"><root><mxCell id="0"/><mxCell id="1" parent="0"/></root></mxGraphModel>`;
 
   constructor(private sanitizer: DomSanitizer) {
-    const libraryUrl = `${window.location.origin}/assets/electrical-shapes.xml`;
     const params = new URLSearchParams({
-      // embed: '1',
+      embed: '1',
       pages: '0',
       noSaveBtn: '1',
       // noExitBtn: '1',
@@ -25,24 +25,35 @@ export class DrawioDiagramComponent {
       toolbar: '0',   // Hides the toolbar
       plugins: '0',   // Disables plugins
       offline: '0',    // Disables all remote resources
-      libraries: '0', // Disables libraries
+      libraries: '1', // Disables libraries
+      splash: '0',
+      protocol: 'json',
       customLibraries: encodeURIComponent(JSON.stringify([
-        { title: 'Electrical Components', url: libraryUrl }
+        {
+          title: 'Basic Shapes',
+          entries: [
+            { name: 'Circle', aspect: 'fixed', w: 50, h: 50, xml: '<ellipse cx="25" cy="25" rx="25" ry="25" fill="#ffffff" stroke="#000000" stroke-width="1"/>' },
+            { name: 'Square', aspect: 'fixed', w: 50, h: 50, xml: '<rect x="0" y="0" width="50" height="50" fill="#ffffff" stroke="#000000" stroke-width="1"/>' },
+            { name: 'Rectangle', aspect: 'fixed', w: 80, h: 40, xml: '<rect x="0" y="0" width="80" height="40" fill="#ffffff" stroke="#000000" stroke-width="1"/>' },
+            { name: 'Triangle', aspect: 'fixed', w: 50, h: 50, xml: '<polygon points="25,0 50,50 0,50" fill="#ffffff" stroke="#000000" stroke-width="1"/>' }
+          ]
+        }
       ]))
     });
-    const drawioUrl = `${this.baseUrl}?${params.toString()}`;
+    const drawioUrl = `${this.baseUrl}?${params.toString()} `;
     this.drawioUrl = this.sanitizer.bypassSecurityTrustResourceUrl(drawioUrl);
   }
 
   @HostListener('window:message', ['$event'])
   onMessage(event: MessageEvent) {
+    console.log(event.data)
     // Handle messages from the iframe
-    if (event.data && event.data.event === 'init') {
+    if (event.data && event.data === 'ready') {
       console.log('draw.io initialized');
-      // You can send messages to draw.io after init
+      this.loadDiagram(this.initialXml);
     }
 
-    if (event.data && event.data.event === 'save') {
+    if (event.data && event.data === 'save') {
       // Handle saved diagram data
       console.log('Diagram data:', event.data.xml);
     }
