@@ -38,7 +38,7 @@ services:
     volumes:
       - ./api:/var/www
   drawio:
-    container_name: drawio
+    container_name: resdeeds-drawio
     image: jgraph/drawio:latest
     ports:
       - "8080:8080"
