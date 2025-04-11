@@ -63,7 +63,6 @@ export class DrawioDiagramComponent implements OnChanges {
       next: (caseData: Case) => {
         if (caseData.diagram_data) {
           try {
-            console.log('Loading diagram data from server');
             this.loadDiagram(caseData.diagram_data);
           } catch (e) {
             console.error('Failed to load diagram data from case:', e);
@@ -106,8 +105,6 @@ export class DrawioDiagramComponent implements OnChanges {
 
   @HostListener('window:message', ['$event'])
   onMessage(event: MessageEvent) {
-    console.log('Received message event:', event);
-
     // Check if the message is from our local draw.io
     if (!event.origin.includes('localhost:8080')) {
       console.log('Ignoring message from unknown origin:', event.origin);
@@ -117,24 +114,20 @@ export class DrawioDiagramComponent implements OnChanges {
     try {
       // Handle messages that might be JSON strings
       const data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
-      console.log('Processed message data:', data);
 
       if (data.event === 'init') {
-        console.log('Draw.io initialized, sending load action');
         if (!this.isLoadingDiagram && this.case?._id && this.case?.project_id) {
           this.loadDiagramFromServer(this.case.project_id, this.case._id);
         } else {
           this.loadDiagram(this.blankDiagramXml);
         }
       } else if (data.event === 'load') {
-        console.log('Diagram loaded');
       } else if (data.event === 'save') {
         console.log('Diagram saved:', data.xml);
         if (this.case?._id && this.case?.project_id) {
           this.saveDiagramToServer(data.xml);
         }
       } else if (data.event === 'exit') {
-        console.log('Draw.io exit event received');
         // Handle exit if needed
       } else {
         console.log('Other draw.io event:', data.event);
@@ -143,7 +136,6 @@ export class DrawioDiagramComponent implements OnChanges {
       console.log('Error processing message:', e);
       // If it's not JSON, handle raw messages
       if (event.data === 'ready') {
-        console.log('Draw.io ready, sending load action');
         if (!this.isLoadingDiagram && this.case?._id && this.case?.project_id) {
           this.loadDiagramFromServer(this.case.project_id, this.case._id);
         } else {
