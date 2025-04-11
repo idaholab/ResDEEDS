@@ -3,6 +3,7 @@ import { Component, HostListener, Input, OnChanges, SimpleChanges } from '@angul
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Case } from '../../models/case.model';
 import { ProjectService } from '../../services/project.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-drawio-diagram',
@@ -13,7 +14,7 @@ import { ProjectService } from '../../services/project.service';
 export class DrawioDiagramComponent implements OnChanges {
   @Input() case?: Case;
 
-  private baseUrl = 'http://localhost:8080';
+  private baseUrl = environment.drawioUrl;
   drawioUrl: SafeResourceUrl;
   private blankDiagramXml = '<mxGraphModel><root><mxCell id="0"/><mxCell id="1" parent="0"/></root></mxGraphModel>';
 
