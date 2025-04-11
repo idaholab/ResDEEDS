@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, HostListener, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Case } from '../../models/case.model';
+import { ProjectService } from '../../services/project.service';
 
 @Component({
   selector: 'app-drawio-diagram',
@@ -14,49 +15,27 @@ export class DrawioDiagramComponent implements OnChanges {
 
   private baseUrl = 'http://localhost:8080';
   drawioUrl: SafeResourceUrl;
-  private initialXml = `<mxGraphModel dx="1231" dy="915" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
-      <root>
-        <mxCell id="0" />
-        <mxCell id="1" parent="0" />
-        <mxCell id="hENS-6vgnXzuaNHbe67B-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="qqCbIm6GXJVwKMpcPDj3-1" target="hENS-6vgnXzuaNHbe67B-1">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="hENS-6vgnXzuaNHbe67B-5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="qqCbIm6GXJVwKMpcPDj3-1" target="hENS-6vgnXzuaNHbe67B-2">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="qqCbIm6GXJVwKMpcPDj3-1" value="" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#f8cecc;strokeColor=#b85450;" parent="1" vertex="1">
-          <mxGeometry x="160" y="190" width="80" height="80" as="geometry" />
-        </mxCell>
-        <mxCell id="hENS-6vgnXzuaNHbe67B-1" value="" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
-          <mxGeometry x="390" y="210" width="80" height="80" as="geometry" />
-        </mxCell>
-        <mxCell id="hENS-6vgnXzuaNHbe67B-6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="hENS-6vgnXzuaNHbe67B-2" target="hENS-6vgnXzuaNHbe67B-3">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="hENS-6vgnXzuaNHbe67B-2" value="" style="shape=hexagon;perimeter=hexagonPerimeter2;whiteSpace=wrap;html=1;fixedSize=1;" vertex="1" parent="1">
-          <mxGeometry x="160" y="420" width="120" height="80" as="geometry" />
-        </mxCell>
-        <mxCell id="hENS-6vgnXzuaNHbe67B-3" value="" style="triangle;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="420" y="420" width="60" height="80" as="geometry" />
-        </mxCell>
-      </root>
-    </mxGraphModel>`;
+  private blankDiagramXml = '<mxGraphModel><root><mxCell id="0"/><mxCell id="1" parent="0"/></root></mxGraphModel>';
 
-  constructor(private sanitizer: DomSanitizer) {
+  private isLoadingDiagram = false;
+  private isSaving = false;
+
+  constructor(private projectService: ProjectService, private sanitizer: DomSanitizer) {
     const params = new URLSearchParams({
       embed: '1',
       proto: 'json',
+      // configure: '1',
       // Disable pages - page handling is already disabled in initialXml with page="0"
       pages: '0',
       // Create minimal UI
       ui: 'min',
-      chrome: '0',
+      chrome: '1',
       toolbar: '0',
-      nav: '0',
-      layers: '0',
+      nav: '1',
+      layers: '1',
       // Hide all buttons
       saveAndExit: '0',
-      noSaveBtn: '1',
+      noSaveBtn: '0',
       noExitBtn: '1'
     });
 
@@ -67,21 +46,61 @@ export class DrawioDiagramComponent implements OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['case'] && changes['case'].currentValue) {
       const caseData = changes['case'].currentValue;
-      this.loadDiagram(this.initialXml);
-      // if (caseData.diagram_data) {
-      // try {
-      //   // Try to load the diagram data from the case
-      //   this.loadDiagram(caseData.diagram_data);
-      // } catch (e) {
-      //   console.error('Failed to load diagram data from case:', e);
-      //   // Fall back to initial XML if there's an error
-      //   this.loadDiagram(this.initialXml);
-      // }
-      // } else {
-      //   // If no diagram data in the case, use the initial XML
-      //   this.loadDiagram(this.initialXml);
-      // }
+      if (caseData._id && caseData.project_id) {
+        // Load the diagram from the server
+        this.loadDiagramFromServer(caseData.project_id, caseData._id);
+      } else {
+        // If no case ID or project ID, use a blank diagram
+        this.loadDiagram(this.blankDiagramXml);
+      }
     }
+  }
+
+  loadDiagramFromServer(projectId: string, caseId: string): void {
+    this.isLoadingDiagram = true;
+    this.projectService.getCaseById(projectId, caseId).subscribe({
+      next: (caseData: Case) => {
+        if (caseData.diagram_data) {
+          try {
+            console.log('Loading diagram data from server');
+            this.loadDiagram(caseData.diagram_data);
+          } catch (e) {
+            console.error('Failed to load diagram data from case:', e);
+            // this.loadDiagram(this.blankDiagramXml);
+          }
+        } else {
+          console.log('No diagram data found, using blank diagram');
+          // this.loadDiagram(this.blankDiagramXml);
+        }
+        this.isLoadingDiagram = false;
+      },
+      error: (err) => {
+        console.error('Error fetching case data:', err);
+        this.loadDiagram(this.blankDiagramXml);
+        this.isLoadingDiagram = false;
+      }
+    });
+  }
+
+  saveDiagramToServer(xmlData: string): void {
+    if (!this.case || !this.case._id || !this.case.project_id || this.isSaving) return;
+
+    this.isSaving = true;
+    const updatedCase: Case = {
+      ...this.case,
+      diagram_data: xmlData
+    };
+
+    this.projectService.updateCase(this.case.project_id, this.case._id, updatedCase).subscribe({
+      next: (result) => {
+        console.log('Diagram saved to server successfully');
+        this.isSaving = false;
+      },
+      error: (err) => {
+        console.error('Error saving diagram to server:', err);
+        this.isSaving = false;
+      }
+    });
   }
 
   @HostListener('window:message', ['$event'])
@@ -101,11 +120,21 @@ export class DrawioDiagramComponent implements OnChanges {
 
       if (data.event === 'init') {
         console.log('Draw.io initialized, sending load action');
-        this.loadDiagram(this.initialXml);
+        if (!this.isLoadingDiagram && this.case?._id && this.case?.project_id) {
+          this.loadDiagramFromServer(this.case.project_id, this.case._id);
+        } else {
+          this.loadDiagram(this.blankDiagramXml);
+        }
       } else if (data.event === 'load') {
         console.log('Diagram loaded');
       } else if (data.event === 'save') {
         console.log('Diagram saved:', data.xml);
+        if (this.case?._id && this.case?.project_id) {
+          this.saveDiagramToServer(data.xml);
+        }
+      } else if (data.event === 'exit') {
+        console.log('Draw.io exit event received');
+        // Handle exit if needed
       } else {
         console.log('Other draw.io event:', data.event);
       }
@@ -114,7 +143,11 @@ export class DrawioDiagramComponent implements OnChanges {
       // If it's not JSON, handle raw messages
       if (event.data === 'ready') {
         console.log('Draw.io ready, sending load action');
-        this.loadDiagram(this.initialXml);
+        if (!this.isLoadingDiagram && this.case?._id && this.case?.project_id) {
+          this.loadDiagramFromServer(this.case.project_id, this.case._id);
+        } else {
+          this.loadDiagram(this.blankDiagramXml);
+        }
       }
     }
   }

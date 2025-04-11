@@ -93,21 +93,30 @@ export class ProjectDiagramComponent implements OnInit {
     this.showModal = false;
   }
 
-  addTabFromModal(): void {
+  addTabFromModal(index: number): void {
     const tabTitle = this.selectedTabName === 'Custom'
       ? (this.customTabName.trim() ? this.customTabName : 'Custom Case')
       : this.selectedTabName;
 
     // Create new Case
-    this._projectService.createCase(this.projectId, { name: tabTitle, diagram_data: "{'test': 'test'}" }).subscribe({
+    const activeCase = this.cases[this.activeTabIndex];
+    this._projectService.createCase(this.projectId, { name: tabTitle, diagram_data: activeCase.diagram_data }).subscribe({
       next: (caseId: string) => {
-        // Append the new case to the cases array
-        this.cases = [...this.cases, { name: tabTitle, _id: caseId }];
-        // Regenerate the tabs array from the updated cases
-        this.tabs = this.cases.map(c => ({ title: c.name, _id: c._id }));
+        // Fetch the complete case data to ensure we have all properties
+        this._projectService.getCaseById(this.projectId, caseId).subscribe({
+          next: (newCase: Case) => {
+            // Append the new case to the cases array
+            this.cases = [...this.cases, newCase];
+            // Regenerate the tabs array from the updated cases
+            this.tabs = this.cases.map(c => ({ title: c.name, _id: c._id }));
 
-        // Activate the new tab
-        this.activeTabIndex = this.tabs.length - 1;
+            // Activate the new tab
+            this.activeTabIndex = this.tabs.length - 1;
+          },
+          error: () => {
+            console.log('Failed to load newly created case');
+          }
+        });
       },
       error: () => {
         console.log('Failed to create case');
