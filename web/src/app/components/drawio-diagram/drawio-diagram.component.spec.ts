@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { DiagramComponent } from './diagram.component';
+import { DrawioDiagramComponent } from './drawio-diagram.component';
 
-describe('DiagramComponent', () => {
-  let component: DiagramComponent;
-  let fixture: ComponentFixture<DiagramComponent>;
+describe('DrawioDiagramComponent', () => {
+  let component: DrawioDiagramComponent;
+  let fixture: ComponentFixture<DrawioDiagramComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [DiagramComponent]
+      imports: [DrawioDiagramComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(DiagramComponent);
+    fixture = TestBed.createComponent(DrawioDiagramComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

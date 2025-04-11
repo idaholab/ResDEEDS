@@ -1,0 +1,11 @@
+:host {
+    display: block;
+}
+
+nav.navbar {
+    position: sticky;
+    top: 0;
+    z-index: 1000; // Higher z-index to stay above other content
+    width: 100%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}

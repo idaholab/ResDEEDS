@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { DiagramComponent } from '../diagram/diagram.component';
 import { ProjectService } from '../../../services/project.service';
 import { Case, CaseResults } from '../../../models/case.model';
 import { ActivatedRoute } from '@angular/router';
+import { DrawioDiagramComponent } from '../../drawio-diagram/drawio-diagram.component';
 
 interface Tab {
   title: string;
@@ -13,7 +13,7 @@ interface Tab {
 
 @Component({
   selector: 'app-project-diagram',
-  imports: [CommonModule, FormsModule, DiagramComponent],
+  imports: [CommonModule, FormsModule, DrawioDiagramComponent],
   templateUrl: './project-diagram.component.html',
   styleUrls: ['./project-diagram.component.scss']
 })
@@ -93,21 +93,30 @@ export class ProjectDiagramComponent implements OnInit {
     this.showModal = false;
   }
 
-  addTabFromModal(): void {
+  addTabFromModal(index: number): void {
     const tabTitle = this.selectedTabName === 'Custom'
       ? (this.customTabName.trim() ? this.customTabName : 'Custom Case')
       : this.selectedTabName;
 
     // Create new Case
-    this._projectService.createCase(this.projectId, { name: tabTitle, diagram_data: "{'test': 'test'}" }).subscribe({
+    const activeCase = this.cases[this.activeTabIndex];
+    this._projectService.createCase(this.projectId, { name: tabTitle, diagram_data: activeCase.diagram_data }).subscribe({
       next: (caseId: string) => {
-        // Append the new case to the cases array
-        this.cases = [...this.cases, { name: tabTitle, _id: caseId }];
-        // Regenerate the tabs array from the updated cases
-        this.tabs = this.cases.map(c => ({ title: c.name, _id: c._id }));
+        // Fetch the complete case data to ensure we have all properties
+        this._projectService.getCaseById(this.projectId, caseId).subscribe({
+          next: (newCase: Case) => {
+            // Append the new case to the cases array
+            this.cases = [...this.cases, newCase];
+            // Regenerate the tabs array from the updated cases
+            this.tabs = this.cases.map(c => ({ title: c.name, _id: c._id }));
 
-        // Activate the new tab
-        this.activeTabIndex = this.tabs.length - 1;
+            // Activate the new tab
+            this.activeTabIndex = this.tabs.length - 1;
+          },
+          error: () => {
+            console.log('Failed to load newly created case');
+          }
+        });
       },
       error: () => {
         console.log('Failed to create case');
@@ -156,6 +165,11 @@ export class ProjectDiagramComponent implements OnInit {
         console.log('Failed to delete case');
       }
     });
+  }
+
+  // get the current active case
+  getActiveCase(): Case | undefined {
+    return this.cases[this.activeTabIndex];
   }
 
   // analyze a case

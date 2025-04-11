@@ -7,6 +7,7 @@ import { HomeComponent } from './components/home/home.component';
 import { ProjectsComponent } from './components/projects/projects.component';
 import { ProjectDiagramComponent } from './components/projects/project-diagram/project-diagram.component';
 
+
 export const routes: Routes = [
     { path: '', component: HomeComponent },
     { path: 'login', component: LoginComponent },

@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import Drawflow from 'drawflow';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Project } from '../models/project.model';
@@ -66,9 +65,21 @@ export class ProjectService {
     return this.http.get<Case[]>(`${this.apiUrl}/project/${projectId}/cases/`, { headers: this.getAuthHeaders() });
   }
 
+  // Fetch a specific case by ID
+  getCaseById(projectId: string, caseId: string): Observable<Case> {
+    return this.http.get<Case>(`${this.apiUrl}/project/${projectId}/case/${caseId}/`, { headers: this.getAuthHeaders() });
+  }
+
   // Create a new case for a specific project
   createCase(projectId: string, caseData: Case): Observable<string> {
     return this.http.post<string>(`${this.apiUrl}/project/${projectId}/case/create/`, caseData, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  // Update a case by ID
+  updateCase(projectId: string, caseId: string, caseData: Case): Observable<Case> {
+    return this.http.put<Case>(`${this.apiUrl}/project/${projectId}/case/${caseId}/update/`, caseData, {
       headers: this.getAuthHeaders()
     });
   }
