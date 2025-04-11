@@ -40,11 +40,16 @@ services:
   drawio:
     container_name: resdeeds-drawio
     image: jgraph/drawio:latest
+    environment:
+      - PUBLIC_URL=/drawio
+      - DRAWIO_BASE_URL=/drawio
     ports:
       - "8080:8080"
       - "8443:8443"
     volumes:
       - ./drawio:/config
+    networks:
+      - resdeeds-network
   mongodb:
     container_name: resdeeds-mongodb
     env_file:
