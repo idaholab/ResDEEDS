@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, HostListener, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, HostListener, Input, OnChanges, OnInit, OnDestroy, SimpleChanges } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Case } from '../../models/case.model';
 import { ProjectService } from '../../services/project.service';
@@ -11,7 +11,7 @@ import { environment } from '../../../environments/environment';
   templateUrl: './drawio-diagram.component.html',
   styleUrl: './drawio-diagram.component.scss'
 })
-export class DrawioDiagramComponent implements OnChanges {
+export class DrawioDiagramComponent implements OnChanges, OnInit, OnDestroy {
   @Input() case?: Case;
 
   // Use the new local URL from GitHub repo
@@ -21,6 +21,7 @@ export class DrawioDiagramComponent implements OnChanges {
 
   private isLoadingDiagram = false;
   private isSaving = false;
+  private resizeTimeout: any = null;
 
   constructor(private projectService: ProjectService, private sanitizer: DomSanitizer) {
     const params = new URLSearchParams({
@@ -45,6 +46,18 @@ export class DrawioDiagramComponent implements OnChanges {
     this.drawioUrl = this.sanitizer.bypassSecurityTrustResourceUrl(drawioUrl);
   }
 
+  ngOnInit(): void {
+    // Adjust iframe size on component initialization
+    this.adjustIframeSize();
+  }
+
+  ngOnDestroy(): void {
+    // Clear any pending timeouts
+    if (this.resizeTimeout) {
+      clearTimeout(this.resizeTimeout);
+    }
+  }
+
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['case'] && changes['case'].currentValue) {
       const caseData = changes['case'].currentValue;
@@ -54,6 +67,34 @@ export class DrawioDiagramComponent implements OnChanges {
       } else {
         // If no case ID or project ID, use a blank diagram
         this.loadDiagram(this.blankDiagramXml);
+      }
+    }
+  }
+
+  @HostListener('window:resize')
+  onResize() {
+    // Debounce resize events
+    if (this.resizeTimeout) {
+      clearTimeout(this.resizeTimeout);
+    }
+    this.resizeTimeout = setTimeout(() => {
+      this.adjustIframeSize();
+    }, 250);
+  }
+
+  /**
+   * Adjusts the iframe size based on container and window size
+   */
+  private adjustIframeSize(): void {
+    const iframe = document.querySelector('.drawio-container iframe') as HTMLIFrameElement;
+    if (iframe) {
+      const container = iframe.parentElement;
+      if (container) {
+        const containerWidth = container.clientWidth;
+        // Set a reasonable max height based on viewport height
+        const maxHeight = Math.min(800, window.innerHeight * 0.8);
+        iframe.style.height = `${maxHeight}px`;
+        iframe.style.width = `${containerWidth}px`;
       }
     }
   }
