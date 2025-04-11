@@ -158,6 +158,11 @@ export class ProjectDiagramComponent implements OnInit {
     });
   }
 
+  // get the current active case
+  getActiveCase(): Case | undefined {
+    return this.cases[this.activeTabIndex];
+  }
+
   // analyze a case
   analyzeCase(index: number): void {
     const tabToAnalyze = this.tabs[index];
