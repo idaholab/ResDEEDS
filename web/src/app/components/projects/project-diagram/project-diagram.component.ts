@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { DiagramComponent } from '../diagram/diagram.component';
 import { ProjectService } from '../../../services/project.service';
 import { Case, CaseResults } from '../../../models/case.model';
 import { ActivatedRoute } from '@angular/router';
