@@ -23,7 +23,7 @@
             (click)="deleteTab(activeTabIndex)">Delete</button>
         </div>
       </div>
-      <app-drawio-diagram></app-drawio-diagram>
+      <app-drawio-diagram [case]="getActiveCase()"></app-drawio-diagram>
     </div>
   </div>
   <!-- Analyze Modal Dialog -->
@@ -59,7 +59,7 @@
   <!-- Modal Dialog -->
   <div class="modal-backdrop fade show" *ngIf="showModal"></div>
   <div class="modal fade show d-block" tabindex="-1" *ngIf="showModal" role="dialog">
-    <div class="modal-case-dialog" role="document">
+    <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">Add a New Case</h5>

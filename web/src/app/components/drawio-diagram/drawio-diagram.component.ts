@@ -1,13 +1,17 @@
 import { CommonModule } from '@angular/common';
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { Case } from '../../models/case.model';
+
 @Component({
   selector: 'app-drawio-diagram',
   imports: [CommonModule],
   templateUrl: './drawio-diagram.component.html',
   styleUrl: './drawio-diagram.component.scss'
 })
-export class DrawioDiagramComponent {
+export class DrawioDiagramComponent implements OnChanges {
+  @Input() case?: Case;
+
   private baseUrl = 'http://localhost:8080';
   drawioUrl: SafeResourceUrl;
   private initialXml = `<mxGraphModel dx="1231" dy="915" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
@@ -58,6 +62,26 @@ export class DrawioDiagramComponent {
 
     const drawioUrl = `${this.baseUrl}?${params.toString()}`;
     this.drawioUrl = this.sanitizer.bypassSecurityTrustResourceUrl(drawioUrl);
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['case'] && changes['case'].currentValue) {
+      const caseData = changes['case'].currentValue;
+      this.loadDiagram(this.initialXml);
+      // if (caseData.diagram_data) {
+      // try {
+      //   // Try to load the diagram data from the case
+      //   this.loadDiagram(caseData.diagram_data);
+      // } catch (e) {
+      //   console.error('Failed to load diagram data from case:', e);
+      //   // Fall back to initial XML if there's an error
+      //   this.loadDiagram(this.initialXml);
+      // }
+      // } else {
+      //   // If no diagram data in the case, use the initial XML
+      //   this.loadDiagram(this.initialXml);
+      // }
+    }
   }
 
   @HostListener('window:message', ['$event'])
