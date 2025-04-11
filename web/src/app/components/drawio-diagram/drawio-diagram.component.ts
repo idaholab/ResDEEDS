@@ -14,7 +14,8 @@ import { environment } from '../../../environments/environment';
 export class DrawioDiagramComponent implements OnChanges {
   @Input() case?: Case;
 
-  private baseUrl = environment.drawioUrl;
+  // Use the new local URL from GitHub repo
+  private baseUrl = environment.drawioLocalUrl;
   drawioUrl: SafeResourceUrl;
   private blankDiagramXml = '<mxGraphModel><root><mxCell id="0"/><mxCell id="1" parent="0"/></root></mxGraphModel>';
 
@@ -105,9 +106,9 @@ export class DrawioDiagramComponent implements OnChanges {
 
   @HostListener('window:message', ['$event'])
   onMessage(event: MessageEvent) {
-    // Check if the message is from our local draw.io
-    if (!event.origin.includes('localhost:8080')) {
-      console.log('Ignoring message from unknown origin:', event.origin);
+    // Check if the message is from our Draw.io instance (served locally from Angular or any valid origin)
+    if (event.source !== window.frames[0]) {
+      console.log('Ignoring message from unknown source:', event.origin);
       return;
     }
 
