@@ -44,7 +44,7 @@ export class DrawioDiagramComponent implements OnChanges, OnInit, OnDestroy {
     });
 
     const drawioUrl = `${this.baseUrl}?${params.toString()}`;
-    this.drawioUrl = this.sanitizer.bypassSecurityTrustResourceUrl(drawioUrl); 
+    this.drawioUrl = this.sanitizer.bypassSecurityTrustResourceUrl(drawioUrl);
   }
 
   ngOnInit(): void {
@@ -101,12 +101,12 @@ export class DrawioDiagramComponent implements OnChanges, OnInit, OnDestroy {
   }
 
   private sendConfigureAction(): void {
-    const libs = [ 
+    const libs = [
       {
         "title": {
           "main": "Energy Systems"
         },
-        "entries": [ 
+        "entries": [
           {
             "id": "energy-systems",
             "title": {
@@ -115,12 +115,12 @@ export class DrawioDiagramComponent implements OnChanges, OnInit, OnDestroy {
             "desc": {
               "main": "Collection of Components for Energy Systems",
             },
-            "libs": [ 
+            "libs": [
               {
                 "title": {
                   "main": "Energy Systems Components",
                 },
-                "data": [ 
+                "data": [
                   {
                     "xml": "jZLBbsMgDIafhmuUgKr1mqZbL5u0VyCJF5BMHIHbpG9fEti6Tqq0A5L5/NuYH4Rq3HLyejIf1AMK9SpU44k4RW5pAFHI0vZCHYWUZVxCvj3JVlu2nLSHkf9TIFPBReMZEkkg8BUz6HUwsMpLoQ50ZrQjNDSO0HGGhl0c/FjFUKMdxhh38XzwEaBuAT8pWLb0kLiAZ9tpfP8jaImZ3C9BnVsyTZEGo6d1MLcMq2nFDC3SQKHovZ4tySj5sogNIfltflXVu0Ot8j1jT1ieerWhbNQJyAH7a5TMtmeTFDtZZIcM2MHkupey2CeqQyLDT/Xd/Bhk/7+393fecg/f4AY=",
                     "w": 52.2,
@@ -152,14 +152,14 @@ export class DrawioDiagramComponent implements OnChanges, OnInit, OnDestroy {
                     "aspect": "fixed"
                   },
                 ]
-              } 
+              }
             ]
-          } 
+          }
         ]
-      } 
+      }
     ]
 
-    const config = { 
+    const config = {
       enabledLibraries: [],
       libraries: libs,
     };
@@ -239,7 +239,7 @@ export class DrawioDiagramComponent implements OnChanges, OnInit, OnDestroy {
       } else if (data.event === 'configure') {
         console.log('Configuring');
         this.sendConfigureAction();
-      }  else if (data.event === 'load') {
+      } else if (data.event === 'load') {
         console.log('Diagram loaded:', data);
       } else if (data.event === 'save') {
         console.log('Diagram saved:', data.xml);
