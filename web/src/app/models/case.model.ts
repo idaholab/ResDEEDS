@@ -8,7 +8,9 @@ export interface Case {
 }
 
 export interface CaseResults {
+    buses: any;
     generators: any;
     lines: any;
     loads: any;
+    storage_units: any;
 }

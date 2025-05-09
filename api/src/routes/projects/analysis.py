@@ -27,8 +27,10 @@ async def analyze_case(case_id: str):
 
     return sanitize_dict(
         {
+            "buses": network.buses.to_dict(),
             "generators": network.generators.to_dict(),
             "loads": network.loads.to_dict(),
             "lines": network.lines.to_dict(),
+            "storage_units": network.storage_units.to_dict(),
         }
     )
