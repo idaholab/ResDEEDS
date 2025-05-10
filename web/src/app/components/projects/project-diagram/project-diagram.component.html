@@ -42,12 +42,16 @@
             </div>
           </div>
           <div *ngIf="!analyzing">
+            <p>Buses</p>
+            <pre>{{ analyzeResult.buses | json }}</pre>
             <p>Generators</p>
             <pre>{{ analyzeResult.generators | json }}</pre>
             <p>Lines</p>
             <pre>{{ analyzeResult.lines | json }}</pre>
             <p>Loads</p>
             <pre>{{ analyzeResult.loads | json }}</pre>
+            <p>Batteries</p>
+            <pre>{{ analyzeResult.storage_units | json }}</pre>
           </div>
         </div>
         <div class="modal-footer">
