@@ -7,6 +7,9 @@
 # Logs
 *.log
 
+# Claude
+CLAUDE.md
+
 # Python
 *.pyc
 __pycache__
