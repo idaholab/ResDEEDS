@@ -8,14 +8,13 @@ Resilience Development for Electric Energy Delivery Systems (ResDEEDS) is a deci
 
 ## 🔧 Tech Stack
 
-- **Languages:** Python, TypeScript, JavaScript, HTML, CSS
-- **Backend Framework:** FastAPI
-- **Frontend Framework:** Angular
+- **Languages:** Python, TypeScript, JavaScript
+- **Frameworks:** FastAPI, Angular
 - **Database:** MongoDB
 - **Containerization:** Docker, Docker Compose
 - **Tools:**
-  - PyPSA (for power system modeling)
-  - DrawIO (for energy diagrams)
+  - [PyPSA](https://pypsa.readthedocs.io/) (for power system modeling)
+  - [DrawIO](https://github.com/jgraph/drawio) (for energy diagrams)
 
 ## 🚀 Features
 
