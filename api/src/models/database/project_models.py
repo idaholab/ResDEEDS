@@ -1,4 +1,4 @@
-from src.database.models import BaseDBModel
+from src.models.database import BaseDBModel
 
 
 class ProjectModel(BaseDBModel):

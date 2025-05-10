@@ -1,7 +1,7 @@
 from typing import Literal
 from pydantic import EmailStr
 
-from src.database.models import BaseDBModel
+from src.models.database import BaseDBModel
 
 
 class UserModel(BaseDBModel):

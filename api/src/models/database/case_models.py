@@ -1,5 +1,4 @@
-from typing import Any
-from src.database.models import BaseDBModel
+from src.models.database import BaseDBModel
 
 
 class CaseModel(BaseDBModel):
