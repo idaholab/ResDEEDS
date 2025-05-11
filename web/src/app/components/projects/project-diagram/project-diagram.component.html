@@ -43,15 +43,15 @@
           </div>
           <div *ngIf="!analyzing">
             <p>Buses</p>
-            <pre>{{ analyzeResult.buses | json }}</pre>
+            <pre>{{ flowResults.buses_state | json }}</pre>
             <p>Generators</p>
-            <pre>{{ analyzeResult.generators | json }}</pre>
+            <pre>{{ flowResults.generators_output | json }}</pre>
             <p>Lines</p>
-            <pre>{{ analyzeResult.lines | json }}</pre>
+            <pre>{{ flowResults.lines_flow | json }}</pre>
             <p>Loads</p>
-            <pre>{{ analyzeResult.loads | json }}</pre>
+            <pre>{{ flowResults.loads_consumption | json }}</pre>
             <p>Batteries</p>
-            <pre>{{ analyzeResult.storage_units | json }}</pre>
+            <pre>{{ flowResults.storage_units_state | json }}</pre>
           </div>
         </div>
         <div class="modal-footer">

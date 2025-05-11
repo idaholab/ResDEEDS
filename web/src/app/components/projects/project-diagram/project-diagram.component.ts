@@ -43,6 +43,8 @@ export class ProjectDiagramComponent implements OnInit {
   cases: Case[] = [];
 
   analyzeResult: any = {};
+  flowResults: any = {};
+  staticData: any = {};
 
   showAnalyzeModal: boolean = false;
 
@@ -187,6 +189,8 @@ export class ProjectDiagramComponent implements OnInit {
         // Set results and display modal
         this.analyzeResult = results;
         this.analyzing = false;
+        this.flowResults = results.flow_results;
+        this.staticData = results.static_data;
       },
       error: () => {
         console.log('Failed to analyze case');
