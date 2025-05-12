@@ -190,6 +190,7 @@ export class ProjectDiagramComponent implements OnInit {
         this.analyzeResult = results;
         this.analyzing = false;
         this.flowResults = results.flow_results;
+        console.log(this.flowResults);
         this.staticData = results.static_data;
       },
       error: () => {

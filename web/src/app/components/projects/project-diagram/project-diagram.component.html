@@ -42,16 +42,99 @@
             </div>
           </div>
           <div *ngIf="!analyzing">
-            <p>Buses</p>
-            <pre>{{ flowResults.buses_state | json }}</pre>
-            <p>Generators</p>
-            <pre>{{ flowResults.generators_output | json }}</pre>
-            <p>Lines</p>
-            <pre>{{ flowResults.lines_flow | json }}</pre>
-            <p>Loads</p>
-            <pre>{{ flowResults.loads_consumption | json }}</pre>
-            <p>Batteries</p>
-            <pre>{{ flowResults.storage_units_state | json }}</pre>
+            <!-- Buses Table -->
+            <p class="fw-bold">Buses</p>
+            <table class="table table-sm table-striped" *ngIf="flowResults?.buses_state">
+              <thead>
+                <tr>
+                  <th>Bus ID</th>
+                  <th>Voltage Magnitude (p.u.)</th>
+                  <th>Voltage Angle (rad)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let busId of (flowResults.buses_state.v_mag_pu | keyvalue)">
+                  <td>{{ busId.key }}</td>
+                  <td>{{ busId.value }}</td>
+                  <td>{{test}}</td>
+                </tr>
+              </tbody>
+            </table>
+            <!-- Generators Table -->
+            <p class="fw-bold mt-3">Generators</p>
+            <table class="table table-sm table-striped" *ngIf="flowResults?.generators_output">
+              <thead>
+                <tr>
+                  <th>Generator ID</th>
+                  <th>Active Power (P)</th>
+                  <th>Reactive Power (Q)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let gen of (flowResults.generators_output.p | keyvalue)">
+                  <td>{{ gen.key }}</td>
+                  <td>{{ gen.value }}</td>
+                  <td>test</td>
+                </tr>
+              </tbody>
+            </table>
+            <!-- Lines Table -->
+            <p class="fw-bold mt-3">Lines</p>
+            <table class="table table-sm table-striped" *ngIf="flowResults?.lines_flow">
+              <thead>
+                <tr>
+                  <th>Line ID</th>
+                  <th>P0</th>
+                  <th>Q0</th>
+                  <th>P1</th>
+                  <th>Q1</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let line of (flowResults.lines_flow.p0 | keyvalue)">
+                  <td>{{ line.key }}</td>
+                  <td>test</td>
+                  <td>test</td>
+                  <td>test</td>
+                </tr>
+              </tbody>
+            </table>
+            <!-- Loads Table -->
+            <p class="fw-bold mt-3">Loads</p>
+            <table class="table table-sm table-striped" *ngIf="flowResults?.loads_consumption">
+              <thead>
+                <tr>
+                  <th>Load ID</th>
+                  <th>Active Power (P)</th>
+                  <th>Reactive Power (Q)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let load of (flowResults.loads_consumption.p | keyvalue)">
+                  <td>{{ load.key }}</td>
+                  <td>test</td>
+                  <td>test</td>
+                </tr>
+              </tbody>
+            </table>
+            <!-- Batteries Table -->
+            <p class="fw-bold mt-3">Batteries</p>
+            <table class="table table-sm table-striped" *ngIf="flowResults?.storage_units_state">
+              <thead>
+                <tr>
+                  <th>Storage ID</th>
+                  <th>Power (P)</th>
+                  <th>State of Charge</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let su of (flowResults.storage_units_state.p | keyvalue)">
+                  <td>{{ su.key }}</td>
+                  <td>test</td>
+                  <td>test</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
         <div class="modal-footer">
