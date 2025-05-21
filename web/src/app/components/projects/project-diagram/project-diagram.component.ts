@@ -199,6 +199,126 @@ export class ProjectDiagramComponent implements OnInit {
     });
   }
 
+  // get flow results
+  getFlowResults() {
+    if (!this.flowResults) return {};
+
+
+    // Initialize result object with empty arrays for each category
+    const result: any = {
+      linesFlow: [],
+      generatorsOutput: [],
+      loadsConsumption: [],
+      storageUnits: [],
+      busesState: []
+    };
+
+    // Process lines flow data
+    if (this.flowResults.lines_flow) {
+      // Get all unique line names across all subfields
+      const lineKeys = new Set<string>();
+      for (const field of ['p0', 'p1', 'q0', 'q1']) {
+        if (this.flowResults.lines_flow[field]) {
+          Object.keys(this.flowResults.lines_flow[field]).forEach(key => lineKeys.add(key));
+        }
+      }
+
+      // Create a row object for each line
+      Array.from(lineKeys).forEach(line => {
+        result.linesFlow.push({
+          line,
+          p0: this.flowResults.lines_flow.p0?.[line] ?? null,
+          p1: this.flowResults.lines_flow.p1?.[line] ?? null,
+          q0: this.flowResults.lines_flow.q0?.[line] ?? null,
+          q1: this.flowResults.lines_flow.q1?.[line] ?? null
+        });
+      });
+    }
+
+    // Process generators output data
+    if (this.flowResults.generators_output) {
+      // Get all unique generator names
+      const genKeys = new Set<string>();
+      for (const field of ['p', 'q']) {
+        if (this.flowResults.generators_output[field]) {
+          Object.keys(this.flowResults.generators_output[field]).forEach(key => genKeys.add(key));
+        }
+      }
+
+      // Create a row object for each generator
+      Array.from(genKeys).forEach(generator => {
+        result.generatorsOutput.push({
+          generator,
+          p: this.flowResults.generators_output.p?.[generator] ?? null,
+          q: this.flowResults.generators_output.q?.[generator] ?? null
+        });
+      });
+    }
+
+    // Process loads consumption data
+    if (this.flowResults.loads_consumption) {
+      // Get all unique load names
+      const loadKeys = new Set<string>();
+      for (const field of ['p', 'q']) {
+        if (this.flowResults.loads_consumption[field]) {
+          Object.keys(this.flowResults.loads_consumption[field]).forEach(key => loadKeys.add(key));
+        }
+      }
+
+      // Create a row object for each load
+      Array.from(loadKeys).forEach(load => {
+        result.loadsConsumption.push({
+          load,
+          p: this.flowResults.loads_consumption.p?.[load] ?? null,
+          q: this.flowResults.loads_consumption.q?.[load] ?? null
+        });
+      });
+    }
+
+    // Process storage units state data
+    if (this.flowResults.storage_units_state) {
+      // Get all unique storage unit names
+      const storageKeys = new Set<string>();
+      for (const field of ['p', 'q', 'state_of_charge']) {
+        if (this.flowResults.storage_units_state[field]) {
+          Object.keys(this.flowResults.storage_units_state[field]).forEach(key => storageKeys.add(key));
+        }
+      }
+
+      // Create a row object for each storage unit
+      Array.from(storageKeys).forEach(unit => {
+        result.storageUnits.push({
+          unit,
+          p: this.flowResults.storage_units_state.p?.[unit] ?? null,
+          q: this.flowResults.storage_units_state.q?.[unit] ?? null,
+          state_of_charge: this.flowResults.storage_units_state.state_of_charge?.[unit] ?? null
+        });
+      });
+    }
+
+    // Process buses state data
+    if (this.flowResults.buses_state) {
+      // Get all unique bus names
+      const busKeys = new Set<string>();
+      for (const field of ['v_mag_pu', 'v_ang']) {
+        if (this.flowResults.buses_state[field]) {
+          Object.keys(this.flowResults.buses_state[field]).forEach(key => busKeys.add(key));
+        }
+      }
+
+      // Create a row object for each bus
+      Array.from(busKeys).forEach(bus => {
+        result.busesState.push({
+          bus,
+          v_mag_pu: this.flowResults.buses_state.v_mag_pu?.[bus] ?? null,
+          v_ang: this.flowResults.buses_state.v_ang?.[bus] ?? null
+        });
+      });
+    }
+
+    return result;
+  }
+
   closeAnalyzeModal(): void {
     this.showAnalyzeModal = false;
   }
