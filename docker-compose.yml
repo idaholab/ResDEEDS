@@ -2,7 +2,7 @@ services:
   web:
     build:
       context: ./web
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     image: ghcr.io/idaholab/resdeeds/web
     container_name: resdeeds-web
     ports:
@@ -15,10 +15,6 @@ services:
       - resdeeds-network
     volumes:
       - ./web:/var/www
-      - node_modules:/var/www/node_modules
-      - ./web/etc/ssl:/etc/ssl
-      - ./web/etc/nginx/conf.d:/etc/nginx/conf.d
-      - ./web/etc/nginx/log:/var/log/nginx
   api:
     build:
       context: ./api
