@@ -11,18 +11,28 @@ from src.bll.psa.components import (
 )
 
 
-def create_network(case_name: str) -> Network:
+def create_network(case_name: str, snapshots=None) -> Network:
     """
     Create a PyPSA network with the specified case name.
 
     Parameters:
         case_name (str): Name of the PyPSA network.
+        snapshots (pd.Index, optional): Index for time-series analysis. Can be simple
+                                       integer index or DatetimeIndex.
 
     Returns:
         network (pypsa.Network): The PyPSA network object.
     """
 
     network = Network(name=case_name)
+
+    # Set snapshots if provided, otherwise use a single snapshot
+    if snapshots is None:
+        import pandas as pd
+
+        snapshots = pd.RangeIndex(1)
+
+    network.set_snapshots(snapshots)
 
     # Add buses
     add_bus(network, "Main")
