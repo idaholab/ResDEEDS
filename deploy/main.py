@@ -14,7 +14,7 @@ def cli(ctx):
 
 @click.command()
 def deploy():
-    """Deploy OPTIC to production."""
+    """Deploy Resdeeds to production."""
     username, password = get_credentials()
     click.confirm(f"Are you sure you want to deploy ResDEEDS?", abort=True)
 
@@ -36,7 +36,6 @@ def deploy():
             break
         print(line, end="")
     ssh.close()
-   
 
 
 @click.command("configure")
@@ -46,7 +45,11 @@ def configure(password, username):
     """Configure access point in config.ini file."""
     config = configparser.ConfigParser()
     key = Fernet.generate_key()
-    config["DEFAULT"] = {"key": str(key, "utf-8"), "password": _encrypt(password, key), "username": username}
+    config["DEFAULT"] = {
+        "key": str(key, "utf-8"),
+        "password": _encrypt(password, key),
+        "username": username,
+    }
     with open("config.ini", "w") as configfile:
         config.write(configfile)
 
@@ -66,9 +69,11 @@ def get_credentials() -> str:
         configure()
     return username, password
 
+
 def _encrypt(password: str, key: bytes) -> str:
     """Encrypt password."""
     return str(Fernet(key).encrypt(password.encode()), "utf-8")
+
 
 def _decrypt(password: bytes, key: bytes) -> str:
     """Decrypt password."""
