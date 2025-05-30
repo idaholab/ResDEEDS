@@ -25,7 +25,7 @@ jobs:
         run: docker pull $IMAGE/api:latest
 
       - name: Tag Docker Image
-        run: docker build -f Dockerfile . --tag $IMAGE/api:latest --cache-from $IMAGE:latest
+        run: docker build -f Dockerfile . --tag $IMAGE/api:latest --cache-from $IMAGE/api:latest
 
       - name: Push Docker Image
         run: docker push $IMAGE/api:latest
@@ -44,7 +44,7 @@ jobs:
         run: docker pull $IMAGE/web:latest
 
       - name: Tag Docker Image
-        run: docker build -f Dockerfile . --tag $IMAGE/web:latest --cache-from $IMAGE:latest
+        run: docker build -f Dockerfile . --tag $IMAGE/web:latest --cache-from $IMAGE/web:latest
 
       - name: Push Docker Image
         run: docker push $IMAGE/web:latest
