@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { provideHttpClient } from '@angular/common/http';
 import { DrawioDiagramComponent } from './drawio-diagram.component';
 
 describe('DrawioDiagramComponent', () => {
@@ -8,7 +8,8 @@ describe('DrawioDiagramComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [DrawioDiagramComponent]
+      imports: [DrawioDiagramComponent],
+      providers: [provideHttpClient()]
     })
     .compileComponents();
 
