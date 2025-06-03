@@ -1,7 +1,7 @@
 services:
   web:
     container_name: resdeeds-web
-    image: ghcr.io/idaholab/resdeeds/web
+    image: ghcr.io/idaholab/resdeeds/web:latest
     ports:
       - 80:80
       - 443:443
