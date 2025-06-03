@@ -1,4 +1,4 @@
-.PHONY: build up stop down deploy
+.PHONY: build up stop down clean deploy
 include api/.env
 export
 
@@ -20,7 +20,7 @@ stop:
 
 # target: down - Stop the docker container.
 down:
-	docker compose down -v
+	docker compose down -v --remove-orphans
 
 # target: deploy - deploy to resdeeds server
 deploy:
