@@ -1,7 +1,7 @@
 from src.database.document import Document
-from src.database.models.user_models import UserModel
-from src.database.models.project_models import ProjectModel
-from src.database.models.case_models import CaseModel
+from src.models.database.user_models import UserModel
+from src.models.database.project_models import ProjectModel
+from src.models.database.case_models import CaseModel
 
 
 def project_document() -> Document:

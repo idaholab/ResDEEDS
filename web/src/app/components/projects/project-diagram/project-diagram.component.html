@@ -44,12 +44,127 @@
           <div *ngIf="!analyzing">
             <p>Warnings</p>
             <pre>{{ analyzeResult.warnings | json }}</pre>
-            <p>Generators</p>
-            <pre>{{ analyzeResult.generators | json }}</pre>
-            <p>Lines</p>
-            <pre>{{ analyzeResult.lines | json }}</pre>
-            <p>Loads</p>
-            <pre>{{ analyzeResult.loads | json }}</pre>
+            <!-- Results tables using getFlowResults() -->
+            <ng-container *ngIf="getFlowResults() as results">
+              <!-- Buses Table -->
+              <div *ngIf="results.busesState?.length > 0" class="mb-4">
+                <p class="fw-bold">Buses</p>
+                <table class="table table-sm table-striped table-bordered">
+                  <thead class="table-light">
+                    <tr>
+                      <th>Bus ID</th>
+                      <th>Voltage Magnitude (p.u.)</th>
+                      <th>Voltage Angle (rad)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let item of results.busesState">
+                      <td>{{ item.bus }}</td>
+                      <td>{{ item.v_mag_pu | number:'1.4-4' }}</td>
+                      <td>{{ item.v_ang | number:'1.4-4' }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              
+              <!-- Generators Table -->
+              <div *ngIf="results.generatorsOutput?.length > 0" class="mb-4">
+                <p class="fw-bold">Generators</p>
+                <table class="table table-sm table-striped table-bordered">
+                  <thead class="table-light">
+                    <tr>
+                      <th>Generator ID</th>
+                      <th>Active Power (P)</th>
+                      <th>Reactive Power (Q)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let item of results.generatorsOutput">
+                      <td>{{ item.generator }}</td>
+                      <td>{{ item.p | number:'1.4-4' }}</td>
+                      <td>{{ item.q | number:'1.4-4' }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              
+              <!-- Lines Table -->
+              <div *ngIf="results.linesFlow?.length > 0" class="mb-4">
+                <p class="fw-bold">Lines</p>
+                <table class="table table-sm table-striped table-bordered">
+                  <thead class="table-light">
+                    <tr>
+                      <th>Line ID</th>
+                      <th>P0</th>
+                      <th>P1</th>
+                      <th>Q0</th>
+                      <th>Q1</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let item of results.linesFlow">
+                      <td>{{ item.line }}</td>
+                      <td>{{ item.p0 | number:'1.4-4' }}</td>
+                      <td>{{ item.p1 | number:'1.4-4' }}</td>
+                      <td>{{ item.q0 | number:'1.4-4' }}</td>
+                      <td>{{ item.q1 | number:'1.4-4' }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              
+              <!-- Loads Table -->
+              <div *ngIf="results.loadsConsumption?.length > 0" class="mb-4">
+                <p class="fw-bold">Loads</p>
+                <table class="table table-sm table-striped table-bordered">
+                  <thead class="table-light">
+                    <tr>
+                      <th>Load ID</th>
+                      <th>Active Power (P)</th>
+                      <th>Reactive Power (Q)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let item of results.loadsConsumption">
+                      <td>{{ item.load }}</td>
+                      <td>{{ item.p | number:'1.4-4' }}</td>
+                      <td>{{ item.q | number:'1.4-4' }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              
+              <!-- Storage Units Table -->
+              <div *ngIf="results.storageUnits?.length > 0" class="mb-4">
+                <p class="fw-bold">Storage Units</p>
+                <table class="table table-sm table-striped table-bordered">
+                  <thead class="table-light">
+                    <tr>
+                      <th>Storage ID</th>
+                      <th>Power (P)</th>
+                      <th>Reactive Power (Q)</th>
+                      <th>State of Charge</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let item of results.storageUnits">
+                      <td>{{ item.unit }}</td>
+                      <td>{{ item.p | number:'1.4-4' }}</td>
+                      <td>{{ item.q | number:'1.4-4' }}</td>
+                      <td>{{ item.state_of_charge | number:'1.4-4' }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              
+              <!-- No results message -->
+              <div *ngIf="!results.busesState?.length && !results.generatorsOutput?.length && 
+                          !results.linesFlow?.length && !results.loadsConsumption?.length && 
+                          !results.storageUnits?.length" 
+                   class="alert alert-info">
+                No analysis results available for this case.
+              </div>
+            </ng-container>
           </div>
         </div>
         <div class="modal-footer">

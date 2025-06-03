@@ -1,17 +1,20 @@
-# Environment Variables
-.env
-
 # MacOS
 .DS_Store
 
 # Logs
 *.log
 
-# Python
+# AI
+.claude/
+.codex/
+CLAUDE.md
+
+# API
 *.pyc
 __pycache__
 
 # Secrets
+*.env
 *.key
 *.cer
 *.ini
@@ -21,3 +24,9 @@ __pycache__
 
 # Visual Studio Code
 .vscode/
+
+# Web
+web/.angular
+web/.sass-cache/
+web/dist
+web/node_modules

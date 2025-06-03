@@ -2,8 +2,7 @@ services:
   web:
     build:
       context: ./web
-      dockerfile: Dockerfile
-    image: ghcr.io/idaholab/resdeeds/web
+      dockerfile: Dockerfile.dev
     container_name: resdeeds-web
     ports:
       - 80:80
@@ -15,15 +14,10 @@ services:
       - resdeeds-network
     volumes:
       - ./web:/var/www
-      - node_modules:/var/www/node_modules
-      - ./web/etc/ssl:/etc/ssl
-      - ./web/etc/nginx/conf.d:/etc/nginx/conf.d
-      - ./web/etc/nginx/log:/var/log/nginx
   api:
     build:
       context: ./api
       dockerfile: Dockerfile
-    image: ghcr.io/idaholab/resdeeds/api
     container_name: resdeeds-api
     depends_on:
       - mongodb

@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from src.bll.auth import JWTBearer, decode_jwt
-from src.routes.payload_models.project_models import ProjectModel
+from src.models.payload.project_models import ProjectModel
 from src.database.collection import case_document, project_document
 
 

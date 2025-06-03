@@ -8,7 +8,7 @@ from src.bll.auth import (
     verify_password,
 )
 from src.database.collection import user_document
-from src.routes.payload_models.auth_models import (
+from src.models.payload.auth_models import (
     UserModel,
     UserUpdateModel,
 )

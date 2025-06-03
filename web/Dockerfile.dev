@@ -1,0 +1,26 @@
+FROM node:24
+
+# Set working directory
+WORKDIR /var/www
+
+COPY . .
+
+# Configure INL certs and environment variables
+ADD http://certstore.inl.gov/pki/CAINLROOT_B64.crt /usr/local/share/ca-certificates/
+RUN /usr/sbin/update-ca-certificates
+ENV NODE_EXTRA_CA_CERTS=/etc/ssl/certs/ca-certificates.crt \
+    REQUESTS_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt \
+    CURL_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt \
+    SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt \
+    SSL_CERT_DIR=/etc/ssl/certs/
+
+# Copy package files and install dependencies
+RUN apt-get update \
+    && npm i -g @angular/cli \
+    && npm i
+
+# Expose the Angular dev server port
+EXPOSE 4200
+
+# Start the development server
+CMD ["ng", "serve", "--host", "0.0.0.0"]
