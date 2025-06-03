@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 
 from src.database.collection import case_document
 from src.bll.auth import JWTBearer
-from src.bll.psa.network import create_network
+from src.bll.psa.network import create_network, validate_user_input
 from src.bll.utils import sanitize_dict
 
 
@@ -20,6 +20,8 @@ async def analyze_case(case_id: str):
             detail="Case not found.",
         )
 
+    warnings = validate_user_input(case)
+
     network = create_network(case["name"])
 
     # Run linear power flow analysis
@@ -27,6 +29,7 @@ async def analyze_case(case_id: str):
 
     return sanitize_dict(
         {
+            "warnings": warnings,
             "generators": network.generators.to_dict(),
             "loads": network.loads.to_dict(),
             "lines": network.lines.to_dict(),

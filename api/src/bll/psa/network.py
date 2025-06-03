@@ -10,6 +10,67 @@ from src.bll.psa.components import (
     add_load,
 )
 
+import xmltodict
+
+def validate_user_input(case: dict) -> list:
+    """
+    Review user input data associated with the specified case name.
+
+    Parameters:
+        case (case): The case to validate.
+
+    Returns:
+        warnings (list): A list of warnings for the user.
+    """
+
+    warnings = []
+
+    diagram = xmltodict.parse(case.get("diagram_data")).get("mxGraphModel").get("root")
+
+    for obj in diagram["object"]:
+        match obj.get("@label"):
+            case "Battery":
+                for num_attr in ["@max_discharge_kw", "@total_capacity_kwh", "@max_charge_kw", "@scaled_charge_percent", "@max_power_factor", "@max_power_factor"]:
+                    try:
+                        float(obj.get(num_attr, ""))
+                    except:
+                        warnings.append(f"The {num_attr[1:]} property for {obj.get("@label")} {obj.get("@name")} cannot be converted to a floating point number from value: {obj.get(num_attr, "")}")
+            case "Bus":
+                pass
+            case "Line":
+                for num_attr in ["@length"]:
+                    try:
+                        float(obj.get(num_attr, ""))
+                    except:
+                        warnings.append(f"The {num_attr[1:]} property for {obj.get("@label")} {obj.get("@name")} cannot be converted to a floating point number from value: {obj.get(num_attr, "")}")
+            case "Load":
+                for num_attr in ["@real_power_mw"]:
+                    try:
+                        float(obj.get(num_attr, ""))
+                    except:
+                        warnings.append(f"The {num_attr[1:]} property for {obj.get("@label")} {obj.get("@name")} cannot be converted to a floating point number from value: {obj.get(num_attr, "")}")
+            case "Diesel Generator":
+                for num_attr in ["@nominal_power_kva", "@power_factor"]:
+                    try:
+                        float(obj.get(num_attr, ""))
+                    except:
+                        warnings.append(f"The {num_attr[1:]} property for {obj.get("@label")} {obj.get("@name")} cannot be converted to a floating point number from value: {obj.get(num_attr, "")}")
+            case "Solar Generator":
+                for num_attr in ["@max_power_kva", "@max_power_kva", "@min_power_factor"]:
+                    try:
+                        float(obj.get(num_attr, ""))
+                    except:
+                        warnings.append(f"The {num_attr[1:]} property for {obj.get("@label")} {obj.get("@name")} cannot be converted to a floating point number from value: {obj.get(num_attr, "")}")
+            case "Wind Generator":
+                for num_attr in ["@max_power_kva", "@max_power_kva", "@min_power_factor"]:
+                    try:
+                        float(obj.get(num_attr, ""))
+                    except:
+                        warnings.append(f"The {num_attr[1:]} property for {obj.get("@label")} {obj.get("@name")} cannot be converted to a floating point number from value: {obj.get(num_attr, "")}")
+            case _:
+                warnings.append("Only objects from the 'Energy Systems Components' Library will be analyzed.")
+
+    return set(warnings)
 
 def create_network(case_name: str) -> Network:
     """
