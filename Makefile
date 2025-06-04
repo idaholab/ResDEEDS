@@ -1,5 +1,5 @@
 .PHONY: build up stop down clean deploy
-include api/.env
+include .env
 export
 
 # target: help - Display callable targets.

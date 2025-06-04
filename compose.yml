@@ -24,7 +24,7 @@ services:
     depends_on:
       - mongodb
     env_file:
-      - ./api/.env
+      - .env
     ports:
       - 5000:5000
     stdin_open: true
@@ -36,7 +36,7 @@ services:
   mongodb:
     container_name: resdeeds-mongodb
     env_file:
-      - ./api/.env
+      - .env
     image: mongo:8.0
     ports:
       - 27017:27017
