@@ -38,9 +38,17 @@ attach-api:
 bash-api:
 	docker exec -it resdeeds-api bash
 
+# target: install-api - Install api dependencies
+install-api:
+	cd api && uv sync --dev
+
 # target: run-api - Run the api locally
 run-api:
-	cd api && uvicorn src.main:app --host 0.0.0.0 --port 5000 --reload
+	cd api && uv run uvicorn src.main:app --host 0.0.0.0 --port 5000 --reload
+
+# target: install-web - Install web dependencies
+install-web:
+	cd web && pnpm install
 
 # target: run-web - Run the web locally
 run-web:
