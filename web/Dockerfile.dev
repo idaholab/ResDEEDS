@@ -12,12 +12,16 @@ ENV NODE_EXTRA_CA_CERTS=/etc/ssl/certs/ca-certificates.crt \
     REQUESTS_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt \
     CURL_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt \
     SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt \
-    SSL_CERT_DIR=/etc/ssl/certs/
+    SSL_CERT_DIR=/etc/ssl/certs/ \
+    PNPM_HOME=/root/.local/share/pnpm \
+    PATH="/root/.local/share/pnpm:$PATH"
 
 # Copy package files and install dependencies
-RUN apt-get update \
-    && npm i -g @angular/cli \
-    && npm i
+RUN apt-get update
+RUN npm i -g pnpm@latest \
+    && mkdir -p $PNPM_HOME \
+    && pnpm add -g @angular/cli \
+    && pnpm install
 
 # Expose the Angular dev server port
 EXPOSE 4200
