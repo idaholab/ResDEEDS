@@ -42,6 +42,8 @@
             </div>
           </div>
           <div *ngIf="!analyzing">
+            <p>Warnings</p>
+            <pre>{{ analyzeResult.warnings | json }}</pre>
             <!-- Results tables using getFlowResults() -->
             <ng-container *ngIf="getFlowResults() as results">
               <!-- Buses Table -->
