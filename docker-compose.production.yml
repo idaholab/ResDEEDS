@@ -1,7 +1,10 @@
 services:
   web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
     container_name: resdeeds-web
-    image: ghcr.io/idaholab/resdeeds/web:latest
+    # image: ghcr.io/idaholab/resdeeds/web:latest
     ports:
       - 80:80
       - 443:443
@@ -11,6 +14,7 @@ services:
       - ./etc/ssl:/etc/ssl
       - ./etc/nginx:/etc/nginx/conf.d
       - /var/log/nginx:/var/log/nginx
+      - pnpm_store:/root/.local/share/pnpm
   api:
     container_name: resdeeds-api
     image: ghcr.io/idaholab/resdeeds/api:latest
@@ -37,3 +41,4 @@ networks:
   resdeeds_network:
 volumes:
   mongodb_data:
+  pnpm_store:
