@@ -64,8 +64,12 @@ For backend development, this project uses **uv** as the package manager:
 # Create a virtual environment (if not already created)
 uv venv --directory api
 
-# Install backend dependencies
+
+# Activate virtual environment
 cd api
+source .venv/bin/activate
+
+# Install backend dependencies
 uv sync --dev
 
 # Run development server
