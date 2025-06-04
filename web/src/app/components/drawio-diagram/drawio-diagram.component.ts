@@ -123,7 +123,7 @@ export class DrawioDiagramComponent implements OnChanges, OnInit, OnDestroy {
                 },
                 "data": [
                   {
-                    "xml": "jVPBbsMgDP0arlFKNK3XNV172jcgh3iEFQIi3pL+/chC2mRttUkhMu9hY55tVpR2OAbwzZur0bDileUvjOfjV5TBOVpBM2GHEo2Jtq5ZsWd8xDnjh/8d3vwczj0EbOlvf1d9oKRoG6jGFMfzOyDCcJ4CzXH5tG2RehdOE5YgsLjcV5/dcmthELXuZANBoTj1S44cgRESPEhN50g2vz3vunUSDNYz5zHIy1uvnt71GMQ7SHJhxen2AXerz43KHZ1Neqy2oKK5a8iOum2imaC9tirqbXQV/9JoLyBEiQ8KWwwQwxySwgKM6QgIO7Hh2yGuzLfqtoCppl8YCIcF9Cjha9pHdBZprGXe65qSvE88S2I0qFWTbnnOs+2EQiqgung/6J/5osgmie71WGRTm60nIOKLIUhRVvPyDQ==",
+                    "xml": "jVTbjqMwDP0aHqlomNHOK+1s52VH2j9AIXEh05BEwW3h79eBQOl2ql2EcHyOnTi+kOT7tv/w3DWfVoJO8p9JViQsC2++99biHTQTbb8HrWmtZJK/JyzgLGGH/zPejsaZ4x4M/tvfVl8gkNaaVyHEYL/jiOCHaaN5XzapBvBq/WnCIsRbWOvVuVurLe9LqTrRcF9DebquObTIdSm440LhQGTzt+e3bp3gGuTMOfBiuevN09kr+PLIBVp/xynzhHvMz0OWOxx0vGzXcBeWquU1yV2DbcjflpYX8KgoxkKr2hCG1q3QXyHTv22nUNnAVhbRtmQwlmDHxan29mzk3uoYXX4cHzIZDys6F2qWv1NoOz4rR9WDnE1IbxAdFaIIlWcHIU2+UcKaozIS/EbQiewgOXISAe9IggFfDyk3Mh0zlNZ6cE3KXlLXE81e6FOcKViL6gJlNfXJIsd6KFNTQf0Coj+L06JdoFFC31y36Za9bZypH7s2NnLIGvQr6FmVbrX6ANsChgbOrkpi7KlXtokd0ICqm3jKj2zzNqE8dm29eD8ZmvkgYmNffDdYxMbZuh97wleTH3e5+0n8AQ==",
                     "w": 52.2, // Battery
                     "h": 70.8,
                     "aspect": "fixed"
@@ -153,7 +153,7 @@ export class DrawioDiagramComponent implements OnChanges, OnInit, OnDestroy {
                     "aspect": "fixed"
                   },  
                   {
-                    "xml": "jVPBTsMwDP2aXKuuFYLrVmAXkJD4gMltvTaQxFWSbd3f4ywZtGwTVD3Y773Yju2IstLj2sLQv1KLSpRPIl+KIg9/WVkiP4POhB4rVIpt2YryURQBL0Tx/D/x4iTOB7Bo/N/nqf7AxrOtoA4lBv07KbAMrdGgBU82hjxnKKJrQGMEol/v3NTVMG4GOqDdfO7hOrGFJgSfctLc5K6Uf9EE548qFdWC6zFUzIIV7bySBisyJtw2gr3X4cILNkHJzrDdcM+Qs65O3XgjJ72kGbFH62UD6uWXoCbvSU8EyxTS08Co62EIhemxC/uQ1eBkk7kdK1ZbqVRFKt223PKX55dTTIMN8XGcQLfa8tOcNZJGb4/sH2Tr+3j4rshSZ3uUXZ+y3OfZQ0QhjbP7Pn1jic6JmE2DuLZozKZdmz8DxicvIUWZPZov",
+                    "xml": "jVPbbtswDP0aP8aIZRTta5I2eVmBAvsAg5EYW6suhsS0zt+PsuXNQRJshgCRh5RIn0MV9c4OhwB99+4VmqJ+K9abQqzTqnfBe7qC5oAddmgM21oV9WshEi4Ksf+/5GpMXvcQ0NG/z/vjL5TEtoFjajHl//QGAkMHdBiAfJiunCuIyXVgcQIm/3iOS9fC0PT+G0Pz+QX3AyeQ6fJlTLuHsTvt35AQ6WJyU7GDPpnaQsv7tiObfq9i8wsDaQlmY3TrGCPfL9AfiYgPHzVpn6JHT+QtJ4wMbUF+tsGfndp5kxusT+PHKWOxTewTpfUrt7aF2TnpAdWcwn5H1DNhmySM2EvlRKmldyftFIZSckWxV0DAW8Ij78ywdhjjCpxaoTpLSC2uWPH9U5UUruq6GcVrPsChad5Yv/bSEMrOcbdsRguBGqnpFl1V4qXsXXs7P3mkEkE4LKBHgvyV5YDeIoUL+99aUTcdfhJl1rRD3Xa5yvO6fJlQyIPU/jn9YHznQhzNI3BvxDmap/z6ATK+eIP5lqvn+hs=",
                     "w": 52.2, // Solar Generator
                     "h": 70.8,
                     "aspect": "fixed"
