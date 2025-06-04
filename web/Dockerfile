@@ -1,4 +1,4 @@
-FROM node:22 AS build
+FROM node:24 AS build
 
 WORKDIR /var/www
 
@@ -13,11 +13,17 @@ ENV NODE_EXTRA_CA_CERTS=/etc/ssl/certs/ca-certificates.crt \
     SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt \
     SSL_CERT_DIR=/etc/ssl/certs/
 
-RUN apt-get update
-RUN npm i -g @angular/cli \
-    && npm i
+# Configure PNPM home directory and add it to PATH for global package access
+ENV PNPM_HOME=/root/.local/share/pnpm \
+    PATH="/root/.local/share/pnpm:$PATH"
 
-RUN ng build --configuration=production
+RUN apt-get update
+RUN npm i -g pnpm@latest \
+    && mkdir -p $PNPM_HOME \
+    && pnpm add -g @angular/cli \
+    && pnpm install
+
+RUN pnpm ng build --configuration=production
 
 FROM nginx:alpine
 
