@@ -44,4 +44,4 @@ run-api:
 
 # target: run-web - Run the web locally
 run-web:
-	cd web && ng serve
+	cd web && pnpm ng serve
