@@ -11,7 +11,7 @@ Resilience Development for Electric Energy Delivery Systems (ResDEEDS) is a deci
 - **Languages:** Python, TypeScript, JavaScript
 - **Frameworks:** FastAPI, Angular
 - **Database:** MongoDB
-- **Package Management:** pnpm (frontend), pip (backend)
+- **Package Management:** pnpm (frontend), uv (backend)
 - **Containerization:** Docker, Docker Compose
 - **Tools:**
   - [PyPSA](https://pypsa.readthedocs.io/) (for power system modeling)
@@ -45,7 +45,7 @@ docker compose up --build
 For frontend development, this project uses **pnpm** as the package manager:
 
 ```bash
-# Install pnpm if not already installed
+# Install pnpm (if not already installed)
 npm install -g pnpm
 
 # Install frontend dependencies
@@ -56,6 +56,20 @@ pnpm install
 pnpm start
 # or
 ng serve
+```
+
+For backend development, this project uses **uv** as the package manager:
+
+```bash
+# Create a virtual environment (if not already created)
+uv venv --directory api
+
+# Install backend dependencies
+cd api
+uv sync --dev
+
+# Run development server
+uv run uvicorn src.main:app --host 0.0.0.0 --port 5000 --reload
 ```
 
 ## 🤝 Contributing
