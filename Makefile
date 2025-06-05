@@ -10,9 +10,17 @@ help:
 build:
 	docker compose build --no-cache
 
+# target: build-prod - Build the production docker image.
+build-prod:
+	docker compose -f compose.production.yml build --no-cache
+
 # target: up - Start the docker container.
 up:
 	docker compose up -d
+
+# target: up-prod - Start the production docker container.
+up-prod:
+	docker compose -f compose.production.yml up -d
 
 # target: stop - Stop the docker container.
 stop:
