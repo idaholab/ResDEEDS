@@ -34,6 +34,10 @@ git clone https://github.com/idaholabs/ResDEEDS.git
 cd ResDEEDS
 ```
 
+Copy over env.dist to .env file
+
+`cp env.dist .env`
+
 ### Run with Docker (Recommended)
 
 ```bash
