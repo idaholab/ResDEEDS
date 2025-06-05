@@ -1,0 +1,38 @@
+FROM python:3.12
+
+WORKDIR /var/www
+
+# Configure INL certs and environment variables
+ADD http://certstore.inl.gov/pki/CAINLROOT_B64.crt /usr/local/share/ca-certificates/
+RUN /usr/sbin/update-ca-certificates
+ENV NODE_EXTRA_CA_CERTS=/etc/ssl/certs/ca-certificates.crt \
+    REQUESTS_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt \
+    CURL_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt \
+    SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt \
+    SSL_CERT_DIR=/etc/ssl/certs/
+
+# Set uv environment variables for development
+ENV UV_COMPILE_BYTECODE=0 \
+    UV_LINK_MODE=copy \
+    DEBUG=1
+
+# Install system dependencies and uv
+RUN apt-get update \
+    && apt-get install -y build-essential cargo git \
+    && rm -rf /var/lib/apt/lists/*
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv
+
+# Copy only dependency files first for better caching
+COPY pyproject.toml uv.lock ./
+
+# Install all dependencies including dev
+RUN uv sync --dev --locked
+
+ENV PORT=5000
+EXPOSE 5000
+
+# Note: Source code will be mounted as volume in docker-compose
+CMD ["uv", "run", "uvicorn", "src.main:app", \
+     "--host", "0.0.0.0", \
+     "--port", "5000", \
+     "--reload"]
