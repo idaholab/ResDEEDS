@@ -65,6 +65,9 @@ ng serve
 For backend development, this project uses **uv** as the package manager:
 
 ```bash
+# Install uv (if not already installed)
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
 # Create a virtual environment (if not already created)
 uv venv --directory api
 
