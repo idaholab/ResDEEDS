@@ -3,7 +3,7 @@ import pandas as pd
 
 from src.database.collection import case_document
 from src.bll.auth import JWTBearer
-from src.bll.psa.network import create_network
+from src.bll.psa.network import create_network, validate_user_input
 from src.bll.utils import sanitize_dict
 
 
@@ -20,6 +20,8 @@ async def analyze_case(case_id: str):
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Case not found.",
         )
+
+    warnings = validate_user_input(case)
 
     # Use a single snapshot with a simple index
     snapshots = pd.RangeIndex(1)
@@ -101,4 +103,4 @@ async def analyze_case(case_id: str):
         },
     }
 
-    return sanitize_dict({"static_data": static_data, "flow_results": flow_results})
+    return sanitize_dict({"warnings": warnings, "static_data": static_data, "flow_results": flow_results})
