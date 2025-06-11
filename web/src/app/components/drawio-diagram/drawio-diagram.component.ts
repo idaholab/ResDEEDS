@@ -174,6 +174,7 @@ export class DrawioDiagramComponent implements OnChanges, OnInit, OnDestroy {
 
     const config = {
       enabledLibraries: [],
+      defaultLibraries: "",
       libraries: libs,
     };
     const iframe = document.querySelector('iframe');
