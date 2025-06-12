@@ -26,9 +26,17 @@ up-prod:
 stop:
 	docker compose stop
 
+# target: stop-prod - Stop the production docker container.
+stop-prod:
+	docker compose -f compose.production.yml stop
+
 # target: down - Stop the docker container.
 down:
 	docker compose down -v --remove-orphans
+
+# target: down-prod - Stop the production docker container.
+down-prod:
+	docker compose -f compose.production.yml down -v --remove-orphans
 
 # target: deploy - deploy to resdeeds server
 deploy:
