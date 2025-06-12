@@ -8,32 +8,8 @@ ResDEEDS (Resilience Development for Electric Energy Delivery Systems) is a deci
 
 ## Development Commands
 
-### Docker-based Development (Recommended)
 ```bash
-# Start all services
-docker compose up --build
-
-# Using Makefile shortcuts
-make build         # Build development docker images
-make build-prod    # Build production docker images
-make up            # Start development containers in detached mode
-make up-prod       # Start production containers in detached mode
-make down          # Stop and remove containers
-make stop          # Stop containers without removing
-
-# Access running containers
-make attach-web    # Attach to web container
-make attach-api    # Attach to API container
-make bash-api      # Run bash in API container
-```
-
-Note: Development uses `Dockerfile.dev` for hot-reloading and faster rebuilds, while production uses optimized `Dockerfile` with security hardening.
-
-### Local Development
-```bash
-
-Copy over env.dist to .env file
-
+# Copy over env.dist to .env file
 `cp env.dist .env`
 
 # Run API locally (requires uv and virtual environment)
