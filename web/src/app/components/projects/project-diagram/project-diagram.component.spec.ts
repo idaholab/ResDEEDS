@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { provideHttpClient } from '@angular/common/http';
+import { provideRouter } from '@angular/router';
 import { ProjectDiagramComponent } from './project-diagram.component';
 
 describe('ProjectDiagramComponent', () => {
@@ -8,7 +9,8 @@ describe('ProjectDiagramComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ProjectDiagramComponent]
+      imports: [ProjectDiagramComponent],
+      providers: [provideHttpClient(), provideRouter([])]
     })
     .compileComponents();
 

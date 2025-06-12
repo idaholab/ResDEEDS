@@ -2,53 +2,46 @@ services:
   web:
     build:
       context: ./web
-      dockerfile: Dockerfile.dev
-    image: ghcr.io/idaholab/resdeeds/web
+      dockerfile: Dockerfile
     container_name: resdeeds-web
+    image: ghcr.io/idaholab/resdeeds/web:latest
     ports:
       - 80:80
       - 443:443
-      - 4200:4200
-    stdin_open: true
-    tty: true
     networks:
-      - resdeeds-network
+      - resdeeds_network
     volumes:
-      - ./web:/var/www
+      - ./etc/ssl:/etc/ssl
+      - ./etc/nginx:/etc/nginx/conf.d
+      - /var/log/nginx:/var/log/nginx
+      - pnpm_store:/root/.local/share/pnpm
   api:
     build:
       context: ./api
       dockerfile: Dockerfile
-    image: ghcr.io/idaholab/resdeeds/api
     container_name: resdeeds-api
+    image: ghcr.io/idaholab/resdeeds/api:latest
     depends_on:
       - mongodb
     env_file:
-      - ./api/.env
+      - .env
     ports:
       - 5000:5000
-    stdin_open: true
-    tty: true
     networks:
-      - resdeeds-network
-    volumes:
-      - ./api:/var/www
+      - resdeeds_network
   mongodb:
     container_name: resdeeds-mongodb
     env_file:
-      - ./api/.env
+      - .env
     image: mongo:8.0
     ports:
       - 27017:27017
-    networks:
-      - resdeeds-network
     volumes:
       - mongodb_data:/data/db
-
+    networks:
+      - resdeeds_network
 networks:
-  resdeeds-network:
-    driver: bridge
-
+  resdeeds_network:
 volumes:
-  node_modules:
   mongodb_data:
+  pnpm_store:
