@@ -106,4 +106,5 @@ packages = ["src"]
 dev-dependencies = [
     "black",
     "ipdb",
+    "pytest>=8.4.0",
 ]
