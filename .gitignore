@@ -8,6 +8,7 @@
 .claude/
 .codex/
 CLAUDE.md
+.serena/
 
 # API
 *.pyc
