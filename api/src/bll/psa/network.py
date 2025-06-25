@@ -1,4 +1,7 @@
+import logging
+
 from pypsa import Network
+import xmltodict
 
 from src.bll.psa.components import (
     add_bus,
@@ -10,7 +13,8 @@ from src.bll.psa.components import (
     add_load,
 )
 
-import xmltodict
+
+logger = logging.getLogger(__name__)
 
 
 def validate_user_input(case: dict) -> list:
@@ -42,6 +46,7 @@ def validate_user_input(case: dict) -> list:
                     try:
                         float(obj.get(num_attr, ""))
                     except Exception as e:
+                        logger.error(e)
                         warnings.append(
                             f"The {num_attr[1:]} property for {obj.get('@label')} '{obj.get('@name')}' cannot be converted to a floating point number from value: {obj.get(num_attr, '')}"
                         )
@@ -52,6 +57,7 @@ def validate_user_input(case: dict) -> list:
                     try:
                         float(obj.get(num_attr, ""))
                     except Exception as e:
+                        logger.error(e)
                         warnings.append(
                             f"The {num_attr[1:]} property for {obj.get('@label')} '{obj.get('@name')}' cannot be converted to a floating point number from value: {obj.get(num_attr, '')}"
                         )
@@ -60,6 +66,7 @@ def validate_user_input(case: dict) -> list:
                     try:
                         float(obj.get(num_attr, ""))
                     except Exception as e:
+                        logger.error(e)
                         warnings.append(
                             f"The {num_attr[1:]} property for {obj.get('@label')} '{obj.get('@name')}' cannot be converted to a floating point number from value: {obj.get(num_attr, '')}"
                         )
@@ -68,6 +75,7 @@ def validate_user_input(case: dict) -> list:
                     try:
                         float(obj.get(num_attr, ""))
                     except Exception as e:
+                        logger.error(e)
                         warnings.append(
                             f"The {num_attr[1:]} property for {obj.get('@label')} '{obj.get('@name')}' cannot be converted to a floating point number from value: {obj.get(num_attr, '')}"
                         )
@@ -80,6 +88,7 @@ def validate_user_input(case: dict) -> list:
                     try:
                         float(obj.get(num_attr, ""))
                     except Exception as e:
+                        logger.error(e)
                         warnings.append(
                             f"The {num_attr[1:]} property for {obj.get('@label')} '{obj.get('@name')}' cannot be converted to a floating point number from value: {obj.get(num_attr, '')}"
                         )
@@ -92,6 +101,7 @@ def validate_user_input(case: dict) -> list:
                     try:
                         float(obj.get(num_attr, ""))
                     except Exception as e:
+                        logger.error(e)
                         warnings.append(
                             f"The {num_attr[1:]} property for {obj.get('@label')} '{obj.get('@name')}' cannot be converted to a floating point number from value: {obj.get(num_attr, '')}"
                         )
