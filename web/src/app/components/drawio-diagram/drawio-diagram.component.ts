@@ -30,7 +30,7 @@ export class DrawioDiagramComponent implements OnChanges, OnInit, OnDestroy {
       proto: 'json',
       configure: '1',
       // Disable pages - page handling is already disabled in initialXml with page="0"
-      pages: '0',
+      pages: 'false',
       // Create minimal UI
       ui: 'min',
       showStartScreen: 'false',
@@ -40,7 +40,7 @@ export class DrawioDiagramComponent implements OnChanges, OnInit, OnDestroy {
       layers: '1',
       // Hide all buttons
       saveAndExit: '0',
-      noSaveBtn: '0',
+      noSaveBtn: '1',
       noExitBtn: '1',
     });
 
@@ -129,19 +129,19 @@ export class DrawioDiagramComponent implements OnChanges, OnInit, OnDestroy {
                     "aspect": "fixed"
                   },
                   {
-                    "xml": "jVLLTsMwEPwaX6M0VgXXJEAvReIXnGaJDbY3src0/Xvs2IGGUoHkw3p2dvbJeGumnROjfMYeNOOPrKxZVcbHW4dIK2hxmKkFrYOtesYfWBXxilVP/yNvZnI5CgeW/o7H7g0OFGwtulhi5DdHn0QWzSp9rTCQgPiu1a5q8nTWOaIXXkKUC4QGj6SVhRatjckTKMnE/JtgCq0GG+xDaAFcAObiXtArUrhyfIAjdRB6/4PQIRGaC0KdJQnHgHopxliYmYa4nsICndC9+6ILrfPmVWndokY318439bap+fVc86hjCpguoFuT+Z7PDtAAuXP4n1RPMgVvqyJPWoIaZM5yVxb3CRU+IcNX9I21LomCN+/it9UHb97++jADfnGbWWV1xp8=",
+                    "xml": "jVLBUoQwDP2aXndY6sGroO5FZ5zxA5wCkVZbwrRZYf/eFIou4o4yPSQveS8hiZClGw9e9foRG7BC3onsRuRZfLL0iLSCloAbS7CWbdMIeSvyiOciv/9f8n5KznrloaO/+Vi9QU1sW1XFFmN+cQyzyKKZz26nHMxAfFu1TU+BTjYxJvknDIYMdgzV3B14IYsP8GRqZR9+JFRIhI4TlDXtiqHJxUb3bAat+ljAjW0c865SwdQ7RhtoXqojKzCzaMaYzp0Vr8baEi36qSmZTV/UIY/vsEQ67Fi0GLQheO5VHSsMrM/Ydrhp3vE3YDyDLo3ne0gHQAfkT+wPpiE9k6/nbWUaTKtTjauEqTD77Rfzwl6XIhxNy/ht9xxN619fJuNnx5lUVnf8CQ==",
                     "w": 52.2, // Bus
                     "h": 70.8,
                     "aspect": "fixed"
                   },
                   {
-                    "xml": "jVLBTsMwDP2aXKuuERrXrbBdhsQvZK1pgpK6StzR/T1Ok8HKmKCKKvv52c+JLWTtpr1Xg37BFqyQz6LciKqMR9YekRbQJeCmGqxl27RCPokq4pWodv8jr2ZyOSgPPf2dj8d3aIhtq46xxcg/mB5SFUUkE3ZSVibsIlQllwMjJCSeW42bTgOdbc5oVdAQ6zFhiyNZVq6x72NLCdTkYlcrNpU1Xc92wxcDz8Dc8isGQwYXgRN4Mo2yhx+EIxKhuyJscknCgdGg1RAbc1MXh1aA5T585BWmD+RHxwKhwNAYa/mPkb19Y6dGi36+ktzN3+0Q8lyiMkxX0L0H+362PaAD8mf2P0xLOiU/VEWegAbT6ayyLovHPLqQkO4r+84OXIQ4mkf0255wNK/KcosZv1rkXGWx858=",
+                    "xml": "jVLBTsMwDP2aXKsuERrXUWCXIfEL6WqaQFpXibt1f4/TZLAyJqhycN6z/V5jC1V109brwbxgA06oJ1FuhCzjUZVHpAV0JrqpAuc4to1Qj0JGXAr5/L/k1ZxcDtpDT3/XY/0Oe+LY6TpajPk720PqoolUwg7aqYSdhWS6MjFCQuK51rhyGujkckWjg4HYjxMecCTHyhX2fbSUQENddLXiUDvb9hzv+cfAMzBbfsVgyeKCOIAnu9du9yOhRiLsLhI2uSXhwGgweojGuqmNQyt6oCP6j1DUY2D6zTpXoUM/e1dy/q5fOw8gSsB0Ad16me/32QJ2QP7E96NtyKTiO1lkFQO2NVllXRb3eUYhIe1X9Y1hn4WYzbP4bSGYzTuxXFfGLzY2d1ks9yc=",
                     "w": 52.2, // Line
                     "h": 70.8,
                     "aspect": "fixed"
                   },
                   {
-                    "xml": "jVLBTsMwDP2aXKuuFWLXUWCXIfEHU9qaJsiJqyRj3d/jLClbGQiUHOznZ/sltqgbM22dHNUL9YCifhLlRlRlvHXjiMICmgNmagCRbd2L+lFUEa9E9fw/8upMLkfpwIa/86l9hy6wjbKNEiN/R7JPVeaiVXLbg09+ch1I3I90BLc3x0vgts2NWB9OCCmjl15BbMOEBzoE1BYasjaqSqAKJgpbsSlRD5btjt8GjoGz6lfyOmhaBD7ABd1J3H0jtBQCmSvCJpcMNDLqlRyjMDMNcW5Fp31HRXvQ2Gs7+GIAC053+xnhlDeN2BCSO7+nXpfx3A4hzyW2hekK+u23Ln+2BTIQ3In9o+6DSsl3VZHHoEAPKne5L4t1QmUe1fCV/csOzI04mufz055wNK/KcosZv1rkXGWx858=",
+                    "xml": "jVNZb4JAEP41PEJg6eEravXFJv0HZmBH2Hav7K4V/31nOarGNi0hzMw390FSrlS/dWC7V8NRJuVLklcJy+Nbrpwx4QaaFapfoZTEC56U64RFnCVs8z/jYjDOLTjU4W9/U79jE4iXUMcSo/3OAB+jzEHZKNZHP8qj6BDk3poTur06XRT3ae6K9eEscfTwHdjICgUt0WUXVCyjIPYTXRANyEqKVhMWjL1Cd7HgN+NFECZqaxOCUWQwdLKE5qN15qj5ykjjhlzlYXjIZEhWeRtbL9dU2hJm4SB65LMJyV0Ilrqu4gDZpuH6IRON0QehObqsoYxswyEAkYh7oug9zV6ATMHaNI6+eKKPlXBO1dGLJg1OgG4lpgq5gLRgi8zq9n5z0zJjy9hfQb+N+DLoLRqFwZ1JPgkeutH5kWXT7joUbTdlec6zxYjCtN/22/uXw5kTkXZa6k/HRdrpvm5Pn/Cr65+i3PwoXw==",
                     "w": 52.2, // Load
                     "h": 70.8,
                     "aspect": "fixed"
@@ -176,6 +176,7 @@ export class DrawioDiagramComponent implements OnChanges, OnInit, OnDestroy {
       enabledLibraries: [],
       defaultLibraries: "",
       libraries: libs,
+      hidePages: 1,
     };
     const iframe = document.querySelector('iframe');
     if (iframe && iframe.contentWindow) {
@@ -260,6 +261,11 @@ export class DrawioDiagramComponent implements OnChanges, OnInit, OnDestroy {
         if (this.case?._id && this.case?.project_id) {
           this.saveDiagramToServer(data.xml);
         }
+      } else if (data.event === 'autosave') {
+        console.log('Diagram saved:', data.xml);
+        if (this.case?._id && this.case?.project_id) {
+          this.saveDiagramToServer(data.xml);
+        }
       } else if (data.event === 'exit') {
         // Handle exit if needed
       } else {
@@ -284,6 +290,7 @@ export class DrawioDiagramComponent implements OnChanges, OnInit, OnDestroy {
     if (iframe && iframe.contentWindow) {
       iframe.contentWindow.postMessage(JSON.stringify({
         action: 'load',
+        autosave: 1,
         xml: xmlData
       }), '*');
     }
