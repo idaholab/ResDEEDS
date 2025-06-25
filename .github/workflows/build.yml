@@ -19,7 +19,8 @@ jobs:
       run:
         working-directory: ./api
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Registry login
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -47,7 +48,8 @@ jobs:
       run:
         working-directory: ./web
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Registry login
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
