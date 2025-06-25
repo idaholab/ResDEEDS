@@ -41,7 +41,7 @@ def validate_user_input(case: dict) -> list:
                 ]:
                     try:
                         float(obj.get(num_attr, ""))
-                    except:
+                    except Exception as e:
                         warnings.append(
                             f"The {num_attr[1:]} property for {obj.get('@label')} '{obj.get('@name')}' cannot be converted to a floating point number from value: {obj.get(num_attr, '')}"
                         )
@@ -51,7 +51,7 @@ def validate_user_input(case: dict) -> list:
                 for num_attr in ["@length"]:
                     try:
                         float(obj.get(num_attr, ""))
-                    except:
+                    except Exception as e:
                         warnings.append(
                             f"The {num_attr[1:]} property for {obj.get('@label')} '{obj.get('@name')}' cannot be converted to a floating point number from value: {obj.get(num_attr, '')}"
                         )
@@ -59,7 +59,7 @@ def validate_user_input(case: dict) -> list:
                 for num_attr in ["@real_power_mw"]:
                     try:
                         float(obj.get(num_attr, ""))
-                    except:
+                    except Exception as e:
                         warnings.append(
                             f"The {num_attr[1:]} property for {obj.get('@label')} '{obj.get('@name')}' cannot be converted to a floating point number from value: {obj.get(num_attr, '')}"
                         )
@@ -67,7 +67,7 @@ def validate_user_input(case: dict) -> list:
                 for num_attr in ["@nominal_power_kva", "@power_factor"]:
                     try:
                         float(obj.get(num_attr, ""))
-                    except:
+                    except Exception as e:
                         warnings.append(
                             f"The {num_attr[1:]} property for {obj.get('@label')} '{obj.get('@name')}' cannot be converted to a floating point number from value: {obj.get(num_attr, '')}"
                         )
@@ -79,7 +79,7 @@ def validate_user_input(case: dict) -> list:
                 ]:
                     try:
                         float(obj.get(num_attr, ""))
-                    except:
+                    except Exception as e:
                         warnings.append(
                             f"The {num_attr[1:]} property for {obj.get('@label')} '{obj.get('@name')}' cannot be converted to a floating point number from value: {obj.get(num_attr, '')}"
                         )
@@ -91,7 +91,7 @@ def validate_user_input(case: dict) -> list:
                 ]:
                     try:
                         float(obj.get(num_attr, ""))
-                    except:
+                    except Exception as e:
                         warnings.append(
                             f"The {num_attr[1:]} property for {obj.get('@label')} '{obj.get('@name')}' cannot be converted to a floating point number from value: {obj.get(num_attr, '')}"
                         )
