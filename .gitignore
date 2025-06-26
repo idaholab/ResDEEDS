@@ -23,7 +23,8 @@ __pycache__
 # Virtual Environment
 .venv/
 
-# Visual Studio Code
+# IDEs
+.idea/
 .vscode/
 
 # Web
