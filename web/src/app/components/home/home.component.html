@@ -9,7 +9,7 @@
       <ng-template #loggedIn>
         <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
           <a type="button" class="btn btn-primary btn-lg px-4 gap-3" routerLink="/projects">Dashboard</a>
-          <a type="button" class="btn btn-outline-secondary btn-lg px-4" (click)="logout()">Logout</a>
+          <a type="button" class="btn btn-outline-secondary btn-lg px-4" (click)="logout()" tabindex="0" (keyup.enter)="logout()">Logout</a>
         </div>
       </ng-template>
     </div>
