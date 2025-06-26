@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ProjectService } from '../../services/project.service';
 import { Project } from '../../models/project.model';
@@ -13,14 +13,15 @@ import { Router } from '@angular/router';
   styleUrls: ['./projects.component.scss']
 })
 export class ProjectsComponent implements OnInit {
+  private projectService = inject(ProjectService);
+  private router = inject(Router);
+
   projects: Project[] = [];
   newProjectName = '';
   isModalOpen = false;
   errorMsg = '';
   editingProjectId: string | null = null;
   editedProjectName = '';
-
-  constructor(private projectService: ProjectService, private router: Router) { }
 
   ngOnInit(): void {
     this.loadProjects();

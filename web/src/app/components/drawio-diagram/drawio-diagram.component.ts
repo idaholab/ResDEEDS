@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, HostListener, Input, OnChanges, OnInit, OnDestroy, SimpleChanges } from '@angular/core';
+import { Component, HostListener, Input, OnChanges, OnInit, OnDestroy, SimpleChanges, inject } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Case } from '../../models/case.model';
 import { ProjectService } from '../../services/project.service';
@@ -12,6 +12,9 @@ import { environment } from '../../../environments/environment';
   styleUrl: './drawio-diagram.component.scss'
 })
 export class DrawioDiagramComponent implements OnChanges, OnInit, OnDestroy {
+  private projectService = inject(ProjectService);
+  private sanitizer = inject(DomSanitizer);
+
   @Input() case?: Case;
 
   // Use the new local URL from GitHub repo
@@ -23,7 +26,7 @@ export class DrawioDiagramComponent implements OnChanges, OnInit, OnDestroy {
   private isSaving = false;
   private resizeTimeout: any = null;
 
-  constructor(private projectService: ProjectService, private sanitizer: DomSanitizer) {
+  constructor() {
 
     const params = new URLSearchParams({
       embed: '1',
@@ -222,7 +225,7 @@ export class DrawioDiagramComponent implements OnChanges, OnInit, OnDestroy {
 
     this.projectService.updateCase(this.case.project_id, this.case._id, updatedCase).subscribe({
       next: (result) => {
-        console.log('Diagram saved to server successfully');
+        console.log(result);
         this.isSaving = false;
       },
       error: (err) => {

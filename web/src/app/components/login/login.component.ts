@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { FormsModule } from '@angular/forms';
@@ -11,11 +11,12 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent {
+  private authService = inject(AuthService);
+  private router = inject(Router);
+
   email = '';
   password = '';
   errorMessage = '';
-
-  constructor(private authService: AuthService, private router: Router) { }
 
   async onSubmit() {
     const loginSuccess = await this.authService.login(this.email, this.password);
