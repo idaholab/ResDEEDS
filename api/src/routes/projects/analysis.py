@@ -5,6 +5,7 @@ from src.database.collection import case_document
 from src.bll.auth import JWTBearer
 from src.bll.psa.network import create_network, validate_user_input
 from src.bll.utils import sanitize_dict
+from src.bll.psa.utils import diagram_to_dict
 
 
 router = APIRouter()
@@ -21,11 +22,13 @@ async def analyze_case(case_id: str):
             detail="Case not found.",
         )
 
-    warnings = validate_user_input(case)
+    # warning_message = validate_user_input(case)
 
     # Use a single snapshot with a simple index
     snapshots = pd.RangeIndex(1)
-    network = create_network(case["name"], snapshots=snapshots)
+    network = create_network(
+        case["name"], diagram_to_dict(case["diagram_data"]), snapshots=snapshots
+    )
 
     # Run linear power flow analysis
     network.lpf()
@@ -103,6 +106,4 @@ async def analyze_case(case_id: str):
         },
     }
 
-    return sanitize_dict(
-        {"warnings": warnings, "static_data": static_data, "flow_results": flow_results}
-    )
+    return sanitize_dict({"static_data": static_data, "flow_results": flow_results})
