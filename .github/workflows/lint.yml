@@ -32,7 +32,7 @@ jobs:
       - name: Install dependencies
         run: |
           npm install -g pnpm \
-            && pnpm add -g @angular/cli \
+            && pnpm add @angular/cli \
             && pnpm install
       - name: Run ESLint
         run: ng lint
