@@ -15,7 +15,7 @@
           <h5 class="card-title">
             <i class="bi bi-lightning-charge me-2"></i>
             <!-- Display an input field if this project is being edited -->
-            <span *ngIf="editingProjectId !== project._id" (click)="startEditing(project)" style="cursor: pointer;">
+            <span *ngIf="editingProjectId !== project._id" (click)="startEditing(project)" tabindex="0" (keyup.enter)="startEditing(project)" style="cursor: pointer;">
               {{ project.name }}
             </span>
             <span *ngIf="editingProjectId === project._id">
@@ -23,7 +23,7 @@
                      (blur)="updateProjectName(project)" 
                      (keyup.enter)="updateProjectName(project)" 
                      (keyup.escape)="cancelEditing()"
-                     autofocus
+                    
                      class="form-control d-inline-block" 
                      style="width: auto; display: inline;" />
             </span>
@@ -80,5 +80,7 @@
   <!-- Modal Backdrop -->
   <div *ngIf="isModalOpen" 
        class="modal-backdrop fade show" 
-       (click)="closeCreateModal()"></div>
+       (click)="closeCreateModal()"
+       tabindex="0"
+       (keyup.enter)="closeCreateModal()"></div>
 </div>

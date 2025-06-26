@@ -1,4 +1,7 @@
+import logging
+
 from pypsa import Network
+import xmltodict
 
 from src.bll.psa.components import (
     add_bus,
@@ -10,7 +13,9 @@ from src.bll.psa.components import (
     add_load,
 )
 
-import xmltodict
+
+logger = logging.getLogger(__name__)
+
 
 def validate_user_input(case: dict) -> list:
     """
@@ -30,47 +35,83 @@ def validate_user_input(case: dict) -> list:
     for obj in diagram["object"]:
         match obj.get("@label"):
             case "Battery":
-                for num_attr in ["@max_discharge_kw", "@total_capacity_kwh", "@max_charge_kw", "@scaled_charge_percent", "@max_power_factor", "@max_power_factor"]:
+                for num_attr in [
+                    "@max_discharge_kw",
+                    "@total_capacity_kwh",
+                    "@max_charge_kw",
+                    "@scaled_charge_percent",
+                    "@max_power_factor",
+                    "@max_power_factor",
+                ]:
                     try:
                         float(obj.get(num_attr, ""))
-                    except:
-                        warnings.append(f"The {num_attr[1:]} property for {obj.get("@label")} '{obj.get("@name")}' cannot be converted to a floating point number from value: {obj.get(num_attr, "")}")
+                    except Exception as e:
+                        logger.error(e)
+                        warnings.append(
+                            f"The {num_attr[1:]} property for {obj.get('@label')} '{obj.get('@name')}' cannot be converted to a floating point number from value: {obj.get(num_attr, '')}"
+                        )
             case "Bus":
                 pass
             case "Line":
                 for num_attr in ["@length"]:
                     try:
                         float(obj.get(num_attr, ""))
-                    except:
-                        warnings.append(f"The {num_attr[1:]} property for {obj.get("@label")} '{obj.get("@name")}' cannot be converted to a floating point number from value: {obj.get(num_attr, "")}")
+                    except Exception as e:
+                        logger.error(e)
+                        warnings.append(
+                            f"The {num_attr[1:]} property for {obj.get('@label')} '{obj.get('@name')}' cannot be converted to a floating point number from value: {obj.get(num_attr, '')}"
+                        )
             case "Load":
                 for num_attr in ["@real_power_mw"]:
                     try:
                         float(obj.get(num_attr, ""))
-                    except:
-                        warnings.append(f"The {num_attr[1:]} property for {obj.get("@label")} '{obj.get("@name")}' cannot be converted to a floating point number from value: {obj.get(num_attr, "")}")
+                    except Exception as e:
+                        logger.error(e)
+                        warnings.append(
+                            f"The {num_attr[1:]} property for {obj.get('@label')} '{obj.get('@name')}' cannot be converted to a floating point number from value: {obj.get(num_attr, '')}"
+                        )
             case "Diesel Generator":
                 for num_attr in ["@nominal_power_kva", "@power_factor"]:
                     try:
                         float(obj.get(num_attr, ""))
-                    except:
-                        warnings.append(f"The {num_attr[1:]} property for {obj.get("@label")} '{obj.get("@name")}' cannot be converted to a floating point number from value: {obj.get(num_attr, "")}")
+                    except Exception as e:
+                        logger.error(e)
+                        warnings.append(
+                            f"The {num_attr[1:]} property for {obj.get('@label')} '{obj.get('@name')}' cannot be converted to a floating point number from value: {obj.get(num_attr, '')}"
+                        )
             case "Solar Generator":
-                for num_attr in ["@max_power_kva", "@max_power_kva", "@min_power_factor"]:
+                for num_attr in [
+                    "@max_power_kva",
+                    "@max_power_kva",
+                    "@min_power_factor",
+                ]:
                     try:
                         float(obj.get(num_attr, ""))
-                    except:
-                        warnings.append(f"The {num_attr[1:]} property for {obj.get("@label")} '{obj.get("@name")}' cannot be converted to a floating point number from value: {obj.get(num_attr, "")}")
+                    except Exception as e:
+                        logger.error(e)
+                        warnings.append(
+                            f"The {num_attr[1:]} property for {obj.get('@label')} '{obj.get('@name')}' cannot be converted to a floating point number from value: {obj.get(num_attr, '')}"
+                        )
             case "Wind Generator":
-                for num_attr in ["@max_power_kva", "@max_power_kva", "@min_power_factor"]:
+                for num_attr in [
+                    "@max_power_kva",
+                    "@max_power_kva",
+                    "@min_power_factor",
+                ]:
                     try:
                         float(obj.get(num_attr, ""))
-                    except:
-                        warnings.append(f"The {num_attr[1:]} property for {obj.get("@label")} '{obj.get("@name")}' cannot be converted to a floating point number from value: {obj.get(num_attr, "")}")
+                    except Exception as e:
+                        logger.error(e)
+                        warnings.append(
+                            f"The {num_attr[1:]} property for {obj.get('@label')} '{obj.get('@name')}' cannot be converted to a floating point number from value: {obj.get(num_attr, '')}"
+                        )
             case _:
-                warnings.append("Only objects from the 'Energy Systems Components' Library will be analyzed.")
+                warnings.append(
+                    "Only objects from the 'Energy Systems Components' Library will be analyzed."
+                )
 
     return list(set(warnings))
+
 
 def create_network(case_name: str, snapshots=None) -> Network:
     """
@@ -190,4 +231,3 @@ def create_network(case_name: str, snapshots=None) -> Network:
     )
 
     return network
-    

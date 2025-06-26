@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ProjectService } from '../../../services/project.service';
 import { Case, CaseResults } from '../../../models/case.model';
@@ -18,14 +18,17 @@ interface Tab {
   styleUrls: ['./project-diagram.component.scss']
 })
 export class ProjectDiagramComponent implements OnInit {
+  private _projectService = inject(ProjectService);
+  private _route = inject(ActivatedRoute);
+
   // Default tab list.
   tabs: Tab[] = [{ title: "Base Case", _id: "id" }];
 
   // Active tab index.
-  activeTabIndex: number = 0;
+  activeTabIndex = 0;
 
   // Controls display of the modal.
-  showModal: boolean = false;
+  showModal = false;
 
   // List of available tab names.
   availableTabs: string[] = ['Heat', 'Freeze', 'Wildfire', 'Hurricane', 'Tornado', 'Earthquake', 'Custom'];
@@ -34,11 +37,11 @@ export class ProjectDiagramComponent implements OnInit {
   selectedTabName: string = this.availableTabs[0];
 
   // Holds the custom tab name if the "Custom" option is selected.
-  customTabName: string = '';
+  customTabName = '';
 
-  projectId: string = '';
+  projectId = '';
 
-  projectName: string = '';
+  projectName = '';
 
   cases: Case[] = [];
 
@@ -46,11 +49,9 @@ export class ProjectDiagramComponent implements OnInit {
   flowResults: any = {};
   staticData: any = {};
 
-  showAnalyzeModal: boolean = false;
+  showAnalyzeModal = false;
 
-  analyzing: boolean = false;
-
-  constructor(private _projectService: ProjectService, private _route: ActivatedRoute) { }
+  analyzing = false;
 
   ngOnInit(): void {
     this.projectId = this._route.snapshot.paramMap.get('id') || '';
@@ -95,7 +96,7 @@ export class ProjectDiagramComponent implements OnInit {
     this.showModal = false;
   }
 
-  addTabFromModal(index: number): void {
+  addTabFromModal(): void {
     const tabTitle = this.selectedTabName === 'Custom'
       ? (this.customTabName.trim() ? this.customTabName : 'Custom Case')
       : this.selectedTabName;

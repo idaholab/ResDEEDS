@@ -16,13 +16,13 @@ def cli(ctx):
 def deploy():
     """Deploy Resdeeds to production."""
     username, password = get_credentials()
-    click.confirm(f"Are you sure you want to deploy ResDEEDS?", abort=True)
+    click.confirm("Are you sure you want to deploy ResDEEDS?", abort=True)
 
     # connect to remote server
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     ssh.connect("resdeedsdev1", username=username, password=password)
-    click.echo(f"Deploying to ResDEEDS to production")
+    click.echo("Deploying to ResDEEDS to production")
 
     # load deploy bash script
     with open("scripts/deploy.sh", "r") as f:
