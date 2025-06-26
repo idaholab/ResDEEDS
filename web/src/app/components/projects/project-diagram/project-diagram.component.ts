@@ -22,10 +22,10 @@ export class ProjectDiagramComponent implements OnInit {
   tabs: Tab[] = [{ title: "Base Case", _id: "id" }];
 
   // Active tab index.
-  activeTabIndex: number = 0;
+  activeTabIndex = 0;
 
   // Controls display of the modal.
-  showModal: boolean = false;
+  showModal = false;
 
   // List of available tab names.
   availableTabs: string[] = ['Heat', 'Freeze', 'Wildfire', 'Hurricane', 'Tornado', 'Earthquake', 'Custom'];
@@ -34,11 +34,11 @@ export class ProjectDiagramComponent implements OnInit {
   selectedTabName: string = this.availableTabs[0];
 
   // Holds the custom tab name if the "Custom" option is selected.
-  customTabName: string = '';
+  customTabName = '';
 
-  projectId: string = '';
+  projectId = '';
 
-  projectName: string = '';
+  projectName = '';
 
   cases: Case[] = [];
 
@@ -46,9 +46,9 @@ export class ProjectDiagramComponent implements OnInit {
   flowResults: any = {};
   staticData: any = {};
 
-  showAnalyzeModal: boolean = false;
+  showAnalyzeModal = false;
 
-  analyzing: boolean = false;
+  analyzing = false;
 
   constructor(private _projectService: ProjectService, private _route: ActivatedRoute) { }
 

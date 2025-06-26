@@ -17,26 +17,26 @@ export interface CaseResults {
     };
     flow_results: {
         lines_flow: {
-            p0: { [key: string]: number };  // Active power at bus0 side
-            p1: { [key: string]: number };  // Active power at bus1 side
-            q0: { [key: string]: number };  // Reactive power at bus0 side
-            q1: { [key: string]: number };  // Reactive power at bus1 side
+            p0: Record<string, number>;  // Active power at bus0 side
+            p1: Record<string, number>;  // Active power at bus1 side
+            q0: Record<string, number>;  // Reactive power at bus0 side
+            q1: Record<string, number>;  // Reactive power at bus1 side
         };
         generators_output: {
-            p: { [key: string]: number };  // Active power output
-            q: { [key: string]: number };  // Reactive power output
+            p: Record<string, number>;  // Active power output
+            q: Record<string, number>;  // Reactive power output
         };
         loads_consumption: {
-            p: { [key: string]: number };  // Active power consumption
-            q: { [key: string]: number };  // Reactive power consumption
+            p: Record<string, number>;  // Active power consumption
+            q: Record<string, number>;  // Reactive power consumption
         };
         storage_units_state: {
-            p: { [key: string]: number };  // Active power charging/discharging
-            state_of_charge: { [key: string]: number };  // Current SOC
+            p: Record<string, number>;  // Active power charging/discharging
+            state_of_charge: Record<string, number>;  // Current SOC
         };
         buses_state: {
-            v_mag_pu: { [key: string]: number };  // Voltage magnitude in p.u.
-            v_ang: { [key: string]: number };     // Voltage angle in radians
+            v_mag_pu: Record<string, number>;  // Voltage magnitude in p.u.
+            v_ang: Record<string, number>;     // Voltage angle in radians
         };
     };
 }

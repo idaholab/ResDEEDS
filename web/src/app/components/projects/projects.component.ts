@@ -14,11 +14,11 @@ import { Router } from '@angular/router';
 })
 export class ProjectsComponent implements OnInit {
   projects: Project[] = [];
-  newProjectName: string = '';
-  isModalOpen: boolean = false;
-  errorMsg: string = '';
+  newProjectName = '';
+  isModalOpen = false;
+  errorMsg = '';
   editingProjectId: string | null = null;
-  editedProjectName: string = '';
+  editedProjectName = '';
 
   constructor(private projectService: ProjectService, private router: Router) { }
 
