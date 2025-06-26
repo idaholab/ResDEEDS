@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
 
@@ -11,7 +11,9 @@ export class AuthService {
     private loggedInState: boolean;
     private tokenKey = "";
 
-    constructor(private router: Router) {
+    private router = inject(Router);
+
+    constructor() {
         this.loggedInState = !!localStorage.getItem('token');
         console.log("API URL: ", this.apiUrl)
     }
