@@ -1,7 +1,6 @@
 import logging
 
 from pypsa import Network
-import xmltodict
 
 from src.bll.psa.components import (
     add_bus,
@@ -17,7 +16,7 @@ from src.bll.psa.components import (
 logger = logging.getLogger(__name__)
 
 
-def validate_user_input(case: dict) -> list:
+def validate_user_input(diagram: dict) -> list:
     """
     Review user input data associated with the specified case name.
 
@@ -30,9 +29,18 @@ def validate_user_input(case: dict) -> list:
 
     warnings = []
 
-    diagram = xmltodict.parse(case.get("diagram_data")).get("mxGraphModel").get("root")
+    if "object" not in diagram:
+        return [
+            "The diagram data does not contain any objects. Please check the diagram."
+        ]
 
     for obj in diagram["object"]:
+        if not isinstance(obj, dict):
+            warnings.append(
+                "The diagram data contains an object that is not a dictionary. Please check the diagram."
+            )
+            continue
+
         match obj.get("@label"):
             case "Battery":
                 for num_attr in [
@@ -113,7 +121,7 @@ def validate_user_input(case: dict) -> list:
     return list(set(warnings))
 
 
-def create_network(case_name: str, snapshots=None) -> Network:
+def create_network(case_name: str, diagram_data: dict, snapshots=None) -> Network:
     """
     Create a PyPSA network with the specified case name.
 

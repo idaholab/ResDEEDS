@@ -16,7 +16,7 @@ def diagram_to_dict(diagram_data: str) -> dict:
         dict: The parsed dictionary representation of the diagram.
     """
     try:
-        return xmltodict.parse(diagram_data)
+        return xmltodict.parse(diagram_data)["mxGraphModel"]["root"]
     except Exception as e:
         logger.error(f"Error parsing diagram data: {e}")
-    return {}
+        return {"error": str(e)}

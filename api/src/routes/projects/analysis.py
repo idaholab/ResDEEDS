@@ -1,3 +1,5 @@
+import logging
+
 from fastapi import APIRouter, Depends, HTTPException, status
 import pandas as pd
 
@@ -7,7 +9,7 @@ from src.bll.psa.network import create_network, validate_user_input
 from src.bll.utils import sanitize_dict
 from src.bll.psa.utils import diagram_to_dict
 
-
+logger = logging.getLogger(__name__)
 router = APIRouter()
 
 
@@ -16,19 +18,27 @@ async def analyze_case(case_id: str):
     """Analyze a project's case."""
     case = case_document().get(document_id=case_id)
 
+    if not case or "diagram_data" not in case:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Case not found or missing diagram data.",
+        )
+
+    diagram = diagram_to_dict(case["diagram_data"])
+
     if not case:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Case not found.",
         )
 
-    # warning_message = validate_user_input(case)
+    warning_message = validate_user_input(diagram)
+    if warning_message:
+        logger.warning(f"Case {case_id} has warnings: {', '.join(warning_message)}")
 
     # Use a single snapshot with a simple index
     snapshots = pd.RangeIndex(1)
-    network = create_network(
-        case["name"], diagram_to_dict(case["diagram_data"]), snapshots=snapshots
-    )
+    network = create_network(case["name"], diagram, snapshots=snapshots)
 
     # Run linear power flow analysis
     network.lpf()
