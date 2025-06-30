@@ -96,13 +96,14 @@ export class ProjectDiagramComponent implements OnInit {
     this.showModal = false;
   }
 
-  addTabFromModal(): void {
+  createNewCase(): void {
     const tabTitle = this.selectedTabName === 'Custom'
       ? (this.customTabName.trim() ? this.customTabName : 'Custom Case')
       : this.selectedTabName;
 
     // Create new Case
     const activeCase = this.cases[this.activeTabIndex];
+    console.log(activeCase.diagram_data)
     this._projectService.createCase(this.projectId, { name: tabTitle, diagram_data: activeCase.diagram_data }).subscribe({
       next: (caseId: string) => {
         // Fetch the complete case data to ensure we have all properties
