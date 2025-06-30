@@ -8,9 +8,9 @@
 // Add specific styles for the drawio container
 .drawio-container {
     position: relative;
-    width: 100%;
-    height: calc(100vh - 300px); // Account for navbar, tabs, and padding
-    max-height: calc(100vh - 200px);
+    width: 90%;
+    height: calc(100vh - 280px); // Account for navbar, tabs, and padding
+    max-height: calc(100vh - 100px);
     overflow: hidden;
     z-index: 1; // Lower z-index than navbar
 
