@@ -1,5 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 
+import xml.etree.ElementTree as ET
+
 from src.bll.auth import JWTBearer, decode_jwt
 from src.database.collection import case_document, project_document
 from src.models.payload.case_models import CaseModel
@@ -54,6 +56,18 @@ async def create_project_case(project_id: str, case: CaseModel):
 async def update_project_case(project_id: str, case_id: str, case: CaseModel):
     """Update a project case."""
     payload = case.model_dump()
+
+    # Grab only the mxGraphModel from the diagram_data
+    root = ET.fromstring(case.diagram_data)
+    mxgraphmodel = root.find(".//mxGraphModel")
+    if not mxgraphmodel:
+        return HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid diagram data format",
+        )
+
+    payload["diagram_data"] = ET.tostring(mxgraphmodel, encoding="unicode")
+
     return case_document().update(query={"_id": case_id}, data=payload)
 
 

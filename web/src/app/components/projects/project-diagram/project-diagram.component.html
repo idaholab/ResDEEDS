@@ -23,6 +23,7 @@
             (click)="deleteTab(activeTabIndex)">Delete</button>
         </div>
       </div>
+      <!-- Embedded Draw.io Diagram iFrame -->
       <app-drawio-diagram [case]="getActiveCase()"></app-drawio-diagram>
     </div>
   </div>
@@ -195,7 +196,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" (click)="closeNewTabModal()">Cancel</button>
-          <button type="button" class="btn btn-primary" (click)="addTabFromModal()">Add Hazard
+          <button type="button" class="btn btn-primary" (click)="createNewCase()">Add Hazard
             Case</button>
         </div>
       </div>

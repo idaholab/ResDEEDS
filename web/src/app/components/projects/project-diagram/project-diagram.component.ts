@@ -96,33 +96,74 @@ export class ProjectDiagramComponent implements OnInit {
     this.showModal = false;
   }
 
-  addTabFromModal(): void {
+  createNewCase(): void {
     const tabTitle = this.selectedTabName === 'Custom'
       ? (this.customTabName.trim() ? this.customTabName : 'Custom Case')
       : this.selectedTabName;
 
-    // Create new Case
+    // Get the currently active case to ensure we have the latest diagram_data
     const activeCase = this.cases[this.activeTabIndex];
-    this._projectService.createCase(this.projectId, { name: tabTitle, diagram_data: activeCase.diagram_data }).subscribe({
-      next: (caseId: string) => {
-        // Fetch the complete case data to ensure we have all properties
-        this._projectService.getCaseById(this.projectId, caseId).subscribe({
-          next: (newCase: Case) => {
-            // Append the new case to the cases array
-            this.cases = [...this.cases, newCase];
-            // Regenerate the tabs array from the updated cases
-            this.tabs = this.cases.map(c => ({ title: c.name, _id: c._id }));
+    
+    if (!activeCase?._id) {
+      console.log('No active case found to copy diagram data from');
+      return;
+    }
 
-            // Activate the new tab
-            this.activeTabIndex = this.tabs.length - 1;
+    // Refresh the active case to get the latest diagram_data before creating new case
+    this._projectService.getCaseById(this.projectId, activeCase._id).subscribe({
+      next: (refreshedActiveCase: Case) => {
+        console.log('Refreshed active case diagram_data:', refreshedActiveCase.diagram_data);
+        
+        // Create new case with the refreshed diagram_data
+        this._projectService.createCase(this.projectId, { 
+          name: tabTitle, 
+          diagram_data: refreshedActiveCase.diagram_data 
+        }).subscribe({
+          next: (caseId: string) => {
+            // Fetch the complete case data to ensure we have all properties
+            this._projectService.getCaseById(this.projectId, caseId).subscribe({
+              next: (newCase: Case) => {
+                // Append the new case to the cases array
+                this.cases = [...this.cases, newCase];
+                // Regenerate the tabs array from the updated cases
+                this.tabs = this.cases.map(c => ({ title: c.name, _id: c._id }));
+
+                // Activate the new tab
+                this.activeTabIndex = this.tabs.length - 1;
+              },
+              error: () => {
+                console.log('Failed to load newly created case');
+              }
+            });
           },
           error: () => {
-            console.log('Failed to load newly created case');
+            console.log('Failed to create case');
           }
         });
       },
       error: () => {
-        console.log('Failed to create case');
+        console.log('Failed to refresh active case before creating new case');
+        // Fallback to using the local case data if refresh fails
+        this._projectService.createCase(this.projectId, { 
+          name: tabTitle, 
+          diagram_data: activeCase.diagram_data 
+        }).subscribe({
+          next: (caseId: string) => {
+            this._projectService.getCaseById(this.projectId, caseId).subscribe({
+              next: (newCase: Case) => {
+                this.cases = [...this.cases, newCase];
+                this.tabs = this.cases.map(c => ({ title: c.name, _id: c._id }));
+                this.activeTabIndex = this.tabs.length - 1;
+              },
+              error: () => {
+                console.log('Failed to load newly created case');
+              }
+            });
+          },
+          error: () => {
+            console.log('Failed to create case');
+          }
+        });
       }
     });
 
