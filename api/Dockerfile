@@ -1,5 +1,5 @@
 # Build stage
-FROM python:3.12-slim AS builder
+FROM python:3.13-slim AS builder
 
 WORKDIR /build
 
@@ -39,7 +39,7 @@ RUN uv sync --no-dev --locked
 COPY . .
 
 # Production stage
-FROM python:3.12-slim
+FROM python:3.13-slim
 
 WORKDIR /var/www
 
@@ -78,6 +78,6 @@ USER appuser
 EXPOSE 5000
 
 CMD ["/var/www/.venv/bin/python", "-m", "uvicorn", "src.main:app", \
-     "--host", "0.0.0.0", \
-     "--port", "5000", \
-     "--workers", "4"]
+    "--host", "0.0.0.0", \
+    "--port", "5000", \
+    "--workers", "4"]

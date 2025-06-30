@@ -1,4 +1,4 @@
-FROM python:3.12
+FROM python:3.13
 
 WORKDIR /var/www
 
@@ -33,6 +33,6 @@ EXPOSE 5000
 
 # Note: Source code will be mounted as volume in docker-compose
 CMD ["uv", "run", "uvicorn", "src.main:app", \
-     "--host", "0.0.0.0", \
-     "--port", "5000", \
-     "--reload"]
+    "--host", "0.0.0.0", \
+    "--port", "5000", \
+    "--reload"]
