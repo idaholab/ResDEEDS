@@ -83,6 +83,21 @@ uv sync --dev
 uv run uvicorn src.main:app --host 0.0.0.0 --port 5000 --reload
 ```
 
+### Lint and Test Commands
+
+```bash
+# API linting and testing
+cd api
+uv run ruff check     # Run Python linter
+pytest -s             # Run Python tests
+
+# Web linting and testing
+cd web
+ng lint               # Run Angular linter
+ng test               # Run Angular tests
+```
+
+
 ## 🤝 Contributing
 
 Contributions are welcome! Please open issues or submit pull requests for improvements, bug fixes, or new features.

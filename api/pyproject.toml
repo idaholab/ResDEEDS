@@ -107,4 +107,5 @@ dev-dependencies = [
     "black",
     "ipdb",
     "pytest>=8.4.0",
+    "ruff>=0.12.1",
 ]
