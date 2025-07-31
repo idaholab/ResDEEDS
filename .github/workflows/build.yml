@@ -42,31 +42,31 @@ jobs:
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: docker push $IMAGE/api:latest
 
-  build-web:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./web
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+  # build-web:
+  #   runs-on: ubuntu-latest
+  #   defaults:
+  #     run:
+  #       working-directory: ./web
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
 
-      - name: Registry login
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        run: echo $PAT | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
+  #     - name: Registry login
+  #       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+  #       run: echo $PAT | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
 
-      - name: Pull Docker Image (for cache)
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        run: docker pull $IMAGE/web:latest || true
+  #     - name: Pull Docker Image (for cache)
+  #       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+  #       run: docker pull $IMAGE/web:latest || true
 
-      - name: Build Docker Image
-        run: |
-          if [ "${{ github.event_name }}" = "push" ] && [ "${{ github.ref }}" = "refs/heads/main" ]; then
-            docker build -f Dockerfile . --tag $IMAGE/web:latest --cache-from $IMAGE/web:latest
-          else
-            docker build -f Dockerfile . --tag temp-web:${{ github.sha }}
-          fi
+  #     - name: Build Docker Image
+  #       run: |
+  #         if [ "${{ github.event_name }}" = "push" ] && [ "${{ github.ref }}" = "refs/heads/main" ]; then
+  #           docker build -f Dockerfile . --tag $IMAGE/web:latest --cache-from $IMAGE/web:latest
+  #         else
+  #           docker build -f Dockerfile . --tag temp-web:${{ github.sha }}
+  #         fi
 
-      - name: Push Docker Image
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        run: docker push $IMAGE/web:latest
+  #     - name: Push Docker Image
+  #       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+  #       run: docker push $IMAGE/web:latest
