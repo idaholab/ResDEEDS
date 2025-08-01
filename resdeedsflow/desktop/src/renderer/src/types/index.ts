@@ -1,4 +1,5 @@
 import type { Node, Edge, XYPosition } from '@xyflow/react'
+import type { NavigateFunction, Params } from 'react-router-dom'
 
 // ============================================================================
 // PyPSA Component Data Types
@@ -70,8 +71,8 @@ export interface NodeProps<T extends PyPSAComponentData> {
   position: XYPosition
   dragging?: boolean
   isConnectable?: boolean
-  targetPosition?: any
-  sourcePosition?: any
+  targetPosition?: 'top' | 'bottom' | 'left' | 'right'
+  sourcePosition?: 'top' | 'bottom' | 'left' | 'right'
 }
 
 export interface EdgeProps {
@@ -112,11 +113,11 @@ export interface DiagramData {
 }
 
 export interface PyPSAExportData {
-  buses: Record<string, any>
-  generators: Record<string, any>
-  loads: Record<string, any>
-  storage_units: Record<string, any>
-  lines: Record<string, any>
+  buses: Record<string, BusNodeData>
+  generators: Record<string, GeneratorNodeData>
+  loads: Record<string, LoadNodeData>
+  storage_units: Record<string, BatteryNodeData>
+  lines: Record<string, PyPSAEdgeData>
 }
 
 // ============================================================================
@@ -136,7 +137,7 @@ export interface EdgeClickHandler {
 }
 
 export interface ConnectionHandler {
-  (connection: any): void
+  (connection: { source: string; target: string; sourceHandle?: string; targetHandle?: string }): void
 }
 
 // ============================================================================
@@ -167,4 +168,35 @@ export interface ReactFlowInstance {
   fitView: () => void
   zoomIn: () => void
   zoomOut: () => void
+}
+
+// ============================================================================
+// Router and Project Types
+// ============================================================================
+
+export interface Project {
+  id: string
+  name: string
+  nodes: PyPSANode[]
+  edges: PyPSAEdge[]
+  metadata: {
+    created: string
+    lastModified: string
+  }
+}
+
+export interface ProjectDatabase {
+  projects: Record<string, Project>
+  settings: {
+    lastOpenedProject?: string
+  }
+}
+
+export interface RouteParams extends Params {
+  projectId?: string
+}
+
+export interface NavigationContextType {
+  navigate: NavigateFunction
+  currentProjectId?: string
 }

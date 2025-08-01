@@ -28,7 +28,6 @@ __pycache__
 .vscode/
 
 # Web
-web/.angular
-web/.sass-cache/
-web/dist
-web/node_modules
+dist/
+node_modules/
+out/

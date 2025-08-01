@@ -94,7 +94,7 @@ export function exportToPyPSA(nodes, edges) {
         })
         break
         
-      case 'generatorNode':
+      case 'generatorNode': {
         // Find connected bus from edges
         const genBus = findConnectedBus(node.id, edges, 'source')
         pypsaNetwork.generators.push({
@@ -108,8 +108,9 @@ export function exportToPyPSA(nodes, edges) {
           control: nodeData.control || 'PQ',
         })
         break
+      }
         
-      case 'loadNode':
+      case 'loadNode': {
         // Find connected bus from edges
         const loadBus = findConnectedBus(node.id, edges, 'target')
         pypsaNetwork.loads.push({
@@ -119,8 +120,9 @@ export function exportToPyPSA(nodes, edges) {
           q_set: nodeData.q_set || 0,
         })
         break
+      }
         
-      case 'batteryNode':
+      case 'batteryNode': {
         // Find connected bus from edges
         const batteryBus = findConnectedBus(node.id, edges, 'source')
         pypsaNetwork.storage_units.push({
@@ -134,6 +136,7 @@ export function exportToPyPSA(nodes, edges) {
           cyclic_state_of_charge: nodeData.cyclic_state_of_charge !== false,
         })
         break
+      }
     }
   })
 

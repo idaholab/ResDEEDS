@@ -7,8 +7,6 @@ import {
   useReactFlow,
   ReactFlowProvider,
   type Connection,
-  type Node,
-  type Edge,
   type NodeChange,
   type EdgeChange,
   type NodeTypes,
@@ -101,7 +99,7 @@ function Flow({ nodes, edges, setNodes, setEdges, onNodeSelect, onEdgeSelect }: 
 
       const newNode: PyPSANode = {
         id: getId(),
-        type: type as any,
+        type: type as PyPSANode['type'],
         position,
         data: defaultData,
       }

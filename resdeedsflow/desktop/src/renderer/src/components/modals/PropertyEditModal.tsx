@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import type { PyPSANode, PyPSAEdge, NodeType } from '../../types'
+import type { PyPSANode, PyPSAEdge, NodeType, PyPSAComponentData, PyPSAEdgeData } from '../../types'
 import './PropertyEditModal.css'
 
 interface PropertyDefinition {
@@ -54,7 +54,7 @@ const nodeProperties: NodePropertiesConfig = {
 
 interface PropertyEditModalProps {
   node: PyPSANode | PyPSAEdge
-  onSave: (nodeId: string, formData: Record<string, any>) => void
+  onSave: (nodeId: string, formData: Partial<PyPSAComponentData | PyPSAEdgeData>) => void
   onClose: () => void
 }
 
@@ -67,8 +67,9 @@ function PropertyEditModal({ node, onSave, onClose }: PropertyEditModalProps) {
   useEffect(() => {
     const initialData: FormData = {}
     properties.forEach(prop => {
-      initialData[prop.name] = (node.data as any)[prop.name] !== undefined
-        ? (node.data as any)[prop.name]
+      const nodeData = node.data as PyPSAComponentData | PyPSAEdgeData
+      initialData[prop.name] = (nodeData as Record<string, unknown>)[prop.name] !== undefined
+        ? (nodeData as Record<string, unknown>)[prop.name] as string | number | boolean
         : prop.default
     })
     setFormData(initialData)

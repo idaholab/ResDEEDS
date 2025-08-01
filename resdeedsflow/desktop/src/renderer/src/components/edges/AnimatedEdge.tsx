@@ -1,5 +1,5 @@
 import { getBezierPath } from '@xyflow/react'
-import type { EdgeProps, Position } from '@xyflow/react'
+import type { Position } from '@xyflow/react'
 import type { CSSProperties } from 'react'
 
 interface AnimatedEdgeProps {

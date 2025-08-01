@@ -21,9 +21,8 @@ ResDEEDS Flow is a desktop application for designing PyPSA (Python for Power Sys
 
 ### Setup
 ```bash
-# Clone the repository
-git clone https://github.com/yourusername/resdeedsflow.git
-cd resdeedsflow
+# Navigate to desktop directory
+cd desktop
 
 # Install dependencies
 pnpm install
@@ -32,6 +31,12 @@ pnpm install
 ## Development
 
 ```bash
+# Navigate to desktop directory
+cd desktop
+
+# Install dependencies
+pnpm install
+
 # Start development server with hot reload
 pnpm dev
 
@@ -45,6 +50,9 @@ pnpm preview
 ## Building for Distribution
 
 ```bash
+# Navigate to desktop directory first
+cd desktop
+
 # Build for all platforms
 pnpm dist
 
@@ -84,34 +92,46 @@ pnpm dist:linux   # Linux
 ## Project Structure
 
 ```
-src/
-├── main/               # Electron main process
-│   └── index.js       # Window management, menu, IPC handlers
-├── preload/           # Preload scripts
-│   └── index.js       # Secure context bridge
-└── renderer/          # React application
-    └── src/
-        ├── App.jsx              # Main application component
-        ├── components/          
-        │   ├── DiagramEditor.jsx    # React Flow canvas
-        │   ├── ComponentPalette.jsx # Draggable components
-        │   ├── PropertyEditModal.jsx # Component property editor
-        │   └── nodes/              # Custom PyPSA nodes
-        │       ├── BusNode.jsx
-        │       ├── GeneratorNode.jsx
-        │       ├── LoadNode.jsx
-        │       └── BatteryNode.jsx
-        └── utils/
-            ├── diagram-storage.js   # File & database operations
-            └── pypsa-exporter.js    # Export functionality
+desktop/
+├── src/
+│   ├── main/               # Electron main process
+│   │   └── index.js       # Window management, menu, IPC handlers
+│   ├── preload/           # Preload scripts
+│   │   └── index.js       # Secure context bridge
+│   └── renderer/          # React application
+│       └── src/
+│           ├── App.tsx              # Main application component
+│           ├── components/          
+│           │   ├── DiagramEditor.tsx    # React Flow canvas
+│           │   ├── ComponentPalette.tsx # Draggable components
+│           │   ├── modals/
+│           │   │   └── PropertyEditModal.tsx # Component property editor
+│           │   ├── edges/
+│           │   │   └── AnimatedEdge.tsx     # Custom edge animations
+│           │   └── nodes/              # Custom PyPSA nodes
+│           │       ├── BusNode.tsx
+│           │       ├── GeneratorNode.tsx
+│           │       ├── LoadNode.tsx
+│           │       └── BatteryNode.tsx
+│           ├── data/
+│           │   └── defaultDiagram.ts   # Default network template
+│           ├── types/
+│           │   ├── index.ts           # TypeScript type definitions
+│           │   └── electron.ts        # Electron API types
+│           └── utils/
+│               ├── diagram-storage.js  # File & database operations
+│               └── pypsa-exporter.js   # Export functionality
+├── electron-builder.yml    # Distribution configuration
+├── electron.vite.config.ts # Build configuration
+└── package.json            # Dependencies and scripts
 ```
 
 ## Technical Details
 
 ### Technologies
-- **Frontend**: React 19 + React Flow (@xyflow/react)
+- **Frontend**: React 19 + TypeScript + React Flow (@xyflow/react)
 - **Desktop**: Electron 37
-- **Build Tool**: Vite + electron-vite
+- **Build Tool**: electron-vite + Vite
 - **Package Manager**: pnpm
 
 ### Data Persistence
