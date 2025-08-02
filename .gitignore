@@ -20,6 +20,9 @@ __pycache__
 *.cer
 *.ini
 
+# Tests
+coverage/
+
 # Virtual Environment
 .venv/
 
