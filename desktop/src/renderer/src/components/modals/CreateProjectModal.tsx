@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from 'react'
-import './CreateProjectModal.css'
 
 interface CreateProjectModalProps {
   isOpen: boolean
@@ -58,55 +57,58 @@ function CreateProjectModal({ isOpen, onClose, onConfirm, defaultName = '' }: Cr
   if (!isOpen) return null
 
   return (
-    <div className="modal-backdrop" onClick={handleBackdropClick}>
-      <div className="create-project-modal" onKeyDown={handleKeyDown}>
-        <div className="modal-header">
-          <h2>Create New Project</h2>
-          <button 
-            className="modal-close-button"
-            onClick={onClose}
-            type="button"
-          >
-            ×
-          </button>
-        </div>
-        
-        <form onSubmit={handleSubmit} className="modal-form">
-          <div className="form-group">
-            <label htmlFor="project-name">Project Name</label>
-            <input
-              ref={inputRef}
-              id="project-name"
-              type="text"
-              value={projectName}
-              onChange={(e) => {
-                setProjectName(e.target.value)
-                setError(null)
-              }}
-              placeholder="Enter project name..."
-              maxLength={50}
-              className={error ? 'error' : ''}
-            />
-            {error && <div className="error-text">{error}</div>}
-          </div>
-          
-          <div className="modal-actions">
+    <div className="modal fade show d-block" tabIndex={-1} style={{ backgroundColor: 'rgba(0,0,0,0.5)' }} onClick={handleBackdropClick}>
+      <div className="modal-dialog modal-dialog-centered">
+        <div className="modal-content" onKeyDown={handleKeyDown}>
+          <div className="modal-header">
+            <h1 className="modal-title fs-5">Create New Project</h1>
             <button 
               type="button" 
-              className="cancel-button"
+              className="btn-close"
               onClick={onClose}
-            >
-              Cancel
-            </button>
-            <button 
-              type="submit" 
-              className="confirm-button"
-              disabled={!projectName.trim()}
-            >
-              Create Project
-            </button>
+              aria-label="Close"
+            ></button>
           </div>
-        </form>
+          
+          <form onSubmit={handleSubmit}>
+            <div className="modal-body">
+              <div className="mb-3">
+                <label htmlFor="project-name" className="form-label">Project Name</label>
+                <input
+                  ref={inputRef}
+                  id="project-name"
+                  type="text"
+                  value={projectName}
+                  onChange={(e) => {
+                    setProjectName(e.target.value)
+                    setError(null)
+                  }}
+                  placeholder="Enter project name..."
+                  maxLength={50}
+                  className={`form-control ${error ? 'is-invalid' : ''}`}
+                />
+                {error && <div className="invalid-feedback">{error}</div>}
+              </div>
+            </div>
+            
+            <div className="modal-footer">
+              <button 
+                type="button" 
+                className="btn btn-secondary"
+                onClick={onClose}
+              >
+                Cancel
+              </button>
+              <button 
+                type="submit" 
+                className="btn btn-primary"
+                disabled={!projectName.trim()}
+              >
+                Create Project
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   )

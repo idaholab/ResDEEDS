@@ -1,7 +1,6 @@
 import { resolve } from 'path'
 import { defineConfig, externalizeDepsPlugin } from 'electron-vite'
 import react from '@vitejs/plugin-react'
-import type { ConfigEnv, UserConfig } from 'vite'
 
 export default defineConfig({
   main: {
@@ -23,6 +22,20 @@ export default defineConfig({
       }
     },
     plugins: [react()],
+    css: {
+      preprocessorOptions: {
+        scss: {
+          // Silence deprecation warnings for Bootstrap compatibility
+          silenceDeprecations: [
+            'legacy-js-api', 
+            'import',
+            'global-builtin',
+            'color-functions', 
+            'mixed-decls'
+          ]
+        }
+      }
+    },
     build: {
       outDir: 'out/renderer'
     }

@@ -341,11 +341,14 @@ describe('PyPSA Exporter', () => {
     })
 
     it('should handle export errors gracefully', async () => {
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
       window.api.exportFile.mockRejectedValue(new Error('Export failed'))
       
       const result = await exportDiagramAsJSON(sampleNodes, sampleEdges)
       
       expect(result).toBe(false)
+      expect(consoleSpy).toHaveBeenCalledWith('Failed to export as JSON:', expect.any(Error))
+      consoleSpy.mockRestore()
     })
   })
 
@@ -404,11 +407,14 @@ describe('PyPSA Exporter', () => {
     })
 
     it('should handle export errors gracefully', async () => {
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
       window.api.exportFile.mockRejectedValue(new Error('Export failed'))
       
       const result = await exportDiagramAsPython(sampleNodes, sampleEdges)
       
       expect(result).toBe(false)
+      expect(consoleSpy).toHaveBeenCalledWith('Failed to export as Python:', expect.any(Error))
+      consoleSpy.mockRestore()
     })
   })
 })

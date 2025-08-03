@@ -130,7 +130,7 @@ function createMenu() {
             dialog.showMessageBox(mainWindow, {
               type: 'info',
               title: 'About ResDEEDS',
-              message: 'ResDEEDS Network Designer',
+              message: 'ResDEEDS',
               detail: 'A visual PyPSA network designer for power system modeling.\n\nVersion: 1.0.0',
               buttons: ['OK']
             })
@@ -151,7 +151,7 @@ function createMenu() {
             dialog.showMessageBox(mainWindow, {
               type: 'info',
               title: 'About ResDEEDS',
-              message: 'ResDEEDS Network Designer',
+              message: 'ResDEEDS',
               detail: 'A visual PyPSA network designer for power system modeling.\n\nVersion: 1.0.0',
               buttons: ['OK']
             })

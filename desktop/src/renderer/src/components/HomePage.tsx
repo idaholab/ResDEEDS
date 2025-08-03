@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import { getAllProjects, createProject, deleteProject } from '../utils/project-storage'
 import CreateProjectModal from './modals/CreateProjectModal'
 import DeleteProjectModal from './modals/DeleteProjectModal'
+import ThemeToggle from './ThemeToggle'
 import type { Project } from '../types'
-import './HomePage.css'
 
 function HomePage() {
   const navigate = useNavigate()
@@ -44,7 +44,7 @@ function HomePage() {
       // Ctrl/Cmd + F: Focus search
       if ((event.ctrlKey || event.metaKey) && event.key === 'f') {
         event.preventDefault()
-        const searchInput = document.querySelector('.search-input') as HTMLInputElement
+        const searchInput = document.querySelector('.form-control[placeholder*="Search"]') as HTMLInputElement
         if (searchInput) {
           searchInput.focus()
           searchInput.select()
@@ -148,43 +148,47 @@ function HomePage() {
     })
 
   return (
-    <div className="home-page">
-      <header className="home-header">
-        <h1>ResDEEDS - PyPSA Network Designer</h1>
-        <button 
-          className="create-project-button"
-          onClick={handleCreateProject}
-          disabled={loading}
-          title="Create New Project (Ctrl+N)"
-        >
-          Create New Project
-        </button>
+    <div className="d-flex flex-column vh-100">
+      <header className="d-flex justify-content-between align-items-center p-3 bg-body border-bottom shadow-sm">
+        <h1 className="mb-0 text-primary fs-4">ResDEEDS</h1>
+        <div className="d-flex gap-2 align-items-center">
+          <ThemeToggle />
+          <button 
+            className="btn btn-primary"
+            onClick={handleCreateProject}
+            disabled={loading}
+            title="Create New Project (Ctrl+N)"
+          >
+            Create New Project
+          </button>
+        </div>
       </header>
       
-      <div className="home-content">
-        <div className="projects-section">
-          <div className="projects-header">
-            <h2>Projects</h2>
+      <div className="flex-grow-1 p-4 overflow-auto">
+        <div className="container-fluid">
+          <div className="d-flex justify-content-between align-items-start mb-4 flex-wrap gap-3">
+            <h2 className="mb-0 fs-3">Projects</h2>
             
             {projects.length > 0 && (
-              <div className="projects-controls">
-                <div className="search-box">
+              <div className="d-flex gap-3 align-items-center flex-wrap">
+                <div className="input-group" style={{ width: '250px' }}>
                   <input
                     type="text"
                     placeholder="Search projects... (Ctrl+F)"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="search-input"
+                    className="form-control"
                     title="Search projects (Ctrl+F)"
                   />
                 </div>
-                <div className="sort-controls">
-                  <label htmlFor="sort-select">Sort by:</label>
+                <div className="d-flex align-items-center gap-2">
+                  <label htmlFor="sort-select" className="form-label mb-0 text-nowrap">Sort by:</label>
                   <select
                     id="sort-select"
                     value={sortBy}
                     onChange={(e) => setSortBy(e.target.value as 'name' | 'created' | 'modified')}
-                    className="sort-select"
+                    className="form-select"
+                    style={{ width: 'auto' }}
                   >
                     <option value="modified">Last Modified</option>
                     <option value="created">Date Created</option>
@@ -196,50 +200,67 @@ function HomePage() {
           </div>
           
           {error && (
-            <div className="error-message">
-              {error}
-              <button onClick={loadProjects} className="retry-button">Retry</button>
+            <div className="alert alert-danger d-flex justify-content-between align-items-center mb-4">
+              <span>{error}</span>
+              <button onClick={loadProjects} className="btn btn-outline-danger btn-sm">Retry</button>
             </div>
           )}
           
           {loading ? (
-            <div className="loading-message">Loading projects...</div>
+            <div className="text-center py-5">
+              <div className="spinner-border text-primary" role="status">
+                <span className="visually-hidden">Loading...</span>
+              </div>
+              <div className="mt-3 text-muted">Loading projects...</div>
+            </div>
           ) : projects.length === 0 ? (
-            <div className="empty-projects">
-              <p>No projects yet. Create your first project to get started!</p>
+            <div className="text-center py-5">
+              <div className="mb-3">
+                <svg width="64" height="64" className="text-muted" fill="currentColor" viewBox="0 0 16 16">
+                  <path d="M9.5 3.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zM8 8.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z"/>
+                  <path d="M14 7.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
+                </svg>
+              </div>
+              <h5 className="text-muted">No projects yet</h5>
+              <p className="text-muted">Create your first project to get started!</p>
             </div>
           ) : filteredAndSortedProjects.length === 0 ? (
-            <div className="empty-projects">
-              <p>No projects match your search criteria.</p>
-              <button onClick={() => setSearchTerm('')} className="clear-search-button">Clear Search</button>
+            <div className="text-center py-5">
+              <h5 className="text-muted">No projects match your search</h5>
+              <button onClick={() => setSearchTerm('')} className="btn btn-primary mt-2">Clear Search</button>
             </div>
           ) : (
-            <div className="projects-list">
+            <div className="row g-3">
               {filteredAndSortedProjects.map((project) => (
-                <div key={project.id} className="project-card">
-                  <div 
-                    className="project-content"
-                    onClick={() => handleOpenProject(project.id)}
-                  >
-                    <h3>{project.name}</h3>
-                    <p className="project-meta">
-                      <span>Created: {formatDate(project.metadata.created)}</span>
-                      <span>Modified: {formatDate(project.metadata.lastModified)}</span>
-                    </p>
-                    <p className="project-stats">
-                      {project.nodes.length} components, {project.edges.length} connections
-                    </p>
+                <div key={project.id} className="col-md-6 col-lg-4">
+                  <div className="card h-100 shadow-sm position-relative project-card" style={{ cursor: 'pointer', transition: 'all 0.2s' }}>
+                    <div 
+                      className="card-body"
+                      onClick={() => handleOpenProject(project.id)}
+                    >
+                      <h5 className="card-title mb-3">{project.name}</h5>
+                      <div className="small text-muted mb-2">
+                        <div>Created: {formatDate(project.metadata.created)}</div>
+                        <div>Modified: {formatDate(project.metadata.lastModified)}</div>
+                      </div>
+                      <div className="small text-muted fst-italic">
+                        {project.nodes.length} components, {project.edges.length} connections
+                      </div>
+                    </div>
+                    <button 
+                      className="btn btn-sm btn-outline-danger position-absolute top-0 end-0 m-2 rounded-circle"
+                      style={{ width: '32px', height: '32px', opacity: 0, transition: 'opacity 0.2s' }}
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        handleDeleteProject(project.id, project.name)
+                      }}
+                      title="Delete project"
+                      onMouseEnter={(e) => e.currentTarget.style.opacity = '1'}
+                      onMouseLeave={(e) => e.currentTarget.style.opacity = '0'}
+                    >
+                      ×
+                    </button>
                   </div>
-                  <button 
-                    className="delete-button"
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      handleDeleteProject(project.id, project.name)
-                    }}
-                    title="Delete project"
-                  >
-                    ×
-                  </button>
                 </div>
               ))}
             </div>

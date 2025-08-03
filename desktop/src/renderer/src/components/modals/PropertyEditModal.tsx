@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import type { PyPSANode, PyPSAEdge, NodeType, PyPSAComponentData, PyPSAEdgeData } from '../../types'
-import './PropertyEditModal.css'
 
 interface PropertyDefinition {
   name: string
@@ -99,58 +98,77 @@ function PropertyEditModal({ node, onSave, onClose }: PropertyEditModalProps) {
   }
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content" onClick={e => e.stopPropagation()}>
-        <div className="modal-header">
-          <h2>Edit {getNodeTypeName()} Properties</h2>
-          <button className="close-button" onClick={onClose}>×</button>
-        </div>
-
-        <form onSubmit={handleSubmit} className="property-form">
-          {properties.map(prop => (
-            <div key={prop.name} className="form-group">
-              <label htmlFor={prop.name}>{prop.label}</label>
-
-              {prop.type === 'select' ? (
-                <select
-                  id={prop.name}
-                  value={String(formData[prop.name] || prop.default)}
-                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) => handleChange(prop.name, e.target.value, prop.type)}
-                >
-                  {prop.options?.map(option => (
-                    <option key={option} value={option}>{option}</option>
-                  ))}
-                </select>
-              ) : prop.type === 'checkbox' ? (
-                <input
-                  type="checkbox"
-                  id={prop.name}
-                  checked={Boolean(formData[prop.name]) || false}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange(prop.name, e.target.checked, prop.type)}
-                />
-              ) : (
-                <input
-                  type={prop.type}
-                  id={prop.name}
-                  value={formData[prop.name] !== undefined ? String(formData[prop.name]) : ''}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange(prop.name, e.target.value, prop.type)}
-                  min={prop.min}
-                  max={prop.max}
-                  step={prop.step}
-                />
-              )}
-            </div>
-          ))}
-
-          <div className="modal-actions">
-            <button type="button" onClick={onClose} className="cancel-button">
-              Cancel
-            </button>
-            <button type="submit" className="save-button">
-              Save
-            </button>
+    <div className="modal fade show d-block" tabIndex={-1} style={{ backgroundColor: 'rgba(0,0,0,0.5)' }} onClick={onClose}>
+      <div className="modal-dialog modal-dialog-centered modal-lg">
+        <div className="modal-content" onClick={e => e.stopPropagation()}>
+          <div className="modal-header">
+            <h1 className="modal-title fs-5">Edit {getNodeTypeName()} Properties</h1>
+            <button 
+              type="button" 
+              className="btn-close"
+              onClick={onClose}
+              aria-label="Close"
+            ></button>
           </div>
-        </form>
+
+          <form onSubmit={handleSubmit}>
+            <div className="modal-body">
+              <div className="row g-3">
+                {properties.map(prop => (
+                  <div key={prop.name} className="col-md-6">
+                    <label htmlFor={prop.name} className="form-label">{prop.label}</label>
+
+                    {prop.type === 'select' ? (
+                      <select
+                        id={prop.name}
+                        className="form-select"
+                        value={String(formData[prop.name] || prop.default)}
+                        onChange={(e: React.ChangeEvent<HTMLSelectElement>) => handleChange(prop.name, e.target.value, prop.type)}
+                      >
+                        {prop.options?.map(option => (
+                          <option key={option} value={option}>{option}</option>
+                        ))}
+                      </select>
+                    ) : prop.type === 'checkbox' ? (
+                      <div className="form-check">
+                        <input
+                          type="checkbox"
+                          id={prop.name}
+                          className="form-check-input"
+                          checked={Boolean(formData[prop.name]) || false}
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange(prop.name, e.target.checked, prop.type)}
+                        />
+                        <label className="form-check-label" htmlFor={prop.name}>
+                          Enable
+                        </label>
+                      </div>
+                    ) : (
+                      <input
+                        type={prop.type}
+                        id={prop.name}
+                        className="form-control"
+                        value={formData[prop.name] !== undefined ? String(formData[prop.name]) : ''}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange(prop.name, e.target.value, prop.type)}
+                        min={prop.min}
+                        max={prop.max}
+                        step={prop.step}
+                      />
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="modal-footer">
+              <button type="button" onClick={onClose} className="btn btn-secondary">
+                Cancel
+              </button>
+              <button type="submit" className="btn btn-primary">
+                Save Changes
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   )

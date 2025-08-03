@@ -114,11 +114,14 @@ describe('Diagram Storage', () => {
     })
 
     it('should handle save errors gracefully', async () => {
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
       window.api.saveFile.mockRejectedValue(new Error('Save failed'))
       
       const result = await saveDiagramToFile(sampleDiagram)
       
       expect(result).toBe(false)
+      expect(consoleSpy).toHaveBeenCalledWith('Failed to save diagram to file:', expect.any(Error))
+      consoleSpy.mockRestore()
     })
 
     it('should return false when Electron API returns failure', async () => {
@@ -184,6 +187,7 @@ describe('Diagram Storage', () => {
     })
 
     it('should validate diagram structure', async () => {
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
       const invalidData = { invalid: 'structure' }
       window.api.openFile.mockResolvedValue({
         success: true,
@@ -194,9 +198,11 @@ describe('Diagram Storage', () => {
       const result = await loadDiagramFromFile()
       
       expect(result).toBeNull()
+      consoleSpy.mockRestore()
     })
 
     it('should handle missing nodes array', async () => {
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
       const invalidData = { edges: [] }
       window.api.openFile.mockResolvedValue({
         success: true,
@@ -207,9 +213,11 @@ describe('Diagram Storage', () => {
       const result = await loadDiagramFromFile()
       
       expect(result).toBeNull()
+      consoleSpy.mockRestore()
     })
 
     it('should handle missing edges array', async () => {
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
       const invalidData = { nodes: [] }
       window.api.openFile.mockResolvedValue({
         success: true,
@@ -220,9 +228,11 @@ describe('Diagram Storage', () => {
       const result = await loadDiagramFromFile()
       
       expect(result).toBeNull()
+      consoleSpy.mockRestore()
     })
 
     it('should handle invalid JSON', async () => {
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
       window.api.openFile.mockResolvedValue({
         success: true,
         data: 'invalid json',
@@ -232,6 +242,7 @@ describe('Diagram Storage', () => {
       const result = await loadDiagramFromFile()
       
       expect(result).toBeNull()
+      consoleSpy.mockRestore()
     })
 
     it('should use browser fallback when Electron API not available', async () => {
@@ -289,6 +300,7 @@ describe('Diagram Storage', () => {
     })
 
     it('should handle invalid file content in browser fallback', async () => {
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
       delete global.window.api
       
       const mockFile = {
@@ -316,6 +328,8 @@ describe('Diagram Storage', () => {
       } catch (error) {
         expect(error).toBeDefined()
       }
+      
+      consoleSpy.mockRestore()
     })
   })
 })

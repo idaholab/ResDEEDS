@@ -81,7 +81,7 @@ describe('PropertyEditModal', () => {
       />
     )
 
-    const overlay = document.querySelector('.modal-overlay')
+    const overlay = document.querySelector('.modal')
     fireEvent.click(overlay!)
     expect(mockOnClose).toHaveBeenCalledOnce()
   })
@@ -96,7 +96,7 @@ describe('PropertyEditModal', () => {
       />
     )
 
-    const closeButton = screen.getByText('×')
+    const closeButton = screen.getByLabelText('Close')
     fireEvent.click(closeButton)
     expect(mockOnClose).toHaveBeenCalledOnce()
   })
@@ -165,7 +165,7 @@ describe('PropertyEditModal', () => {
     const voltageInput = screen.getByDisplayValue('13.8')
     fireEvent.change(voltageInput, { target: { value: '69' } })
 
-    const saveButton = screen.getByText('Save')
+    const saveButton = screen.getByText('Save Changes')
     fireEvent.click(saveButton)
 
     await waitFor(() => {
