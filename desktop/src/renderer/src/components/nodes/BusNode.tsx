@@ -1,6 +1,6 @@
 import { Handle, Position } from '@xyflow/react'
 import type { BusNodeData } from '../../types'
-import './NodeStyles.css'
+import './NodeStyles.scss'
 
 interface BusNodeProps {
   data: BusNodeData

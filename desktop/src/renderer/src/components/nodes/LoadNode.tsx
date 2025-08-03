@@ -1,6 +1,6 @@
 import { Handle, Position } from '@xyflow/react'
 import type { LoadNodeData } from '../../types'
-import './NodeStyles.css'
+import './NodeStyles.scss'
 
 interface LoadNodeProps {
   data: LoadNodeData

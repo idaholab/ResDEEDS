@@ -20,7 +20,7 @@ import LoadNode from './nodes/LoadNode'
 import BatteryNode from './nodes/BatteryNode'
 import AnimatedEdge from './edges/AnimatedEdge'
 import type { PyPSANode, PyPSAEdge, PyPSAComponentData } from '../types'
-import './DiagramEditor.css'
+import './DiagramEditor.scss'
 
 const nodeTypes: NodeTypes = {
   busNode: BusNode,

@@ -1,0 +1,75 @@
+.diagram-editor {
+  flex: 1;
+  height: 100%;
+  background-color: var(--react-flow-background);
+  transition: var(--transition-colors);
+}
+
+// React Flow Minimap Styles
+.react-flow__minimap {
+  background-color: var(--react-flow-controls-background);
+  border: 1px solid var(--react-flow-controls-border);
+  box-shadow: var(--shadow-base);
+  border-radius: 8px;
+  width: 200px;
+  height: 150px;
+
+  &-mask {
+    fill: var(--react-flow-minimap-mask);
+    stroke: var(--color-info);
+    stroke-width: 2;
+  }
+
+  &-node {
+    cursor: pointer;
+  }
+}
+
+// React Flow Controls Styles
+.react-flow__controls {
+  box-shadow: var(--shadow-base);
+  background: var(--react-flow-controls-background);
+  border: 1px solid var(--react-flow-controls-border);
+  border-radius: 8px;
+
+  &-button {
+    background-color: var(--react-flow-controls-background);
+    border: 1px solid var(--react-flow-controls-border);
+    color: var(--color-text-primary);
+    transition: var(--transition-colors);
+
+    &:hover {
+      background-color: var(--color-surface-secondary);
+    }
+  }
+}
+
+// Edge Animations
+@keyframes dashdraw {
+  to {
+    stroke-dashoffset: -10;
+  }
+}
+
+// React Flow Edge Styles
+.react-flow__edge {
+  &-path {
+    stroke: var(--color-text-muted);
+    stroke-dasharray: 5;
+    animation: dashdraw 0.5s linear infinite;
+    transition: var(--transition-colors);
+  }
+
+  // Selected edge state
+  &.selected .react-flow__edge-path {
+    stroke: var(--color-info);
+    stroke-width: 3;
+    animation: dashdraw 0.3s linear infinite;
+  }
+
+  // Hover effect for edges
+  &:hover .react-flow__edge-path {
+    stroke: var(--color-text-secondary);
+    stroke-width: 3;
+  }
+}

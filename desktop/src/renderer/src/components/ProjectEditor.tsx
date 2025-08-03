@@ -3,12 +3,13 @@ import { useParams, useNavigate } from 'react-router-dom'
 import DiagramEditor from './DiagramEditor'
 import ComponentPalette from './ComponentPalette'
 import PropertyEditModal from './modals/PropertyEditModal'
+import ThemeToggle from './ThemeToggle'
 import { exportDiagramAsJSON, exportDiagramAsPython } from '../utils/pypsa-exporter'
 import { defaultNodes, defaultEdges } from '../data/defaultDiagram'
 import { getProject, saveProjectDiagram, createProject, renameProject } from '../utils/project-storage'
 import { saveDiagramToFile, loadDiagramFromFile } from '../utils/diagram-storage'
 import type { PyPSANode, PyPSAEdge, RouteParams, Project } from '../types'
-import './ProjectEditor.css'
+import './ProjectEditor.scss'
 
 function ProjectEditor() {
   const { projectId } = useParams<RouteParams>()
@@ -201,6 +202,7 @@ function ProjectEditor() {
           </h1>
         </div>
         <div className="export-buttons">
+          <ThemeToggle />
           <button
             className="export-button"
             onClick={() => exportDiagramAsJSON(nodes, edges)}

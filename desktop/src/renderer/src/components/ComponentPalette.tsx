@@ -1,5 +1,5 @@
 import type { NodeType } from '../types'
-import './ComponentPalette.css'
+import './ComponentPalette.scss'
 
 interface ComponentItem {
   type: NodeType

@@ -40,6 +40,9 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
   // Apply theme to document
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme)
+    document.documentElement.setAttribute('data-bs-theme', theme)
+    
+    // Update body classes for Bootstrap
     document.body.className = theme === 'dark' ? 'bg-dark text-light' : 'bg-light text-dark'
     
     // Save to localStorage
