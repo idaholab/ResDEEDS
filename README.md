@@ -1,8 +1,8 @@
-# ResDEEDS Flow - PyPSA Network Designer
+# ResDEEDS
 
 ## Overview
 
-ResDEEDS Flow is a desktop application for designing PyPSA (Python for Power System Analysis) networks through an intuitive visual interface. Built with Electron and React Flow, it provides drag-and-drop functionality for creating power system models and exports them as PyPSA-compatible JSON or Python code.
+ResDEEDS is a desktop application for designing PyPSA (Python for Power System Analysis) networks through an intuitive visual interface. Built with Electron and React Flow, it provides drag-and-drop functionality for creating power system models and exports them as PyPSA-compatible JSON or Python code.
 
 ## Features
 
