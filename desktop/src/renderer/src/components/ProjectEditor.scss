@@ -95,8 +95,9 @@
   }
 }
 
-.project-content {
+.project-editor .project-content {
   display: flex;
+  flex-direction: row;
   flex: 1;
   overflow: hidden;
 }
