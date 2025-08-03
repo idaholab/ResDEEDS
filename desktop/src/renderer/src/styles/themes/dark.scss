@@ -22,7 +22,14 @@
   // Component specific
   --bs-card-bg: #1e293b;
   --bs-card-border-color: #334155;
+  --bs-card-hover-bg: #2d3748;
+  --bs-card-hover-border: var(--bs-primary);
   --bs-modal-backdrop-bg: rgba(0, 0, 0, 0.8);
+  
+  // Enhanced card shadows for dark theme
+  --bs-card-shadow-rest: 0 2px 4px 0 rgba(0, 0, 0, 0.4), 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+  --bs-card-shadow-hover: 0 16px 32px -8px rgba(0, 0, 0, 0.5), 0 10px 20px -5px rgba(0, 0, 0, 0.3);
+  --bs-card-shadow-active: 0 6px 12px -3px rgba(0, 0, 0, 0.4), 0 3px 6px -1px rgba(0, 0, 0, 0.2);
   
   // React Flow specific
   --react-flow-background: #0f172a;

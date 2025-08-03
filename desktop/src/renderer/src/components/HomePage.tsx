@@ -5,6 +5,7 @@ import CreateProjectModal from './modals/CreateProjectModal'
 import DeleteProjectModal from './modals/DeleteProjectModal'
 import ThemeToggle from './ThemeToggle'
 import type { Project } from '../types'
+import './HomePage.scss'
 
 function HomePage() {
   const navigate = useNavigate()
@@ -148,8 +149,8 @@ function HomePage() {
     })
 
   return (
-    <div className="d-flex flex-column vh-100">
-      <header className="d-flex justify-content-between align-items-center p-3 bg-body border-bottom shadow-sm">
+    <div className="home-page d-flex flex-column vh-100">
+      <header className="home-header d-flex justify-content-between align-items-center p-3 border-bottom shadow-sm">
         <h1 className="mb-0 text-primary fs-4">ResDEEDS</h1>
         <div className="d-flex gap-2 align-items-center">
           <ThemeToggle />
@@ -230,33 +231,30 @@ function HomePage() {
               <button onClick={() => setSearchTerm('')} className="btn btn-primary mt-2">Clear Search</button>
             </div>
           ) : (
-            <div className="row g-3">
+            <div className="projects-list">
               {filteredAndSortedProjects.map((project) => (
-                <div key={project.id} className="col-md-6 col-lg-4">
-                  <div className="card h-100 shadow-sm position-relative project-card" style={{ cursor: 'pointer', transition: 'all 0.2s' }}>
+                <div key={project.id}>
+                  <div className="project-card h-100 position-relative">
                     <div 
-                      className="card-body"
+                      className="project-content"
                       onClick={() => handleOpenProject(project.id)}
                     >
-                      <h5 className="card-title mb-3">{project.name}</h5>
-                      <div className="small text-muted mb-2">
+                      <h3>{project.name}</h3>
+                      <div className="project-meta">
                         <div>Created: {formatDate(project.metadata.created)}</div>
                         <div>Modified: {formatDate(project.metadata.lastModified)}</div>
                       </div>
-                      <div className="small text-muted fst-italic">
+                      <div className="project-stats">
                         {project.nodes.length} components, {project.edges.length} connections
                       </div>
                     </div>
                     <button 
-                      className="btn btn-sm btn-outline-danger position-absolute top-0 end-0 m-2 rounded-circle"
-                      style={{ width: '32px', height: '32px', opacity: 0, transition: 'opacity 0.2s' }}
+                      className="delete-button"
                       onClick={(e) => {
                         e.stopPropagation()
                         handleDeleteProject(project.id, project.name)
                       }}
                       title="Delete project"
-                      onMouseEnter={(e) => e.currentTarget.style.opacity = '1'}
-                      onMouseLeave={(e) => e.currentTarget.style.opacity = '0'}
                     >
                       ×
                     </button>
