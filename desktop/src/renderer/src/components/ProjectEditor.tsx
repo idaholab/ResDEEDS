@@ -4,6 +4,7 @@ import DiagramEditor from './DiagramEditor'
 import ComponentPalette from './ComponentPalette'
 import PropertyEditModal from './modals/PropertyEditModal'
 import ThemeToggle from './ThemeToggle'
+import EditableProjectName from './EditableProjectName'
 import { exportDiagramAsJSON, exportDiagramAsPython } from '../utils/pypsa-exporter'
 import { defaultNodes, defaultEdges } from '../data/defaultDiagram'
 import { getProject, saveProjectDiagram, createProject, renameProject } from '../utils/project-storage'
@@ -154,16 +155,15 @@ function ProjectEditor() {
     navigate('/')
   }
 
-  const handleRenameProject = async () => {
-    if (!project || !projectId) return
+  const handleInlineRename = async (newName: string): Promise<boolean> => {
+    if (!project || !projectId) return false
     
-    const newName = prompt('Enter new project name:', project.name)
-    if (newName && newName.trim() !== project.name) {
-      const success = await renameProject(projectId, newName.trim())
-      if (success) {
-        setProject({ ...project, name: newName.trim() })
-      }
+    const success = await renameProject(projectId, newName)
+    if (success) {
+      setProject({ ...project, name: newName })
+      return true
     }
+    return false
   }
 
   if (loading) {
@@ -197,9 +197,10 @@ function ProjectEditor() {
           <button className="back-button" onClick={handleBackToHome}>
             ← Back to Projects
           </button>
-          <h1 onClick={handleRenameProject} title="Click to rename">
-            {project?.name || 'Untitled Project'}
-          </h1>
+          <EditableProjectName 
+            value={project?.name || 'Untitled Project'}
+            onSave={handleInlineRename}
+          />
         </div>
         <div className="export-buttons">
           <ThemeToggle />

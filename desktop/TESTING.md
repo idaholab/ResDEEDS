@@ -1,6 +1,6 @@
 # Testing Guide for ResDEEDS Flow
 
-This document provides guidance on running and writing tests for the ResDEEDS Flow Electron application.
+This document provides guidance on running and writing tests for the ResDEEDS application.
 
 ## Overview
 
