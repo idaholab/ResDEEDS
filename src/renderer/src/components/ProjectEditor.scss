@@ -1,0 +1,135 @@
+.project-editor {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: var(--color-background);
+  transition: var(--transition-colors);
+
+  // Loading and Error States
+  &.loading,
+  &.error {
+    justify-content: center;
+    align-items: center;
+  }
+}
+
+.project-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1.5rem;
+  background: var(--color-surface-primary);
+  border-bottom: 1px solid var(--color-border);
+  box-shadow: var(--shadow-base);
+  transition: var(--transition-colors);
+
+  h1 {
+    margin: 0;
+    color: var(--color-text-primary);
+    font-size: 1.25rem;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    transition: var(--transition-colors);
+
+    &:hover {
+      background-color: var(--color-surface-secondary);
+    }
+  }
+}
+
+// Force dark theme background for project header
+[data-theme="dark"] .project-header {
+  background: var(--color-surface-primary) !important;
+}
+
+.project-nav {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.back-button {
+  background: none;
+  border: 1px solid var(--color-border);
+  color: var(--color-text-secondary);
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: var(--transition-base);
+
+  &:hover {
+    background: var(--color-surface-secondary);
+    border-color: var(--color-text-muted);
+    color: var(--color-text-primary);
+  }
+}
+
+.export-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.export-button {
+  background: #007acc;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background: #005999;
+  }
+
+  &.python {
+    background: #28a745;
+
+    &:hover {
+      background: #1e7e34;
+    }
+  }
+}
+
+.project-editor .project-content {
+  display: flex;
+  flex-direction: row;
+  flex: 1;
+  overflow: hidden;
+}
+
+// Shared content styles for loading and error states
+.loading-content,
+.error-content {
+  text-align: center;
+  padding: 2rem;
+  background: var(--color-surface-primary);
+  border-radius: 8px;
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--color-border);
+  transition: var(--transition-colors);
+}
+
+.error-content {
+  h2 {
+    color: var(--color-danger);
+    margin: 0 0 1rem 0;
+  }
+
+  p {
+    color: var(--color-text-secondary);
+    margin: 0 0 1.5rem 0;
+  }
+}
+
+.loading-content {
+  p {
+    color: var(--color-text-secondary);
+    margin: 0;
+    font-size: 1.1rem;
+  }
+}

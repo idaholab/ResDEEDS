@@ -1,0 +1,195 @@
+// SCSS mixins for PyPSA node styles
+@mixin node-state($color) {
+  border-color: $color;
+  background: var(--react-flow-node-background);
+
+  &:hover {
+    border-color: $color;
+    opacity: 0.8;
+  }
+
+  &.selected {
+    border-color: $color;
+    box-shadow: 0 0 0 2px rgba($color, 0.3);
+  }
+}
+
+@mixin node-active-state {
+  @include node-state(var(--color-success));
+}
+
+@mixin node-zero-state {
+  @include node-state(var(--color-danger));
+}
+
+// Base custom node styles
+.custom-node {
+  padding: 10px;
+  border-radius: 8px;
+  background: var(--react-flow-node-background);
+  border: 2px solid var(--react-flow-node-border);
+  min-width: 120px;
+  text-align: center;
+  cursor: pointer;
+  transition: var(--transition-base);
+  box-shadow: var(--shadow-base);
+  color: var(--color-text-primary);
+
+  &:hover {
+    border-color: var(--color-text-muted);
+    box-shadow: var(--shadow-lg);
+  }
+
+  &.selected {
+    border-color: var(--color-info);
+    box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.3);
+  }
+}
+
+// Node content elements
+.node-icon {
+  font-size: 24px;
+  margin-bottom: 4px;
+}
+
+.node-label {
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 4px;
+  color: var(--color-text-primary);
+}
+
+.node-info {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+// PyPSA Component Node Types
+.bus-node {
+  @include node-state(var(--color-bus));
+
+  &-active {
+    @include node-active-state;
+  }
+
+  &-zero {
+    @include node-zero-state;
+  }
+}
+
+.generator-node {
+  @include node-state(var(--color-generator));
+
+  &-active {
+    @include node-active-state;
+  }
+
+  &-zero {
+    @include node-zero-state;
+  }
+}
+
+.load-node {
+  @include node-state(var(--color-load));
+
+  &-active {
+    @include node-active-state;
+  }
+
+  &-zero {
+    @include node-zero-state;
+  }
+}
+
+.line-node {
+  @include node-state(var(--color-line));
+}
+
+.battery-node {
+  @include node-state(var(--color-battery));
+
+  &-active {
+    @include node-active-state;
+  }
+
+  &-zero {
+    @include node-zero-state;
+  }
+}
+
+// React Flow Handle Styles
+.react-flow__handle {
+  width: 10px;
+  height: 10px;
+  background: var(--react-flow-handle-background);
+  border: 2px solid var(--react-flow-handle-border);
+  transition: var(--transition-base);
+
+  &-connecting {
+    background: var(--color-warning);
+  }
+
+  &-valid {
+    background: var(--color-success);
+  }
+}
+
+// React Flow Theme Styles
+.react-flow {
+  background: var(--react-flow-background);
+
+  &__controls {
+    background: var(--react-flow-controls-background);
+    border: 1px solid var(--react-flow-controls-border);
+    border-radius: 8px;
+    box-shadow: var(--shadow-base);
+
+    &-button {
+      background: var(--react-flow-controls-background);
+      border-color: var(--react-flow-controls-border);
+      color: var(--color-text-primary);
+      transition: var(--transition-colors);
+
+      &:hover {
+        background: var(--color-surface-secondary);
+      }
+    }
+  }
+
+  &__minimap {
+    background: var(--react-flow-controls-background);
+    border: 1px solid var(--react-flow-controls-border);
+    border-radius: 8px;
+    box-shadow: var(--shadow-base);
+
+    &-mask {
+      fill: var(--react-flow-minimap-mask);
+    }
+  }
+
+  &__edge {
+    &-path {
+      stroke: var(--color-text-muted);
+      transition: var(--transition-colors);
+    }
+
+    &.selected &-path {
+      stroke: var(--color-info);
+    }
+  }
+
+  &__connectionline {
+    stroke: var(--color-info);
+  }
+
+  &__panel {
+    background: var(--color-surface-primary);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    box-shadow: var(--shadow-base);
+    color: var(--color-text-primary);
+  }
+}

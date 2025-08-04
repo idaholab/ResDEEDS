@@ -1,0 +1,146 @@
+// ResDEEDS Custom Bootstrap Variables
+// This file contains all custom Bootstrap variable overrides
+
+@use "sass:color";
+
+// ============================================================================
+// COLOR SYSTEM
+// ============================================================================
+
+// Brand Colors for Power System Components
+$primary: #0066cc !default;          // Electric blue for main actions
+$secondary: #6c757d !default;        // Standard Bootstrap gray
+$success: #22c55e !default;          // Green for valid connections
+$info: #06b6d4 !default;             // Cyan for information
+$warning: #f59e0b !default;          // Amber for warnings
+$danger: #ef4444 !default;           // Red for errors/disconnections
+$light: #f8fafc !default;            // Very light gray
+$dark: #1e293b !default;             // Dark slate for professional look
+
+// PyPSA Component Colors
+$bus-color: #4f46e5 !default;        // Indigo for bus nodes
+$generator-color: #059669 !default;  // Emerald for generators
+$load-color: #dc2626 !default;       // Red for loads
+$battery-color: #7c3aed !default;    // Purple for storage
+$line-color: #374151 !default;       // Gray for transmission lines
+
+// Theme Colors
+$body-bg-light: #ffffff !default;
+$body-bg-dark: #0f172a !default;
+$body-color-light: #374151 !default;
+$body-color-dark: #f1f5f9 !default;
+
+// ============================================================================
+// TYPOGRAPHY
+// ============================================================================
+
+$font-family-sans-serif: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif !default;
+$font-family-monospace: "SF Mono", Monaco, Inconsolata, "Roboto Mono", "Source Code Pro", monospace !default;
+
+$font-size-base: 0.875rem !default;  // 14px for desktop density
+$font-size-sm: 0.75rem !default;     // 12px
+$font-size-lg: 1rem !default;        // 16px
+
+$line-height-base: 1.5 !default;
+$headings-line-height: 1.2 !default;
+
+// ============================================================================
+// SPACING
+// ============================================================================
+
+$spacer: 1rem !default;
+$spacers: (
+  0: 0,
+  1: $spacer * 0.25,    // 4px
+  2: $spacer * 0.5,     // 8px
+  3: $spacer * 0.75,    // 12px
+  4: $spacer,           // 16px
+  5: $spacer * 1.25,    // 20px
+  6: $spacer * 1.5,     // 24px
+  7: $spacer * 2,       // 32px
+  8: $spacer * 2.5,     // 40px
+  9: $spacer * 3        // 48px
+) !default;
+
+// ============================================================================
+// BORDERS
+// ============================================================================
+
+$border-width: 1px !default;
+$border-radius: 0.375rem !default;     // 6px - slightly rounded for modern look
+$border-radius-sm: 0.25rem !default;   // 4px
+$border-radius-lg: 0.5rem !default;    // 8px
+$border-radius-xl: 0.75rem !default;   // 12px
+
+// ============================================================================
+// SHADOWS
+// ============================================================================
+
+$box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06) !default;
+$box-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !default;
+$box-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !default;
+$box-shadow-inset: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06) !default;
+
+// ============================================================================
+// COMPONENTS
+// ============================================================================
+
+// Buttons
+$btn-padding-y: 0.5rem !default;
+$btn-padding-x: 1rem !default;
+$btn-font-size: $font-size-base !default;
+$btn-border-radius: $border-radius !default;
+$btn-box-shadow: $box-shadow-sm !default;
+$btn-focus-box-shadow: 0 0 0 0.2rem rgba($primary, 0.25) !default;
+
+// Forms
+$input-padding-y: 0.5rem !default;
+$input-padding-x: 0.75rem !default;
+$input-font-size: $font-size-base !default;
+$input-border-radius: $border-radius !default;
+$input-focus-border-color: color.adjust($primary, $lightness: 25%) !default;
+$input-focus-box-shadow: 0 0 0 0.2rem rgba($primary, 0.25) !default;
+
+// Cards
+$card-border-radius: $border-radius-lg !default;
+$card-box-shadow: $box-shadow !default;
+$card-border-width: 0 !default;  // Remove borders for cleaner look
+
+// Modals
+$modal-backdrop-opacity: 0.5 !default;
+$modal-content-border-radius: $border-radius-xl !default;
+$modal-content-box-shadow-xs: $box-shadow-lg !default;
+
+// Navigation
+$navbar-padding-y: 0.75rem !default;
+$navbar-padding-x: 1rem !default;
+$navbar-brand-font-size: 1.125rem !default;
+
+// Tables
+$table-cell-padding-y: 0.5rem !default;
+$table-cell-padding-x: 0.75rem !default;
+
+// ============================================================================
+// DESKTOP-SPECIFIC ADJUSTMENTS
+// ============================================================================
+
+// Reduce padding for information density
+$container-padding-x: 1rem !default;
+
+// Adjust transition speeds for desktop feel
+$transition-base: all 0.15s ease-in-out !default;
+$transition-fade: opacity 0.15s linear !default;
+$transition-collapse: height 0.35s ease !default;
+
+// ============================================================================
+// ACCESSIBILITY
+// ============================================================================
+
+$min-contrast-ratio: 4.5 !default;   // WCAG AA compliance
+$color-contrast-dark: #ffffff !default;
+$color-contrast-light: #000000 !default;
+
+// Focus indicators
+$focus-ring-width: 0.2rem !default;
+$focus-ring-opacity: 0.25 !default;
+$focus-ring-color: rgba($primary, $focus-ring-opacity) !default;

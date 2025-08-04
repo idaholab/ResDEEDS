@@ -1,0 +1,25 @@
+// Component-specific styles that extend Bootstrap
+
+// Project card hover effects
+.project-card {
+  transition: all 0.2s ease-in-out;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+    border-color: var(--bs-primary) !important;
+    
+    .btn-outline-danger {
+      opacity: 1 !important;
+    }
+  }
+}
+
+// Theme toggle button styling
+.theme-toggle {
+  transition: all 0.2s ease-in-out;
+  
+  &:hover {
+    transform: scale(1.1);
+  }
+}

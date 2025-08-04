@@ -1,111 +1,165 @@
-# ⚡ ResDEEDS
+# ResDEEDS
 
-Resilience Development for Electric Energy Delivery Systems
+## Overview
 
-## 🧠 Overview
+ResDEEDS is a desktop application for designing PyPSA (Python for Power System Analysis) networks through an intuitive visual interface. Built with Electron and React Flow, it provides drag-and-drop functionality for creating power system models and exports them as PyPSA-compatible JSON or Python code.
 
-Resilience Development for Electric Energy Delivery Systems (ResDEEDS) is a decision-support tool designed to guide users through the assessment of electric energy delivery systems (EEDS) resilience. Built on top of the PyPSA (Python for Power System Analysis) framework, ResDEEDS automates the core steps of the INL Resilience Framework for EEDS. It enables systematic evaluation, tracks resilience planning activities, and offers data-driven recommendations for mitigating potential hazards.
+## Features
 
-## 🔧 Tech Stack
+- **Visual Network Design**: Drag-and-drop interface for creating power system networks
+- **PyPSA Components**: Support for buses, generators, loads, and battery storage
+- **Desktop Application**: Native file system access with open/save functionality
+- **Auto-save**: Automatic persistence of diagrams to local database
+- **Export Options**: Generate PyPSA JSON structure or Python code
+- **Cross-platform**: Available for Windows, macOS, and Linux
 
-- **Languages:** Python, TypeScript, JavaScript
-- **Frameworks:** FastAPI, Angular
-- **Database:** MongoDB
-- **Package Management:** pnpm (frontend), uv (backend)
-- **Containerization:** Docker, Docker Compose
-- **Tools:**
-  - [PyPSA](https://pypsa.readthedocs.io/) (for power system modeling)
-  - [DrawIO](https://github.com/jgraph/drawio) (for energy diagrams)
+## Installation
 
-## 🚀 Features
+### Prerequisites
+- Node.js (v18 or higher)
+- pnpm package manager
 
-- Secure authentication and user management (JWT-based)
-- Project and case management
-- Linear power flow analysis (LPF) and network modeling
-- RESTful API endpoints for integration
-- Responsive, modern web UI
-- Containerized deployment for easy setup
-
-## 📦 Installation
-
+### Setup
 ```bash
-# Clone the repository
-git clone https://github.com/idaholabs/ResDEEDS.git
-cd ResDEEDS
+# Install dependencies
+pnpm install
 ```
 
-Copy over env.dist to .env file
-
-`cp env.dist .env`
-
-### Run with Docker (Recommended)
+## Development
 
 ```bash
-docker compose up --build
-```
-
-### Local Development
-
-For frontend development, this project uses **pnpm** as the package manager:
-
-```bash
-# Install pnpm (if not already installed)
-npm install -g pnpm
-
-# Install frontend dependencies
-cd web
+# Install dependencies
 pnpm install
 
-# Run development server
-pnpm start
-# or
-ng serve
+# Start development server with hot reload
+pnpm dev
+
+# Build for production
+pnpm build
+
+# Preview production build
+pnpm preview
 ```
 
-For backend development, this project uses **uv** as the package manager:
+## Building for Distribution
 
 ```bash
-# Install uv (if not already installed)
-curl -LsSf https://astral.sh/uv/install.sh | sh
+# Build for all platforms
+pnpm dist
 
-# Create a virtual environment (if not already created)
-uv venv --directory api
-
-
-# Activate virtual environment
-cd api
-source .venv/bin/activate
-
-# Install backend dependencies
-uv sync --dev
-
-# Run development server
-uv run uvicorn src.main:app --host 0.0.0.0 --port 5000 --reload
+# Platform-specific builds
+pnpm dist:mac     # macOS
+pnpm dist:win     # Windows
+pnpm dist:linux   # Linux
 ```
 
-### Lint and Test Commands
+## Usage
 
-```bash
-# API linting and testing
-cd api
-uv run ruff check     # Run Python linter
-pytest -s             # Run Python tests
+### Creating a Network
 
-# Web linting and testing
-cd web
-ng lint               # Run Angular linter
-ng test               # Run Angular tests
+1. **Launch the Application**: Start ResDEEDS Flow from your applications folder
+2. **Add Components**: Drag components from the palette on the left:
+   - **Bus**: Connection points (voltage level, carrier type)
+   - **Generator**: Power generation units (capacity, cost, carrier)
+   - **Load**: Power consumption points (active/reactive power)
+   - **Battery**: Energy storage units (capacity, efficiency, duration)
+3. **Connect Components**: Draw edges between components to create network topology
+4. **Edit Properties**: Double-click any component to modify its parameters
+5. **Save Your Work**: Use File → Save (Cmd/Ctrl+S) to save as .rsd file
+
+### Exporting Networks
+
+- **File → Export as PyPSA JSON**: Creates a JSON file compatible with PyPSA
+- **File → Export as Python Code**: Generates Python code to recreate the network
+
+### Keyboard Shortcuts
+
+- `Cmd/Ctrl + N`: New diagram
+- `Cmd/Ctrl + O`: Open diagram
+- `Cmd/Ctrl + S`: Save diagram
+- `Cmd/Ctrl + Shift + S`: Save as...
+- `Delete/Backspace`: Delete selected elements
+
+## Project Structure
+
+```
+├── src/
+│   ├── main/               # Electron main process
+│   │   └── index.js       # Window management, menu, IPC handlers
+│   ├── preload/           # Preload scripts
+│   │   └── index.js       # Secure context bridge
+│   └── renderer/          # React application
+│       └── src/
+│           ├── App.tsx              # Main application component
+│           ├── components/          
+│           │   ├── DiagramEditor.tsx    # React Flow canvas
+│           │   ├── ComponentPalette.tsx # Draggable components
+│           │   ├── modals/
+│           │   │   └── PropertyEditModal.tsx # Component property editor
+│           │   ├── edges/
+│           │   │   └── AnimatedEdge.tsx     # Custom edge animations
+│           │   └── nodes/              # Custom PyPSA nodes
+│           │       ├── BusNode.tsx
+│           │       ├── GeneratorNode.tsx
+│           │       ├── LoadNode.tsx
+│           │       └── BatteryNode.tsx
+│           ├── data/
+│           │   └── defaultDiagram.ts   # Default network template
+│           ├── types/
+│           │   ├── index.ts           # TypeScript type definitions
+│           │   └── electron.ts        # Electron API types
+│           └── utils/
+│               ├── diagram-storage.js  # File & database operations
+│               └── pypsa-exporter.js   # Export functionality
+├── electron-builder.yml    # Distribution configuration
+├── electron.vite.config.ts # Build configuration
+└── package.json            # Dependencies and scripts
 ```
 
+## Technical Details
 
-## 🤝 Contributing
+### Technologies
+- **Frontend**: React 19 + TypeScript + React Flow (@xyflow/react)
+- **Desktop**: Electron 37
+- **Build Tool**: electron-vite + Vite
+- **Package Manager**: pnpm
 
-Contributions are welcome! Please open issues or submit pull requests for improvements, bug fixes, or new features.
+### Data Persistence
+- **Auto-save Database**: Diagrams automatically saved to `resdeeds-db.json` in user data directory
+- **File Format**: Custom `.rsd` format for diagram files
+- **Export Formats**: PyPSA JSON and Python code generation
 
-## 📄 License
+### Component Properties
 
-This project is licensed under the terms of the [LICENSE.txt](LICENSE.txt).
+#### Bus Node
+- `v_nom`: Nominal voltage level (kV)
+- `carrier`: Energy carrier type (AC, DC, etc.)
 
-## 📬 Contact
+#### Generator Node
+- `bus`: Connected bus ID
+- `p_nom`: Nominal power capacity (MW)
+- `carrier`: Energy source (solar, wind, gas, etc.)
+- `marginal_cost`: Operating cost (€/MWh)
 
-For questions or support, please open an issue or contact the maintainers via GitHub.
+#### Load Node
+- `bus`: Connected bus ID
+- `p_set`: Active power demand (MW)
+- `q_set`: Reactive power demand (MVar)
+
+#### Battery Node
+- `bus`: Connected bus ID
+- `p_nom`: Power capacity (MW)
+- `max_hours`: Storage duration (hours)
+- `efficiency`: Round-trip efficiency (0-1)
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+ISC License - see LICENSE file for details
+
+## Authors
+
+- Idaho National Laboratory (INL)

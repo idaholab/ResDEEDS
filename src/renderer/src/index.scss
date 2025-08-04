@@ -1,0 +1,121 @@
+/* CSS Variables for Theme System */
+:root {
+  /* Default (light) theme variables */
+  --color-background: #ffffff;
+  --color-surface-primary: #ffffff;
+  --color-surface-secondary: #f8fafc;
+  --color-surface-tertiary: #f1f5f9;
+  --color-text-primary: #0f172a;
+  --color-text-secondary: #475569;
+  --color-text-muted: #64748b;
+  --color-border: #e2e8f0;
+  --color-border-subtle: rgba(0, 0, 0, 0.1);
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-base: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  
+  /* React Flow specific */
+  --react-flow-background: #f8fafc;
+  --react-flow-node-background: #ffffff;
+  --react-flow-node-border: #e2e8f0;
+  --react-flow-handle-background: #64748b;
+  --react-flow-handle-border: #ffffff;
+  --react-flow-minimap-mask: rgba(0, 0, 0, 0.1);
+  --react-flow-controls-background: #ffffff;
+  --react-flow-controls-border: #e2e8f0;
+  
+  /* Component colors */
+  --color-bus: #4f46e5;
+  --color-generator: #059669;
+  --color-load: #dc2626;
+  --color-battery: #7c3aed;
+  --color-line: #374151;
+  
+  /* State colors */
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-danger: #ef4444;
+  --color-info: #06b6d4;
+  
+  /* Transitions */
+  --transition-base: all 0.2s ease-in-out;
+  --transition-colors: color 0.2s ease-in-out, background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+}
+
+/* Dark theme overrides */
+[data-theme="dark"] {
+  --color-background: #0f172a;
+  --color-surface-primary: #1e293b;
+  --color-surface-secondary: #0f172a;
+  --color-surface-tertiary: #020617;
+  --color-text-primary: #f1f5f9;
+  --color-text-secondary: #cbd5e1;
+  --color-text-muted: #94a3b8;
+  --color-border: #334155;
+  --color-border-subtle: rgba(255, 255, 255, 0.1);
+  
+  /* Shadows (more prominent in dark theme) */
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.2), 0 1px 2px 0 rgba(0, 0, 0, 0.1);
+  --shadow-base: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+  --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+  
+  /* React Flow dark theme */
+  --react-flow-background: #0f172a;
+  --react-flow-node-background: #1e293b;
+  --react-flow-node-border: #334155;
+  --react-flow-handle-background: #94a3b8;
+  --react-flow-handle-border: #1e293b;
+  --react-flow-minimap-mask: rgba(255, 255, 255, 0.1);
+  --react-flow-controls-background: #1e293b;
+  --react-flow-controls-border: #334155;
+  
+  /* Adjusted colors for dark theme */
+  --color-bus: #6366f1;
+  --color-generator: #10b981;
+  --color-load: #f87171;
+  --color-battery: #a855f7;
+  --color-line: #6b7280;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--color-background);
+  color: var(--color-text-primary);
+  transition: var(--transition-colors);
+}
+
+#root {
+  width: 100vw;
+  height: 100vh;
+}
+
+/* Global scrollbar theming */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+  
+  &-track {
+    background: var(--color-surface-secondary);
+  }
+  
+  &-thumb {
+    background: var(--color-text-muted);
+    border-radius: 4px;
+    
+    &:hover {
+      background: var(--color-text-secondary);
+    }
+  }
+}
