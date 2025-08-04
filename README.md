@@ -21,9 +21,6 @@ ResDEEDS is a desktop application for designing PyPSA (Python for Power System A
 
 ### Setup
 ```bash
-# Navigate to desktop directory
-cd desktop
-
 # Install dependencies
 pnpm install
 ```
@@ -31,9 +28,6 @@ pnpm install
 ## Development
 
 ```bash
-# Navigate to desktop directory
-cd desktop
-
 # Install dependencies
 pnpm install
 
@@ -50,9 +44,6 @@ pnpm preview
 ## Building for Distribution
 
 ```bash
-# Navigate to desktop directory first
-cd desktop
-
 # Build for all platforms
 pnpm dist
 
@@ -92,7 +83,6 @@ pnpm dist:linux   # Linux
 ## Project Structure
 
 ```
-desktop/
 ├── src/
 │   ├── main/               # Electron main process
 │   │   └── index.js       # Window management, menu, IPC handlers
