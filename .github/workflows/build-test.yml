@@ -74,6 +74,7 @@ jobs:
         run: pnpm build
 
       - name: Verify build output
+        shell: bash
         run: |
           ls -la out/
           ls -la out/main/
