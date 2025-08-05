@@ -104,32 +104,34 @@ jobs:
           draft: false
           prerelease: false
 
-      - name: Upload macOS DMG
-        uses: actions/upload-release-asset@v1
+      - name: Find and upload macOS artifacts
+        run: |
+          # Find DMG file
+          DMG_FILE=$(find artifacts/resdeeds-mac -name "*.dmg" -type f | head -1)
+          if [ -n "$DMG_FILE" ]; then
+            gh release upload ${{ github.ref_name }} "$DMG_FILE" --clobber
+          else
+            echo "No DMG file found"
+          fi
+          
+          # Find ZIP file  
+          ZIP_FILE=$(find artifacts/resdeeds-mac -name "*.zip" -type f | head -1)
+          if [ -n "$ZIP_FILE" ]; then
+            gh release upload ${{ github.ref_name }} "$ZIP_FILE" --clobber
+          else
+            echo "No ZIP file found"
+          fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: artifacts/resdeeds-mac/*.dmg
-          asset_name: ResDEEDS-${{ github.ref_name }}-macOS.dmg
-          asset_content_type: application/octet-stream
 
-      - name: Upload macOS ZIP
-        uses: actions/upload-release-asset@v1
+      - name: Find and upload Windows artifacts
+        run: |
+          # Find EXE file
+          EXE_FILE=$(find artifacts/resdeeds-win -name "*.exe" -type f | head -1)
+          if [ -n "$EXE_FILE" ]; then
+            gh release upload ${{ github.ref_name }} "$EXE_FILE" --clobber
+          else
+            echo "No EXE file found"
+          fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: artifacts/resdeeds-mac/*.zip
-          asset_name: ResDEEDS-${{ github.ref_name }}-macOS.zip
-          asset_content_type: application/zip
-
-      - name: Upload Windows Installer
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: artifacts/resdeeds-win/*.exe
-          asset_name: ResDEEDS-${{ github.ref_name }}-Windows-Setup.exe
-          asset_content_type: application/octet-stream
