@@ -41,6 +41,33 @@ pnpm build
 pnpm preview
 ```
 
+### Make Commands
+
+For convenience, you can also use Make commands:
+
+```bash
+# Run development server
+make dev
+
+# Build the application
+make build
+
+# Run tests
+make test
+
+# Generate code coverage report
+make coverage
+
+# Run linter
+make lint
+
+# Run all checks (lint, test, coverage)
+make check
+
+# Display all available targets
+make help
+```
+
 ## Building for Distribution
 
 ```bash
