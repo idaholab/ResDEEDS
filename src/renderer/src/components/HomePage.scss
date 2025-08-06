@@ -163,29 +163,29 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 1.5rem;
-  
+
   // Responsive breakpoints
   @media (max-width: 576px) {
     grid-template-columns: 1fr;
     gap: 1rem;
   }
-  
+
   @media (min-width: 577px) and (max-width: 768px) {
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   }
-  
+
   @media (min-width: 1200px) {
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   }
-  
+
   @media (min-width: 1400px) {
     grid-template-columns: repeat(4, 1fr);
   }
-  
+
   // Staggered entrance animation
-  > div {
+  >div {
     animation: card-entrance 0.6s cubic-bezier(0.4, 0, 0.2, 1) both;
-    
+
     @for $i from 1 through 12 {
       &:nth-child(#{$i}) {
         animation-delay: #{($i - 1) * 0.1}s;
@@ -199,6 +199,7 @@
     opacity: 0;
     transform: translateY(24px) scale(0.95);
   }
+
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -213,15 +214,15 @@
   padding: 0;
   position: relative;
   overflow: hidden;
-  
+
   // Enhanced shadow system
   box-shadow: var(--bs-card-shadow-rest, var(--bs-box-shadow-sm));
-  
+
   // Smooth transitions using cubic-bezier for premium feel
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   transform-origin: center;
   will-change: transform, box-shadow, border-color;
-  
+
   // Enhanced hover effects - only on devices that support hover
   @media (hover: hover) and (pointer: fine) {
     &:hover {
@@ -229,39 +230,39 @@
       border-color: var(--bs-card-hover-border, var(--bs-primary));
       box-shadow: var(--bs-card-shadow-hover, var(--bs-box-shadow-lg));
       background: var(--bs-card-hover-bg, var(--bs-card-bg));
-      
+
       .delete-button {
         opacity: 1;
         transform: scale(1.05);
       }
-      
+
       .project-content {
-        background: linear-gradient(135deg, 
-          rgba(var(--bs-primary-rgb), 0.02) 0%, 
-          rgba(var(--bs-primary-rgb), 0.04) 100%);
+        background: linear-gradient(135deg,
+            rgba(var(--bs-primary-rgb), 0.02) 0%,
+            rgba(var(--bs-primary-rgb), 0.04) 100%);
       }
     }
   }
-  
+
   // Touch-specific styles
   @media (hover: none) and (pointer: coarse) {
     .delete-button {
       opacity: 0.8;
     }
-    
+
     &:active {
       transform: translateY(-2px) scale(1.01);
       border-color: var(--bs-card-hover-border, var(--bs-primary));
       transition: all 0.1s ease-out;
     }
   }
-  
+
   // Active state for all devices
   &:active {
     transform: translateY(-2px) scale(1.01);
     transition: all 0.1s ease-out;
   }
-  
+
   // Focus state for accessibility
   &:focus-within {
     outline: none;
@@ -277,7 +278,7 @@
     font-weight: 600;
     line-height: 1.4;
     letter-spacing: -0.025em;
-    
+
     // Text truncation for long names
     overflow: hidden;
     text-overflow: ellipsis;
@@ -305,23 +306,23 @@
   display: flex;
   flex-direction: column;
   gap: 0.375rem;
-  
+
   // Meta item styling
-  > div {
+  >div {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    
+
     &::before {
       content: '•';
       color: var(--bs-text-muted);
       font-weight: bold;
     }
-    
+
     &:first-child::before {
       content: '📅';
     }
-    
+
     &:last-child::before {
       content: '✏️';
     }
@@ -333,14 +334,11 @@
   color: var(--bs-text-muted);
   font-size: 0.8125rem;
   font-weight: 500;
-  padding: 0.5rem 0.75rem;
-  background: rgba(var(--bs-primary-rgb), 0.08);
   border-radius: 6px;
-  border-left: 3px solid var(--bs-primary);
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  
+
   &::before {
     content: '🔗';
     font-size: 0.875rem;
@@ -365,29 +363,29 @@
   align-items: center;
   justify-content: center;
   opacity: 0;
-  
+
   // Enhanced transitions
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   transform: scale(0.85);
   box-shadow: 0 2px 8px rgba(var(--bs-danger-rgb), 0.3);
-  
+
   // Improved touch target for mobile
   @media (max-width: 768px) {
     opacity: 0.7;
     width: 36px;
     height: 36px;
   }
-  
+
   &:hover {
     background: color-mix(in srgb, var(--bs-danger) 85%, black);
     transform: scale(1);
     box-shadow: 0 4px 12px rgba(var(--bs-danger-rgb), 0.4);
   }
-  
+
   &:active {
     transform: scale(0.95);
   }
-  
+
   // Better accessibility
   &:focus {
     outline: none;
@@ -400,14 +398,14 @@
   text-align: center;
   padding: 4rem 2rem;
   color: var(--bs-text-secondary);
-  
+
   // Enhanced loading animation
   .spinner-border {
     width: 3rem;
     height: 3rem;
     border-width: 3px;
   }
-  
+
   // Better typography
   .mt-3 {
     font-size: 1.1rem;
@@ -417,21 +415,22 @@
 }
 
 .empty-projects {
+
   // Enhanced empty state
   svg {
     opacity: 0.6;
     margin-bottom: 1.5rem;
-    
+
     // Subtle animation
     animation: gentle-bounce 3s ease-in-out infinite;
   }
-  
+
   h5 {
     color: var(--bs-text-primary);
     font-weight: 600;
     margin-bottom: 0.75rem;
   }
-  
+
   p {
     font-size: 1rem;
     margin: 0 0 1.5rem 0;
@@ -444,12 +443,19 @@
 }
 
 @keyframes gentle-bounce {
-  0%, 20%, 50%, 80%, 100% {
+
+  0%,
+  20%,
+  50%,
+  80%,
+  100% {
     transform: translateY(0);
   }
+
   40% {
     transform: translateY(-5px);
   }
+
   60% {
     transform: translateY(-3px);
   }
