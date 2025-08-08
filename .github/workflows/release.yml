@@ -15,9 +15,6 @@ env:
   ELECTRON_CACHE: ~/.cache/electron
   ELECTRON_BUILDER_CACHE: ~/.cache/electron-builder
 
-permissions:
-  contents: write
-
 jobs:
   build:
     strategy:
@@ -61,7 +58,7 @@ jobs:
       - name: Build application (${{ matrix.platform }})
         run: pnpm ${{ matrix.script }}
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.PAT }}
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4.6.2
@@ -101,7 +98,7 @@ jobs:
             ### Changes
             See [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) for full details."
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PAT }}
 
       - name: Find and upload macOS artifacts
         run: |
@@ -121,7 +118,7 @@ jobs:
             echo "No ZIP file found"
           fi
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PAT }}
 
       - name: Find and upload Windows artifacts
         run: |
@@ -133,4 +130,4 @@ jobs:
             echo "No EXE file found"
           fi
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PAT }}
