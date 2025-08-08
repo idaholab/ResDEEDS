@@ -5,6 +5,7 @@
 *.log
 
 # AI
+ai_docs/
 .claude/
 .codex/
 CLAUDE.md
