@@ -23,11 +23,11 @@ jobs:
           - os: macos-latest
             platform: mac
             script: dist:mac
-            artifact-pattern: 'dist/*.{dmg,zip}'
+            artifact-pattern: 'dist/**/*'
           - os: windows-latest
             platform: win
             script: dist:win
-            artifact-pattern: 'dist/*.exe'
+            artifact-pattern: 'dist/**/*'
 
     runs-on: ${{ matrix.os }}
     
