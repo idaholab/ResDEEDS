@@ -34,3 +34,8 @@ lint:
 # target: check - Run all checks (lint, test, coverage).
 check: lint test coverage
 	@echo "All checks passed."
+
+# target: dist - Build the distribution package.
+dist:
+	@echo "Building distribution package..."
+	pnpm dist
