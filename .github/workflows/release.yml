@@ -15,6 +15,9 @@ env:
   ELECTRON_CACHE: ~/.cache/electron
   ELECTRON_BUILDER_CACHE: ~/.cache/electron-builder
 
+permissions:
+  contents: write
+
 jobs:
   build:
     strategy:
