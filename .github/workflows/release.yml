@@ -85,6 +85,15 @@ jobs:
       - name: Display artifact structure
         run: ls -la artifacts/
 
+      - name: Extract version from tag
+        id: version
+        run: |
+          # Remove 'v' prefix from tag to get clean version
+          VERSION="${{ github.ref_name }}"
+          CLEAN_VERSION="${VERSION#v}"
+          echo "version=${CLEAN_VERSION}" >> $GITHUB_OUTPUT
+          echo "tag_version=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+
       - name: Create Release
         run: |
           gh release create ${{ github.ref_name }} \
@@ -102,32 +111,45 @@ jobs:
 
       - name: Find and upload macOS artifacts
         run: |
-          # Find DMG file
-          DMG_FILE=$(find artifacts/resdeeds-mac -name "*.dmg" -type f | head -1)
+          VERSION="${{ steps.version.outputs.version }}"
+          
+          # Find DMG file with dynamic version
+          DMG_FILE=$(find artifacts/resdeeds-mac -name "resdeeds-${VERSION}.dmg" -type f | head -1)
           if [ -n "$DMG_FILE" ]; then
+            echo "Uploading DMG: $DMG_FILE"
             gh release upload ${{ github.ref_name }} "$DMG_FILE" --clobber
           else
-            echo "No DMG file found"
+            echo "No DMG file found for version ${VERSION}"
+            echo "Available files:"
+            find artifacts/resdeeds-mac -name "*.dmg" -type f
           fi
           
-          # Find ZIP file  
-          ZIP_FILE=$(find artifacts/resdeeds-mac -name "*.zip" -type f | head -1)
+          # Find ZIP file with dynamic version
+          ZIP_FILE=$(find artifacts/resdeeds-mac -name "ResDEEDS-${VERSION}-arm64-mac.zip" -type f | head -1)
           if [ -n "$ZIP_FILE" ]; then
+            echo "Uploading ZIP: $ZIP_FILE"
             gh release upload ${{ github.ref_name }} "$ZIP_FILE" --clobber
           else
-            echo "No ZIP file found"
+            echo "No ZIP file found for version ${VERSION}"
+            echo "Available files:"
+            find artifacts/resdeeds-mac -name "*.zip" -type f
           fi
         env:
           GH_TOKEN: ${{ secrets.PAT }}
 
       - name: Find and upload Windows artifacts
         run: |
-          # Find EXE file
-          EXE_FILE=$(find artifacts/resdeeds-win -name "*.exe" -type f | head -1)
+          VERSION="${{ steps.version.outputs.version }}"
+          
+          # Find EXE file with dynamic version
+          EXE_FILE=$(find artifacts/resdeeds-win -name "*${VERSION}*.exe" -type f | head -1)
           if [ -n "$EXE_FILE" ]; then
+            echo "Uploading EXE: $EXE_FILE"
             gh release upload ${{ github.ref_name }} "$EXE_FILE" --clobber
           else
-            echo "No EXE file found"
+            echo "No EXE file found for version ${VERSION}"
+            echo "Available files:"
+            find artifacts/resdeeds-win -name "*.exe" -type f
           fi
         env:
           GH_TOKEN: ${{ secrets.PAT }}

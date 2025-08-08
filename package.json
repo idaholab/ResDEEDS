@@ -1,6 +1,6 @@
 {
-  "name": "resdeeds-desktop",
-  "version": "1.0.0",
+  "name": "resdeeds",
+  "version": "0.1.0",
   "description": "ResDEEDS - PyPSA Network Designer",
   "main": "./out/main/index.js",
   "author": "INL",
