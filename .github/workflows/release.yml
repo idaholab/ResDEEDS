@@ -118,7 +118,7 @@ jobs:
             echo "No ZIP file found"
           fi
         env:
-          GITHUB_TOKEN: ${{ secrets.PAT }}
+          GH_TOKEN: ${{ secrets.PAT }}
 
       - name: Find and upload Windows artifacts
         run: |
@@ -130,4 +130,4 @@ jobs:
             echo "No EXE file found"
           fi
         env:
-          GITHUB_TOKEN: ${{ secrets.PAT }}
+          GH_TOKEN: ${{ secrets.PAT }}
