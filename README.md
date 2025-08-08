@@ -83,7 +83,7 @@ pnpm dist:linux   # Linux
 ## Initiate a Release
 
 ```bash
-git tag -a <version number> -m "Release version 1.0.0"
+git tag -a <version number> -m "Release version <version number>"
 
 git push origin <version number>
 ```
