@@ -2,6 +2,7 @@ import React from 'react'
 import type { Case, HazardType } from '../types'
 import NewCaseModal from './modals/NewCaseModal'
 import DeleteCaseModal from './modals/DeleteCaseModal'
+import './CaseTabManager.scss'
 
 interface CaseTabManagerProps {
   cases: Case[]
@@ -22,11 +23,12 @@ const CaseTabManager: React.FC<CaseTabManagerProps> = ({
   const [showDeleteModal, setShowDeleteModal] = React.useState(false)
   const [caseToDelete, setCaseToDelete] = React.useState<string | null>(null)
 
-  const handleDeleteClick = (caseId: string, caseName: string) => {
-    if (caseName === 'Base') {
+  const handleDeleteClick = () => {
+    const activeCase_ = cases.find(c => c.id === activeCase)
+    if (!activeCase_ || activeCase_.name === 'Base') {
       return // Cannot delete base case
     }
-    setCaseToDelete(caseId)
+    setCaseToDelete(activeCase)
     setShowDeleteModal(true)
   }
 
@@ -45,43 +47,47 @@ const CaseTabManager: React.FC<CaseTabManagerProps> = ({
 
   return (
     <>
-      <div className="case-tab-manager mb-3">
-        <ul className="nav nav-tabs">
-          {cases.map((case_) => (
-            <li key={case_.id} className="nav-item">
+      <div className="case-tab-manager mt-1 mb-2">
+        <div className="d-flex justify-content-between align-items-center">
+          <ul className="nav nav-tabs flex-grow-1">
+            {cases.map((case_) => (
+              <li key={case_.id} className="nav-item">
+                <button
+                  className={`nav-link ${activeCase === case_.id ? 'active' : ''}`}
+                  onClick={() => onCaseSelect(case_.id)}
+                  type="button"
+                >
+                  {case_.name}
+                </button>
+              </li>
+            ))}
+            <li className="nav-item">
               <button
-                className={`nav-link ${activeCase === case_.id ? 'active' : ''}`}
-                onClick={() => onCaseSelect(case_.id)}
+                className="nav-link"
+                onClick={() => setShowNewCaseModal(true)}
                 type="button"
+                title="Add new case"
+                aria-label="Add new case"
               >
-                {case_.name}
-                {case_.name !== 'Base' && (
-                  <button
-                    className="btn btn-sm btn-outline-danger ms-2"
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      handleDeleteClick(case_.id, case_.name)
-                    }}
-                    title="Delete case"
-                    type="button"
-                  >
-                    ×
-                  </button>
-                )}
+                +
               </button>
             </li>
-          ))}
-          <li className="nav-item">
-            <button
-              className="nav-link"
-              onClick={() => setShowNewCaseModal(true)}
-              type="button"
-              title="Add new case"
-            >
-              +
-            </button>
-          </li>
-        </ul>
+          </ul>
+          {(() => {
+            const activeCase_ = cases.find(c => c.id === activeCase)
+            return activeCase_?.name !== 'Base' && (
+              <button
+                className="btn btn-outline-danger btn-sm ms-3 delete-case-btn"
+                onClick={handleDeleteClick}
+                title={`Delete ${activeCase_?.name} case`}
+                aria-label={`Delete ${activeCase_?.name} case`}
+              >
+                <span className="me-1">×</span>
+                Delete
+              </button>
+            )
+          })()}
+        </div>
       </div>
 
       {/* New Case Modal */}

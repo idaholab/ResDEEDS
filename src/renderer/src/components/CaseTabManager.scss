@@ -1,0 +1,204 @@
+// CaseTabManager Custom Styling
+// Modern, clean tab interface with smooth animations
+
+.case-tab-manager {
+  .nav-tabs {
+    border-bottom: none;
+    margin-bottom: 0;
+    display: flex;
+    align-items: flex-end;
+
+    .nav-item {
+      margin-bottom: -2px;
+      display: flex;
+      align-items: center;
+
+
+      .nav-link {
+        position: relative;
+        padding: 0.75rem 1.25rem;
+        margin-right: 0.25rem;
+        border: 2px solid transparent;
+        border-radius: 0.5rem;
+        background: transparent;
+        color: var(--bs-text-muted);
+        font-weight: 500;
+        transition: all 0.2s ease-in-out;
+        overflow: hidden;
+
+        // Hover state
+        &:hover {
+          background: var(--bs-gray-50);
+          color: var(--bs-body-color);
+          transform: translateY(-1px);
+          box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.075);
+          border-color: var(--bs-border-color);
+        }
+
+        // Active state
+        &.active {
+          background: linear-gradient(135deg, var(--bs-white) 0%, var(--bs-gray-50) 100%);
+          color: var(--bs-primary);
+          border-color: var(--bs-primary);
+          box-shadow:
+            0 0.125rem 0.5rem rgba(var(--bs-primary-rgb), 0.15),
+            inset 0 1px 0 var(--bs-white);
+          font-weight: 600;
+        }
+
+        // Focus state for accessibility
+        &:focus {
+          outline: none;
+          box-shadow:
+            0 0 0 0.125rem rgba(var(--bs-primary-rgb), 0.25),
+            0 0.125rem 0.5rem rgba(0, 0, 0, 0.075);
+        }
+
+        // Add new case button styling
+        &:last-child .nav-link {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 2.25rem;
+          height: 2.25rem;
+          padding: 0.5rem;
+          background: var(--bs-light);
+          border: 2px dashed var(--bs-border-color);
+          border-radius: 0.375rem;
+          color: var(--bs-text-muted);
+          font-size: 1rem;
+          font-weight: 300;
+          transition: all 0.2s ease-in-out;
+
+          &:hover {
+            background: var(--bs-primary);
+            border-color: var(--bs-primary);
+            color: white;
+            transform: translateY(-1px) scale(1.05);
+            box-shadow: 0 0.25rem 0.75rem rgba(var(--bs-primary-rgb), 0.25);
+          }
+
+          &:focus {
+            outline: none;
+            box-shadow: 0 0 0 0.125rem rgba(var(--bs-primary-rgb), 0.25);
+          }
+        }
+      }
+    }
+  }
+
+  // Dark theme support
+  [data-bs-theme="dark"] {
+    .case-tab-manager {
+      .nav-tabs {
+
+        .nav-item {
+          .nav-link {
+            &:hover {
+              background: var(--bs-gray-800);
+              color: var(--bs-white);
+            }
+
+            &.active {
+              background: linear-gradient(135deg, var(--bs-gray-900) 0%, var(--bs-gray-800) 100%);
+              color: var(--bs-primary);
+              border-color: var(--bs-primary);
+              box-shadow:
+                0 0.125rem 0.5rem rgba(var(--bs-primary-rgb), 0.15),
+                inset 0 1px 0 var(--bs-gray-700);
+            }
+          }
+
+          &:last-child .nav-link {
+            background: var(--bs-gray-800);
+            border-color: var(--bs-border-color);
+
+            &:hover {
+              background: var(--bs-primary);
+              border-color: var(--bs-primary);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // Animation for new tabs
+  @keyframes slideInTab {
+    from {
+      opacity: 0;
+      transform: translateX(-1rem);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  .case-tab-manager .nav-item {
+    animation: slideInTab 0.3s ease-out;
+  }
+
+  // Responsive adjustments
+  @media (max-width: 576px) {
+    .case-tab-manager {
+      .nav-tabs {
+        .nav-item {
+          .nav-link {
+            padding: 0.5rem 0.75rem;
+            font-size: 0.875rem;
+
+          }
+
+          &:last-child .nav-link {
+            width: 2rem;
+            height: 2rem;
+            padding: 0.375rem;
+            font-size: 0.875rem;
+          }
+        }
+      }
+    }
+  }
+
+  // Delete case button styling
+  .delete-case-btn {
+    position: relative;
+    border-width: 1.5px;
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 1rem;
+    margin: 0 0.75rem;
+    
+    &:hover {
+      background-color: var(--bs-danger);
+      border-color: var(--bs-danger);
+      color: white;
+      transform: translateY(-1px);
+      box-shadow: 0 0.25rem 0.5rem rgba(var(--bs-danger-rgb), 0.25);
+    }
+    
+    &:focus {
+      box-shadow: 0 0 0 0.2rem rgba(var(--bs-danger-rgb), 0.25);
+    }
+    
+    &:active {
+      transform: translateY(0);
+      box-shadow: 0 0.125rem 0.25rem rgba(var(--bs-danger-rgb), 0.4);
+    }
+    
+    // Icon alignment and spacing
+    span {
+      font-size: 1.1rem;
+      line-height: 1;
+      font-weight: 400;
+      display: flex;
+      align-items: center;
+      margin-right: 0.25rem;
+    }
+  }
+}
