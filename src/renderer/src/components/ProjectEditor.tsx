@@ -5,11 +5,20 @@ import ComponentPalette from './ComponentPalette'
 import PropertyEditModal from './modals/PropertyEditModal'
 import ThemeToggle from './ThemeToggle'
 import EditableProjectName from './EditableProjectName'
+import CaseTabManager from './CaseTabManager'
 import { exportDiagramAsJSON, exportDiagramAsPython } from '../utils/pypsa-exporter'
 import { defaultNodes, defaultEdges } from '../data/defaultDiagram'
-import { getProject, saveProjectDiagram, createProject, renameProject } from '../utils/project-storage'
+import { 
+  getProject, 
+  createProject, 
+  renameProject,
+  addCaseToProject,
+  deleteCaseFromProject,
+  switchActiveCase,
+  updateCaseDiagram
+} from '../utils/project-storage'
 import { saveDiagramToFile, loadDiagramFromFile } from '../utils/diagram-storage'
-import type { PyPSANode, PyPSAEdge, RouteParams, Project } from '../types'
+import type { PyPSANode, PyPSAEdge, RouteParams, Project, HazardType, PyPSAComponentData, PyPSAEdgeData } from '../types'
 import './ProjectEditor.scss'
 
 function ProjectEditor() {
@@ -47,8 +56,20 @@ function ProjectEditor() {
         }
 
         setProject(projectData)
-        setNodes(projectData.nodes)
-        setEdges(projectData.edges)
+        
+        // Load the active case data
+        const activeCase = projectData.cases.find(c => c.id === projectData.activeCase)
+        if (activeCase) {
+          setNodes(activeCase.nodes)
+          setEdges(activeCase.edges)
+        } else {
+          // Fallback to first case if active case not found
+          const firstCase = projectData.cases[0]
+          if (firstCase) {
+            setNodes(firstCase.nodes)
+            setEdges(firstCase.edges)
+          }
+        }
         setIsInitialized(true)
       } catch (err) {
         setError('Failed to load project')
@@ -63,14 +84,15 @@ function ProjectEditor() {
 
   // Auto-save to database with debouncing
   useEffect(() => {
-    if (!isInitialized || !projectId) return
+    if (!isInitialized || !projectId || !project) return
 
     const timeoutId = setTimeout(async () => {
-      await saveProjectDiagram(projectId, nodes, edges)
+      // Save to the active case
+      await updateCaseDiagram(projectId, project.activeCase, nodes, edges)
     }, 500) // 500ms debounce
 
     return () => clearTimeout(timeoutId)
-  }, [nodes, edges, isInitialized, projectId])
+  }, [nodes, edges, isInitialized, projectId, project])
 
   // Setup Electron menu event handlers
   useEffect(() => {
@@ -166,6 +188,72 @@ function ProjectEditor() {
     return false
   }
 
+  // Case management handlers
+  const handleCaseSelect = async (caseId: string) => {
+    if (!project || !projectId) return
+    
+    // Save current case before switching
+    await updateCaseDiagram(projectId, project.activeCase, nodes, edges)
+    
+    // Switch to new case
+    const success = await switchActiveCase(projectId, caseId)
+    if (success) {
+      const updatedProject = await getProject(projectId)
+      if (updatedProject) {
+        setProject(updatedProject)
+        
+        // Load the new case data
+        const newActiveCase = updatedProject.cases.find(c => c.id === caseId)
+        if (newActiveCase) {
+          setNodes(newActiveCase.nodes)
+          setEdges(newActiveCase.edges)
+        }
+      }
+    }
+  }
+
+  const handleNewCase = async (hazardType: HazardType) => {
+    if (!project || !projectId) return
+    
+    // Save current case first
+    await updateCaseDiagram(projectId, project.activeCase, nodes, edges)
+    
+    // Create new case
+    const newCaseId = await addCaseToProject(projectId, hazardType)
+    if (newCaseId) {
+      const updatedProject = await getProject(projectId)
+      if (updatedProject) {
+        setProject(updatedProject)
+        
+        // Load the new case data
+        const newCase = updatedProject.cases.find(c => c.id === newCaseId)
+        if (newCase) {
+          setNodes(newCase.nodes)
+          setEdges(newCase.edges)
+        }
+      }
+    }
+  }
+
+  const handleDeleteCase = async (caseId: string) => {
+    if (!project || !projectId) return
+    
+    const success = await deleteCaseFromProject(projectId, caseId)
+    if (success) {
+      const updatedProject = await getProject(projectId)
+      if (updatedProject) {
+        setProject(updatedProject)
+        
+        // Load the active case data (will be Base case after deletion)
+        const activeCase = updatedProject.cases.find(c => c.id === updatedProject.activeCase)
+        if (activeCase) {
+          setNodes(activeCase.nodes)
+          setEdges(activeCase.edges)
+        }
+      }
+    }
+  }
+
   if (loading) {
     return (
       <div className="project-editor loading">
@@ -221,14 +309,25 @@ function ProjectEditor() {
 
       <div className="project-content">
         <ComponentPalette />
-        <DiagramEditor
-          nodes={nodes}
-          edges={edges}
-          setNodes={setNodes}
-          setEdges={setEdges}
-          onNodeSelect={handleNodeSelect}
-          onEdgeSelect={handleEdgeSelect}
-        />
+        <div className="diagram-container">
+          {project && (
+            <CaseTabManager
+              cases={project.cases}
+              activeCase={project.activeCase}
+              onCaseSelect={handleCaseSelect}
+              onNewCase={handleNewCase}
+              onDeleteCase={handleDeleteCase}
+            />
+          )}
+          <DiagramEditor
+            nodes={nodes}
+            edges={edges}
+            setNodes={setNodes}
+            setEdges={setEdges}
+            onNodeSelect={handleNodeSelect}
+            onEdgeSelect={handleEdgeSelect}
+          />
+        </div>
       </div>
 
       {selectedNode && (

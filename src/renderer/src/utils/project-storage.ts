@@ -1,4 +1,4 @@
-import type { Project, ProjectDatabase, PyPSANode, PyPSAEdge, DiagramData } from '../types'
+import type { Project, ProjectDatabase, PyPSANode, PyPSAEdge, DiagramData, Case, HazardType } from '../types'
 import { defaultNodes, defaultEdges } from '../data/defaultDiagram'
 
 // ============================================================================
@@ -9,6 +9,12 @@ export const generateProjectId = (): string => {
   const timestamp = Date.now()
   const random = Math.random().toString(36).substring(2, 7)
   return `project_${timestamp}_${random}`
+}
+
+export const generateCaseId = (): string => {
+  const timestamp = Date.now()
+  const random = Math.random().toString(36).substring(2, 7)
+  return `case_${timestamp}_${random}`
 }
 
 // ============================================================================
@@ -83,12 +89,16 @@ const migrateDatabaseToProjectFormat = async (oldDb: Record<string, unknown>): P
   if (oldDb.diagrams?.current) {
     const current = oldDb.diagrams.current
     const migratedProjectId = generateProjectId()
+    const baseCase = createBaseCase(
+      Array.isArray(current.nodes) ? current.nodes : defaultNodes,
+      Array.isArray(current.edges) ? current.edges : defaultEdges
+    )
     
     const migratedProject: Project = {
       id: migratedProjectId,
       name: current.name || 'Migrated Project',
-      nodes: Array.isArray(current.nodes) ? current.nodes : defaultNodes,
-      edges: Array.isArray(current.edges) ? current.edges : defaultEdges,
+      cases: [baseCase],
+      activeCase: baseCase.id,
       metadata: {
         created: current.metadata?.created || new Date().toISOString(),
         lastModified: new Date().toISOString()
@@ -107,6 +117,38 @@ const migrateDatabaseToProjectFormat = async (oldDb: Record<string, unknown>): P
 }
 
 // ============================================================================
+// Case Helper Functions
+// ============================================================================
+
+export const createBaseCase = (nodes?: PyPSANode[], edges?: PyPSAEdge[]): Case => {
+  const now = new Date().toISOString()
+  return {
+    id: generateCaseId(),
+    name: 'Base',
+    nodes: nodes || [...defaultNodes],
+    edges: edges || [...defaultEdges],
+    metadata: {
+      created: now,
+      lastModified: now
+    }
+  }
+}
+
+export const createHazardCase = (hazardType: HazardType, templateNodes: PyPSANode[], templateEdges: PyPSAEdge[]): Case => {
+  const now = new Date().toISOString()
+  return {
+    id: generateCaseId(),
+    name: hazardType,
+    nodes: JSON.parse(JSON.stringify(templateNodes)), // Deep clone
+    edges: JSON.parse(JSON.stringify(templateEdges)), // Deep clone
+    metadata: {
+      created: now,
+      lastModified: now
+    }
+  }
+}
+
+// ============================================================================
 // Project CRUD Operations
 // ============================================================================
 
@@ -115,12 +157,13 @@ export const createProject = async (name: string, templateNodes?: PyPSANode[], t
     const database = await readProjectDatabase()
     const projectId = generateProjectId()
     const now = new Date().toISOString()
+    const baseCase = createBaseCase(templateNodes, templateEdges)
     
     const newProject: Project = {
       id: projectId,
       name: name || `Project ${Object.keys(database.projects).length + 1}`,
-      nodes: templateNodes || [...defaultNodes],
-      edges: templateEdges || [...defaultEdges],
+      cases: [baseCase],
+      activeCase: baseCase.id,
       metadata: {
         created: now,
         lastModified: now
@@ -219,23 +262,176 @@ export const renameProject = async (projectId: string, newName: string): Promise
 }
 
 // ============================================================================
-// Project Diagram Operations
+// Case Management Operations
 // ============================================================================
 
-export const saveProjectDiagram = async (projectId: string, nodes: PyPSANode[], edges: PyPSAEdge[]): Promise<boolean> => {
-  return await updateProject(projectId, { nodes, edges })
+export const addCaseToProject = async (projectId: string, hazardType: HazardType): Promise<string | null> => {
+  try {
+    const database = await readProjectDatabase()
+    const project = database.projects[projectId]
+    
+    if (!project) {
+      console.error(`Project not found: ${projectId}`)
+      return null
+    }
+    
+    // Get the base case as template
+    const baseCase = project.cases.find(c => c.name === 'Base')
+    if (!baseCase) {
+      console.error('Base case not found in project')
+      return null
+    }
+    
+    // Create new case with base case data
+    const newCase = createHazardCase(hazardType, baseCase.nodes, baseCase.edges)
+    project.cases.push(newCase)
+    project.activeCase = newCase.id
+    project.metadata.lastModified = new Date().toISOString()
+    
+    const success = await writeProjectDatabase(database)
+    return success ? newCase.id : null
+  } catch (error) {
+    console.error('Failed to add case to project:', error)
+    return null
+  }
 }
 
-export const loadProjectDiagram = async (projectId: string): Promise<{ nodes: PyPSANode[], edges: PyPSAEdge[] } | null> => {
+export const deleteCaseFromProject = async (projectId: string, caseId: string): Promise<boolean> => {
+  try {
+    const database = await readProjectDatabase()
+    const project = database.projects[projectId]
+    
+    if (!project) {
+      console.error(`Project not found: ${projectId}`)
+      return false
+    }
+    
+    // Don't allow deleting the base case
+    const caseToDelete = project.cases.find(c => c.id === caseId)
+    if (!caseToDelete) {
+      console.error(`Case not found: ${caseId}`)
+      return false
+    }
+    
+    if (caseToDelete.name === 'Base') {
+      console.error('Cannot delete Base case')
+      return false
+    }
+    
+    // Remove the case
+    project.cases = project.cases.filter(c => c.id !== caseId)
+    
+    // If this was the active case, switch to Base
+    if (project.activeCase === caseId) {
+      const baseCase = project.cases.find(c => c.name === 'Base')
+      project.activeCase = baseCase?.id || project.cases[0]?.id || ''
+    }
+    
+    project.metadata.lastModified = new Date().toISOString()
+    
+    return await writeProjectDatabase(database)
+  } catch (error) {
+    console.error('Failed to delete case from project:', error)
+    return false
+  }
+}
+
+export const switchActiveCase = async (projectId: string, caseId: string): Promise<boolean> => {
+  try {
+    const database = await readProjectDatabase()
+    const project = database.projects[projectId]
+    
+    if (!project) {
+      console.error(`Project not found: ${projectId}`)
+      return false
+    }
+    
+    const targetCase = project.cases.find(c => c.id === caseId)
+    if (!targetCase) {
+      console.error(`Case not found: ${caseId}`)
+      return false
+    }
+    
+    project.activeCase = caseId
+    project.metadata.lastModified = new Date().toISOString()
+    
+    return await writeProjectDatabase(database)
+  } catch (error) {
+    console.error('Failed to switch active case:', error)
+    return false
+  }
+}
+
+export const updateCaseDiagram = async (projectId: string, caseId: string, nodes: PyPSANode[], edges: PyPSAEdge[]): Promise<boolean> => {
+  try {
+    const database = await readProjectDatabase()
+    const project = database.projects[projectId]
+    
+    if (!project) {
+      console.error(`Project not found: ${projectId}`)
+      return false
+    }
+    
+    const targetCase = project.cases.find(c => c.id === caseId)
+    if (!targetCase) {
+      console.error(`Case not found: ${caseId}`)
+      return false
+    }
+    
+    targetCase.nodes = nodes
+    targetCase.edges = edges
+    targetCase.metadata.lastModified = new Date().toISOString()
+    project.metadata.lastModified = new Date().toISOString()
+    
+    return await writeProjectDatabase(database)
+  } catch (error) {
+    console.error('Failed to update case diagram:', error)
+    return false
+  }
+}
+
+export const getActiveCase = async (projectId: string): Promise<Case | null> => {
   try {
     const project = await getProject(projectId)
     if (!project) {
       return null
     }
     
+    return project.cases.find(c => c.id === project.activeCase) || null
+  } catch (error) {
+    console.error('Failed to get active case:', error)
+    return null
+  }
+}
+
+// ============================================================================
+// Project Diagram Operations (Updated for Cases)
+// ============================================================================
+
+export const saveProjectDiagram = async (projectId: string, nodes: PyPSANode[], edges: PyPSAEdge[]): Promise<boolean> => {
+  try {
+    const project = await getProject(projectId)
+    if (!project) {
+      return false
+    }
+    
+    return await updateCaseDiagram(projectId, project.activeCase, nodes, edges)
+  } catch (error) {
+    console.error('Failed to save project diagram:', error)
+    return false
+  }
+}
+
+export const loadProjectDiagram = async (projectId: string): Promise<{ nodes: PyPSANode[], edges: PyPSAEdge[] } | null> => {
+  try {
+    const activeCase = await getActiveCase(projectId)
+    if (!activeCase) {
+      return null
+    }
+    
     return {
-      nodes: project.nodes,
-      edges: project.edges
+      nodes: activeCase.nodes,
+      edges: activeCase.edges
     }
   } catch (error) {
     console.error('Failed to load project diagram:', error)

@@ -102,6 +102,13 @@
   overflow: hidden;
 }
 
+.diagram-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+
 // Shared content styles for loading and error states
 .loading-content,
 .error-content {
