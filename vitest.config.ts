@@ -8,6 +8,13 @@ export default defineConfig({
     globals: true,
     environment: 'happy-dom',
     setupFiles: ['./src/renderer/test/setup.ts'],
+    exclude: [
+      '**/node_modules/**',
+      '**/dist/**',
+      '**/tests/e2e/**',
+      '**/.{idea,git,cache,output,temp}/**',
+      '**/{karma,rollup,webpack,vite,vitest,jest,ava,babel,nyc,cypress,tsup,build,eslint,prettier}.config.*'
+    ],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'html', 'lcov'],
@@ -21,7 +28,8 @@ export default defineConfig({
         'src/renderer/src/vite-env.d.ts',
         'src/main/**/*',
         'src/preload/**/*',
-        'src/renderer/src/types/**/*'
+        'src/renderer/src/types/**/*',
+        'tests/e2e/**/*'
       ],
       thresholds: {
         statements: 60,

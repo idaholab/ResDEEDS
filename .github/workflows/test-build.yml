@@ -38,6 +38,20 @@ jobs:
       - name: Run tests with coverage
         run: pnpm test:coverage
 
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install --with-deps
+
+      - name: Run E2E tests
+        run: pnpm test:e2e
+
+      - name: Upload Playwright report
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report-${{ matrix.os }}
+          path: playwright-report/
+          retention-days: 30
+
       - name: Upload coverage to codecov
         uses: codecov/codecov-action@v4
         if: success()

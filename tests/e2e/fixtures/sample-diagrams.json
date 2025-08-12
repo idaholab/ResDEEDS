@@ -1,0 +1,117 @@
+{
+  "simpleBusGenerator": {
+    "nodes": [
+      {
+        "id": "bus-1",
+        "type": "bus",
+        "position": { "x": 250, "y": 200 },
+        "data": {
+          "label": "Bus 1",
+          "v_nom": 380,
+          "carrier": "AC"
+        }
+      },
+      {
+        "id": "gen-1",
+        "type": "generator",
+        "position": { "x": 100, "y": 150 },
+        "data": {
+          "label": "Generator 1",
+          "p_nom": 100,
+          "carrier": "gas",
+          "marginal_cost": 50
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "gen-1-bus-1",
+        "source": "gen-1",
+        "target": "bus-1",
+        "type": "smoothstep"
+      }
+    ]
+  },
+  "complexNetwork": {
+    "nodes": [
+      {
+        "id": "bus-1",
+        "type": "bus",
+        "position": { "x": 250, "y": 200 },
+        "data": {
+          "label": "Bus 1",
+          "v_nom": 380,
+          "carrier": "AC"
+        }
+      },
+      {
+        "id": "bus-2",
+        "type": "bus",
+        "position": { "x": 450, "y": 200 },
+        "data": {
+          "label": "Bus 2",
+          "v_nom": 380,
+          "carrier": "AC"
+        }
+      },
+      {
+        "id": "gen-1",
+        "type": "generator",
+        "position": { "x": 100, "y": 150 },
+        "data": {
+          "label": "Coal Plant",
+          "p_nom": 500,
+          "carrier": "coal",
+          "marginal_cost": 30
+        }
+      },
+      {
+        "id": "load-1",
+        "type": "load",
+        "position": { "x": 350, "y": 100 },
+        "data": {
+          "label": "City Load",
+          "p_set": 200,
+          "q_set": 50
+        }
+      },
+      {
+        "id": "battery-1",
+        "type": "battery",
+        "position": { "x": 550, "y": 150 },
+        "data": {
+          "label": "Storage",
+          "p_nom": 100,
+          "max_hours": 4,
+          "efficiency": 0.9
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "gen-1-bus-1",
+        "source": "gen-1",
+        "target": "bus-1",
+        "type": "smoothstep"
+      },
+      {
+        "id": "bus-1-load-1",
+        "source": "bus-1",
+        "target": "load-1",
+        "type": "smoothstep"
+      },
+      {
+        "id": "bus-1-bus-2",
+        "source": "bus-1",
+        "target": "bus-2",
+        "type": "smoothstep"
+      },
+      {
+        "id": "bus-2-battery-1",
+        "source": "bus-2",
+        "target": "battery-1",
+        "type": "smoothstep"
+      }
+    ]
+  }
+}

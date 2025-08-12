@@ -23,6 +23,8 @@ __pycache__
 
 # Tests
 coverage/
+playwright-report/
+test-results/
 
 # Virtual Environment
 .venv/
