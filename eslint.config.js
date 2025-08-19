@@ -12,6 +12,7 @@ module.exports = tseslint.config(
       'dist/**',
       '*.min.js',
       'coverage/**',
+      'ai_docs/**',
     ],
   },
   eslint.configs.recommended,
