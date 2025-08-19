@@ -171,14 +171,31 @@ export interface ReactFlowInstance {
 }
 
 // ============================================================================
+// Case Management Types
+// ============================================================================
+
+export type HazardType = 'Heat' | 'Freeze' | 'Hurricane' | 'Wildfire' | 'Tornado' | 'Earthquake'
+
+export interface Case {
+  id: string
+  name: string // "Base" or HazardType value
+  nodes: PyPSANode[]
+  edges: PyPSAEdge[]
+  metadata: {
+    created: string
+    lastModified: string
+  }
+}
+
+// ============================================================================
 // Router and Project Types
 // ============================================================================
 
 export interface Project {
   id: string
   name: string
-  nodes: PyPSANode[]
-  edges: PyPSAEdge[]
+  cases: Case[]
+  activeCase: string // ID of current case
   metadata: {
     created: string
     lastModified: string

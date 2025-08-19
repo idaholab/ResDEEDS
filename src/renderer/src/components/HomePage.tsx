@@ -245,7 +245,7 @@ function HomePage() {
                         <div>Modified: {formatDate(project.metadata.lastModified)}</div>
                       </div>
                       <div className="project-stats">
-                        {project.nodes.length} components, {project.edges.length} connections
+                        {project.cases?.reduce((total, case_) => total + case_.nodes.length, 0) || 0} components, {project.cases?.reduce((total, case_) => total + case_.edges.length, 0) || 0} connections
                       </div>
                     </div>
                     <button 
