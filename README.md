@@ -15,11 +15,35 @@ ResDEEDS is a desktop application for designing PyPSA (Python for Power System A
 
 ## Installation
 
-### Prerequisites
+### End Users
+
+Download the latest release from the [GitHub Releases](https://github.com/idaholab/ResDEEDS/releases) page:
+
+- **macOS**: Download the `.dmg` file
+- **Windows**: Download the `.exe` file
+
+#### Installing on macOS
+
+Due to the app not being notarized by Apple, you may see a security warning when opening the DMG file. To install:
+
+1. Download the `.dmg` file from the releases page
+2. Double-click the DMG file to mount it
+3. If you see a security warning, **right-click** on the ResDEEDS app and select **"Open"**
+4. Click **"Open"** again in the confirmation dialog
+5. Drag the ResDEEDS app to your Applications folder
+
+Alternatively, you can bypass Gatekeeper by running this command in Terminal:
+```bash
+sudo xattr -rd com.apple.quarantine /path/to/ResDEEDS.app
+```
+
+### Developers
+
+#### Prerequisites
 - Node.js (v18 or higher)
 - pnpm package manager
 
-### Setup
+#### Setup
 ```bash
 # Install dependencies
 pnpm install
