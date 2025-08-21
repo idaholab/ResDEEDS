@@ -7,7 +7,8 @@ import HomePage from './HomePage'
 vi.mock('../utils/project-storage', () => ({
   getAllProjects: vi.fn(() => Promise.resolve([])),
   createProject: vi.fn(),
-  deleteProject: vi.fn()
+  deleteProject: vi.fn(),
+  duplicateProject: vi.fn() 
 }))
 
 // Mock the modals

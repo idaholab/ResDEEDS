@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { getAllProjects, createProject, deleteProject } from '../utils/project-storage'
+import { getAllProjects, createProject, deleteProject, duplicateProject } from '../utils/project-storage'
 import CreateProjectModal from './modals/CreateProjectModal'
 import DeleteProjectModal from './modals/DeleteProjectModal'
 import ThemeToggle from './ThemeToggle'
@@ -98,6 +98,23 @@ function HomePage() {
     setProjectToDelete({ id: projectId, name: projectName })
     setShowDeleteModal(true)
   }
+
+
+const handleDuplicateProject = async (projectId: string) => {
+  try {
+    const duplicatedId = await duplicateProject(projectId)
+    if (duplicatedId) {
+      await loadProjects() // Optional: refresh the list
+      navigate(`/project/${duplicatedId}`) // Navigate to the new project
+    } else {
+      setError('Failed to duplicate project')
+    }
+  } catch (err) {
+    setError('Failed to duplicate project')
+    console.error('Error duplicating project:', err)
+  }
+}
+
 
   const handleConfirmDeleteProject = async () => {
     if (!projectToDelete) return
@@ -257,6 +274,16 @@ function HomePage() {
                       title="Delete project"
                     >
                       ×
+                    </button>
+                    <button
+                      className="duplicate-button"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        handleDuplicateProject(project.id)
+                      }}
+                      title="Duplicate project"
+                    >
+                      ⧉
                     </button>
                   </div>
                 </div>

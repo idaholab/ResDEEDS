@@ -261,6 +261,52 @@ export const renameProject = async (projectId: string, newName: string): Promise
   return await updateProject(projectId, { name: newName })
 }
 
+
+export const duplicateProject = async (originalProjectId: string, newName?: string): Promise<string | null> => {
+  try {
+    const database = await readProjectDatabase()
+    const originalProject = database.projects[originalProjectId]
+
+    if (!originalProject) {
+      console.error(`Original project not found: ${originalProjectId}`)
+      return null
+    }
+
+    const newProjectId = generateProjectId()
+    const now = new Date().toISOString()
+
+    // Deep clone the original project
+    const clonedCases = originalProject.cases.map(caseItem => ({
+      ...structuredClone(caseItem),
+      id: generateProjectId() // Assuming each case also needs a unique ID
+    }))
+
+    const newActiveCaseId = clonedCases[0]?.id
+
+    const duplicatedProject: Project = {
+      ...structuredClone(originalProject),
+      id: newProjectId,
+      name: newName || `${originalProject.name} (Copy)`,
+      cases: clonedCases,
+      activeCase: newActiveCaseId,
+      metadata: {
+        created: now,
+        lastModified: now
+      }
+    }
+
+    database.projects[newProjectId] = duplicatedProject
+    database.settings.lastOpenedProject = newProjectId
+
+    const success = await writeProjectDatabase(database)
+    return success ? newProjectId : null
+  } catch (error) {
+    console.error('Failed to duplicate project:', error)
+    return null
+  }
+}
+
+
 // ============================================================================
 // Case Management Operations
 // ============================================================================
