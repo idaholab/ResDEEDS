@@ -1,7 +1,7 @@
 import { render, screen, fireEvent } from '@testing-library/react'
 import { describe, it, expect, vi } from 'vitest'
 import CaseTabManager from './CaseTabManager'
-import type { Case, HazardType } from '../types'
+import type { Case } from '../types'
 
 const mockCases: Case[] = [
   {

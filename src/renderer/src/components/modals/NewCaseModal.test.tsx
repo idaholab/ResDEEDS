@@ -1,7 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react'
 import { describe, it, expect, vi } from 'vitest'
 import NewCaseModal from './NewCaseModal'
-import type { HazardType } from '../../types'
 
 const defaultProps = {
   onSubmit: vi.fn(),

@@ -1,13 +1,15 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import { describe, it, expect, vi } from 'vitest'
 import { MemoryRouter } from 'react-router-dom'
 import HomePage from './HomePage'
+import * as projectStorage from '../utils/project-storage'
 
 // Mock the project storage functions
 vi.mock('../utils/project-storage', () => ({
   getAllProjects: vi.fn(() => Promise.resolve([])),
   createProject: vi.fn(),
-  deleteProject: vi.fn()
+  deleteProject: vi.fn(),
+  duplicateProject: vi.fn() 
 }))
 
 // Mock the modals
@@ -54,5 +56,26 @@ describe('HomePage', () => {
     renderWithRouter()
     
     expect(screen.getByText('Projects')).toBeInTheDocument()
+  })
+
+  it('renders a duplicate button for each project', async () => {
+    const mockProject = {
+      id: 'project-1',
+      name: 'Test Project',
+      metadata: {
+        created: new Date().toISOString(),
+        lastModified: new Date().toISOString()
+      },
+      cases: [],
+      activeCase: ''
+    }
+
+    vi.mocked(projectStorage.getAllProjects).mockResolvedValue([mockProject])
+
+    renderWithRouter()
+
+    await waitFor(() => {
+      expect(screen.getByTitle('Duplicate project')).toBeInTheDocument()
+    })
   })
 })
