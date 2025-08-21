@@ -1,5 +1,40 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { generateProjectId } from './project-storage'
+import { describe, it, expect, vi, beforeEach, Mock } from 'vitest'
+import {
+  createProject,
+  getProject,
+  getAllProjects,
+  updateProject,
+  deleteProject,
+  duplicateProject,
+  generateProjectId,
+} from './project-storage'
+
+
+declare global {
+  interface Window {
+    api: {
+      readDatabase: () => Promise<{ success: boolean; data?: any }>
+      writeDatabase: (data: any) => Promise<{ success: boolean }>
+    }
+  }
+}
+
+let readDatabase: Mock
+let writeDatabase: Mock
+
+beforeEach(() => {
+  vi.resetModules()
+  vi.clearAllMocks()
+
+  readDatabase = vi.fn()
+  writeDatabase = vi.fn()
+
+  globalThis.window = Object.create(window)
+  window.api = {
+    readDatabase,
+    writeDatabase
+  }
+})
 
 describe('project-storage', () => {
   beforeEach(() => {
@@ -42,3 +77,113 @@ describe('project-storage', () => {
     })
   })
 })
+
+
+
+describe('project-storage async operations', () => {
+  it('creates a new project and writes to the database', async () => {
+    vi.mocked(readDatabase).mockResolvedValue({
+      success: true,
+      data: { projects: {}, settings: {} }
+    })
+
+    vi.mocked(writeDatabase).mockResolvedValue({ success: true })
+
+    const projectId = await createProject('Test Project')
+
+    expect(projectId).toMatch(/^project_/)
+    expect(writeDatabase).toHaveBeenCalled()
+  })
+
+  it('retrieves a project by ID', async () => {
+    const mockProject = { id: 'project-1', name: 'Test', cases: [], activeCase: '', metadata: {} }
+
+    vi.mocked(readDatabase).mockResolvedValue({
+      success: true,
+      data: { projects: { 'project-1': mockProject }, settings: {} }
+    })
+
+    const result = await getProject('project-1')
+    expect(result).toEqual(mockProject)
+  })
+
+  it('returns all projects sorted by lastModified', async () => {
+    const projects = {
+      '1': { id: '1', name: 'A', metadata: { lastModified: '2023-01-01' }, cases: [], activeCase: '' },
+      '2': { id: '2', name: 'B', metadata: { lastModified: '2023-02-01' }, cases: [], activeCase: '' }
+    }
+
+    vi.mocked(readDatabase).mockResolvedValue({
+      success: true,
+      data: { projects, settings: {} }
+    })
+
+    const result = await getAllProjects()
+    expect(result[0].id).toBe('2') // Most recent first
+  })
+
+  it('updates a project and writes to the database', async () => {
+    const existing = {
+      id: 'project-1',
+      name: 'Old Name',
+      metadata: { lastModified: '2023-01-01' },
+      cases: [],
+      activeCase: ''
+    }
+
+    vi.mocked(readDatabase).mockResolvedValue({
+      success: true,
+      data: { projects: { 'project-1': existing }, settings: {} }
+    })
+
+    vi.mocked(writeDatabase).mockResolvedValue({ success: true })
+
+    const result = await updateProject('project-1', { name: 'New Name' })
+    expect(result).toBe(true)
+    expect(writeDatabase).toHaveBeenCalled()
+  })
+
+  it('deletes a project and updates the database', async () => {
+    const db = {
+      projects: { 'project-1': { id: 'project-1', name: 'Test', cases: [], activeCase: '', metadata: {} } },
+      settings: { lastOpenedProject: 'project-1' }
+    }
+
+    vi.mocked(readDatabase).mockResolvedValue({ success: true, data: db })
+    vi.mocked(writeDatabase).mockResolvedValue({ success: true })
+
+    const result = await deleteProject('project-1')
+    expect(result).toBe(true)
+    expect(writeDatabase).toHaveBeenCalled()
+  })
+
+  it('duplicates a project and writes it to the database', async () => {
+    const original = {
+      id: 'project-1',
+      name: 'Original Project',
+      metadata: { created: '2023-01-01', lastModified: '2023-01-01' },
+      cases: [
+        {
+          id: 'case-1',
+          name: 'Base',
+          nodes: [],
+          edges: [],
+          metadata: { created: '2023-01-01', lastModified: '2023-01-01' }
+        }
+      ],
+      activeCase: 'case-1'
+    }
+
+    vi.mocked(readDatabase).mockResolvedValue({
+      success: true,
+      data: { projects: { 'project-1': original }, settings: {} }
+    })
+
+    vi.mocked(writeDatabase).mockResolvedValue({ success: true })
+
+    const newId = await duplicateProject('project-1')
+    expect(newId).toMatch(/^project_/)
+    expect(writeDatabase).toHaveBeenCalled()
+  })
+})
+
