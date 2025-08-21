@@ -13,8 +13,8 @@ import {
 declare global {
   interface Window {
     api: {
-      readDatabase: () => Promise<{ success: boolean; data?: any }>
-      writeDatabase: (data: any) => Promise<{ success: boolean }>
+      readDatabase: () => Promise<{ success: boolean; data?: unknown }>
+      writeDatabase: (data: unknown) => Promise<{ success: boolean }>
     }
   }
 }
