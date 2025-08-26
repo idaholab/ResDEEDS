@@ -150,7 +150,15 @@ function AnalysisModal({ isOpen, nodes, edges, onClose }: AnalysisModalProps) {
                   <h6>System Statistics</h6>
                   <div className="small text-muted">Summary of network metrics (if available)</div>
                   <pre className="bg-light p-2 rounded" style={{ maxHeight: 200, overflow: 'auto' }}>
-                    {JSON.stringify(result.statistics || {}, null, 2)}
+                    {JSON.stringify(
+                      Object.fromEntries(
+                        Object.entries(result.statistics || {}).filter(([key]) => 
+                          !['Curtailment', 'Capital Expenditure', 'Operational Expenditure', 'Revenue', 'Market Value'].includes(key)
+                        )
+                      ), 
+                      null, 
+                      2
+                    )}
                   </pre>
                 </div>
               </>
