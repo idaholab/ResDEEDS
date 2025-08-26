@@ -107,20 +107,6 @@ function AnalysisModal({ isOpen, nodes, edges, onClose }: AnalysisModalProps) {
 
             {!loading && result && result.status === 'ok' && (
               <>
-                {/* Optimization Results */}
-                <div className="mb-3">
-                  <h6>Optimization Results</h6>
-                  <div className="row">
-                    <div className="col">
-                      <div className="card card-body">
-                        <div className="small text-muted">Objective Value</div>
-                        <div className="fs-5">{typeof result.objective === 'number' ? result.objective.toFixed(3) : String(result.objective)}</div>
-                        {lastRunAt && <div className="small text-muted mt-1">Last run: {lastRunAt}</div>}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
                 {/* Power Flows */}
                 <div className="mb-3">
                   <h6>Power Flows</h6>
