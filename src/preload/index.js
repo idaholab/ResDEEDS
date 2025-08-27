@@ -13,6 +13,10 @@ const api = {
   writeDatabase: (data) => ipcRenderer.invoke('db:write', data),
   databaseExists: () => ipcRenderer.invoke('db:exists'),
   
+  // Analysis service
+  analysisHealth: () => ipcRenderer.invoke('analysis:health'),
+  runAnalysis: (networkJson) => ipcRenderer.invoke('analysis:run', networkJson),
+  
   // Menu event listeners
   onMenuAction: (callback) => {
     // Remove any existing listeners first

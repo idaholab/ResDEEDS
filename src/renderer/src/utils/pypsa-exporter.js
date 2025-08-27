@@ -123,8 +123,10 @@ export function exportToPyPSA(nodes, edges) {
       }
         
       case 'batteryNode': {
-        // Find connected bus from edges
-        const batteryBus = findConnectedBus(node.id, edges, 'source')
+        // Find connected bus from edges - check both charge and discharge handles
+        const batteryBusDischarge = findConnectedBus(node.id, edges, 'source')
+        const batteryBusCharge = findConnectedBus(node.id, edges, 'target')
+        const batteryBus = batteryBusDischarge || batteryBusCharge
         pypsaNetwork.storage_units.push({
           name: node.id,
           bus: batteryBus || nodeData.bus || '',

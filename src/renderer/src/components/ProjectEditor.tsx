@@ -7,6 +7,7 @@ import ThemeToggle from './ThemeToggle'
 import EditableProjectName from './EditableProjectName'
 import CaseTabManager from './CaseTabManager'
 import { exportDiagramAsJSON, exportDiagramAsPython } from '../utils/pypsa-exporter'
+import AnalysisModal from './modals/AnalysisModal'
 import { defaultNodes, defaultEdges } from '../data/defaultDiagram'
 import { 
   getProject, 
@@ -34,6 +35,7 @@ function ProjectEditor() {
   const [project, setProject] = useState<Project | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [showAnalysis, setShowAnalysis] = useState(false)
 
   // Load project data on startup
   useEffect(() => {
@@ -294,6 +296,13 @@ function ProjectEditor() {
           <ThemeToggle />
           <button
             className="export-button"
+            onClick={() => setShowAnalysis(true)}
+            title="Run linear PyPSA optimization and view results"
+          >
+            Analyze
+          </button>
+          <button
+            className="export-button"
             onClick={() => exportDiagramAsJSON(nodes, edges)}
           >
             Export PyPSA JSON
@@ -343,6 +352,15 @@ function ProjectEditor() {
           node={{ ...selectedEdge, type: 'lineEdge' }}
           onSave={(id, data) => handleEdgeUpdate(id, data)}
           onClose={handleCloseModal}
+        />
+      )}
+
+      {showAnalysis && (
+        <AnalysisModal
+          isOpen={showAnalysis}
+          nodes={nodes}
+          edges={edges}
+          onClose={() => setShowAnalysis(false)}
         />
       )}
     </div>

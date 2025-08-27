@@ -5,6 +5,7 @@
 *.log
 
 # AI
+AGENTS.md
 ai_docs/
 .claude/
 .codex/
