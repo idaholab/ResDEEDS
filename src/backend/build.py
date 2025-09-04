@@ -47,25 +47,26 @@ def get_platform_info():
 
 def check_dependencies():
     """Check if required build dependencies are available."""
+    # Check if uv is available for dependency management
+    uv_available = shutil.which('uv') is not None
+    if not uv_available:
+        print("✗ uv not found. Please install uv first: https://docs.astral.sh/uv/getting-started/installation/")
+        sys.exit(1)
+    
+    print("✓ uv found - using for dependency management")
+    
     try:
         import PyInstaller
         print(f"✓ PyInstaller {PyInstaller.__version__} found")
     except ImportError:
-        print("✗ PyInstaller not found. Installing...")
-        subprocess.check_call([sys.executable, "-m", "pip", "install", "pyinstaller"])
+        print("✗ PyInstaller not found. Installing with uv...")
+        subprocess.check_call(["uv", "add", "pyinstaller"])
         print("✓ PyInstaller installed")
-    
-    # Check if uv is available for dependency management
-    uv_available = shutil.which('uv') is not None
-    if uv_available:
-        print("✓ uv found - using for dependency management")
-    else:
-        print("✓ Using pip for dependency management")
     
     return uv_available
 
 
-def install_dependencies(use_uv=False):
+def install_dependencies(use_uv=True):
     """Install dependencies for the backend."""
     print("Installing backend dependencies...")
     
@@ -73,7 +74,7 @@ def install_dependencies(use_uv=False):
         # Use uv for faster dependency installation
         subprocess.check_call(["uv", "sync"])
     else:
-        # Install from requirements.txt if it exists, otherwise from pyproject.toml
+        # Fallback to pip (should not happen with updated check_dependencies)
         if Path("requirements.txt").exists():
             subprocess.check_call([sys.executable, "-m", "pip", "install", "-r", "requirements.txt"])
         else:
@@ -113,12 +114,22 @@ def build_executable(platform_info, debug=False, clean=True):
     
     print(f"Building executable for {platform_info['full_name']}...")
     
-    # PyInstaller command
+    # Check if spec file exists, create if missing
+    spec_file = Path("resdeeds-backend.spec")
+    if not spec_file.exists():
+        print("✗ PyInstaller spec file not found. Please create resdeeds-backend.spec first.")
+        print("You can generate one with: uv run python -m PyInstaller --name resdeeds-backend __main__.py")
+        sys.exit(1)
+    
+    # PyInstaller command using uv run for proper environment
     cmd = [
-        sys.executable, "-m", "PyInstaller",
-        "resdeeds-backend.spec",
+        "uv", "run", "python", "-m", "PyInstaller",
+        str(spec_file),
         "--noconfirm",  # Overwrite output directory
     ]
+    
+    if debug:
+        cmd.extend(["--debug", "all"])
     
     # Note: Console/windowed settings are defined in the .spec file
     # Cannot use --windowed when a .spec file is provided
@@ -132,6 +143,8 @@ def build_executable(platform_info, debug=False, clean=True):
     except subprocess.CalledProcessError as e:
         print("✗ PyInstaller build failed")
         print("Error output:", e.stderr)
+        if e.stdout:
+            print("Standard output:", e.stdout)
         sys.exit(1)
     
     return True

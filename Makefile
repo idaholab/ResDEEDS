@@ -43,12 +43,12 @@ build-backend:
 # target: build-backend-clean - Clean build and rebuild backend executable.
 build-backend-clean:
 	@echo "Clean building backend executable..."
-	cd src/backend && python build.py --no-deps
+	cd src/backend && uv run python build.py --no-deps
 
 # target: verify-backend - Verify backend build.
 verify-backend:
 	@echo "Verifying backend build..."
-	cd src/backend && python build.py --verify-only
+	cd src/backend && uv run python build.py --verify-only
 
 # target: dist - Build the distribution package with backend.
 dist: build-backend
