@@ -11,6 +11,12 @@ files:
   - "!{tsconfig.json,tsconfig.node.json,tsconfig.web.json}"
 asarUnpack:
   - resources/**
+extraResources:
+  - from: "src/backend/dist/"
+    to: "backend/"
+    filter:
+      - "resdeeds-backend*"
+      - "version.json"
 win:
   executableName: ResDEEDS
   target:

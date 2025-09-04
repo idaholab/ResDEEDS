@@ -16,10 +16,13 @@
     "test:ui": "vitest --ui",
     "test:coverage": "vitest run --coverage",
     "test:watch": "vitest --watch",
-    "dist": "npm run build && electron-builder",
-    "dist:mac": "npm run build && electron-builder --mac",
-    "dist:win": "npm run build && electron-builder --win",
-    "dist:linux": "npm run build && electron-builder --linux"
+    "build:backend": "cd src/backend && uv run build.py",
+    "build:backend:clean": "cd src/backend && uv run build.py --no-deps",
+    "verify:backend": "cd src/backend && uv run build.py --verify-only",
+    "dist": "npm run build && npm run build:backend && electron-builder",
+    "dist:mac": "npm run build && npm run build:backend && electron-builder --mac",
+    "dist:win": "npm run build && npm run build:backend && electron-builder --win",
+    "dist:linux": "npm run build && npm run build:backend && electron-builder --linux"
   },
   "keywords": [
     "pypsa",

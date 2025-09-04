@@ -2,17 +2,29 @@ from typing import Any, Dict, List, Optional
 
 import json
 import traceback
+import argparse
+import signal
+import sys
+import threading
+import time
 
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
+import uvicorn
 
+# Attempt imports with diagnostics captured for health reporting
+pypsa_import_error: Optional[str] = None
+pandas_import_error: Optional[str] = None
 try:
-    import pandas as pd
-    import pypsa
-except Exception as e:
-    # Defer import errors to runtime responses to keep server importable
-    pd = None
-    pypsa = None
+    import pandas as pd  # type: ignore
+except Exception as e:  # pragma: no cover - diagnostics only
+    pd = None  # type: ignore
+    pandas_import_error = f"{type(e).__name__}: {e}"
+try:
+    import pypsa  # type: ignore
+except Exception as e:  # pragma: no cover - diagnostics only
+    pypsa = None  # type: ignore
+    pypsa_import_error = f"{type(e).__name__}: {e}"
 
 
 class AnalyzeRequest(BaseModel):
@@ -33,14 +45,35 @@ def health() -> Dict[str, Any]:
         "status": "ok",
         "pypsa": bool(pypsa),
         "pandas": bool(pd),
+        "pypsa_error": pypsa_import_error,
+        "pandas_error": pandas_import_error,
     }
 
 
+# Global server instance for graceful shutdown
+server_instance = None
+shutdown_event = threading.Event()
+
+
+def signal_handler(signum, frame):
+    """Handle shutdown signals gracefully."""
+    print(f"\nReceived signal {signum}, shutting down gracefully...")
+    shutdown_event.set()
+    if server_instance:
+        server_instance.should_exit = True
+
+
 def build_pypsa_network(payload: AnalyzeRequest):
-    if pypsa is None or pd is None:
-        raise RuntimeError(
-            "Python dependencies missing. Ensure 'pypsa' and 'pandas' are installed."
-        )
+    if not pypsa or not pd:
+        details = []
+        if not pypsa and pypsa_import_error:
+            details.append(f"pypsa import error: {pypsa_import_error}")
+        if not pd and pandas_import_error:
+            details.append(f"pandas import error: {pandas_import_error}")
+        msg = "Python dependencies missing. Ensure 'pypsa' and 'pandas' are installed."
+        if details:
+            msg = f"{msg} (" + "; ".join(details) + ")"
+        raise RuntimeError(msg)
 
     n = pypsa.Network()
 
@@ -220,3 +253,86 @@ def analyze(payload: AnalyzeRequest) -> Dict[str, Any]:
             "traceback": traceback.format_exc(limit=3),
         }
 
+
+def create_server(host: str = "127.0.0.1", port: int = 8000, log_level: str = "info"):
+    """Create and configure the uvicorn server."""
+    config = uvicorn.Config(
+        app=app,
+        host=host,
+        port=port,
+        log_level=log_level,
+        access_log=True,
+        server_header=False,
+        date_header=False,
+    )
+    return uvicorn.Server(config)
+
+
+def main():
+    """Main entry point for the backend server."""
+    parser = argparse.ArgumentParser(
+        description="ResDEEDS Analysis Backend Service",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter
+    )
+    
+    parser.add_argument(
+        "--host",
+        type=str,
+        default="127.0.0.1",
+        help="Host to bind the server to"
+    )
+    
+    parser.add_argument(
+        "--port",
+        type=int,
+        default=8000,
+        help="Port to bind the server to"
+    )
+    
+    parser.add_argument(
+        "--log-level",
+        type=str,
+        default="info",
+        choices=["critical", "error", "warning", "info", "debug", "trace"],
+        help="Log level for the server"
+    )
+    
+    parser.add_argument(
+        "--version",
+        action="version",
+        version="ResDEEDS Backend 0.1.0"
+    )
+    
+    args = parser.parse_args()
+    
+    # Set up signal handlers for graceful shutdown
+    signal.signal(signal.SIGINT, signal_handler)
+    signal.signal(signal.SIGTERM, signal_handler)
+    
+    # Create and start the server
+    global server_instance
+    server_instance = create_server(
+        host=args.host,
+        port=args.port,
+        log_level=args.log_level
+    )
+    
+    print(f"Starting ResDEEDS Analysis Backend...")
+    print(f"Server will be available at: http://{args.host}:{args.port}")
+    print(f"Health check: http://{args.host}:{args.port}/api/health")
+    print(f"API docs: http://{args.host}:{args.port}/docs")
+    print("Press Ctrl+C to stop the server")
+    
+    try:
+        server_instance.run()
+    except KeyboardInterrupt:
+        print("\nShutdown requested by user")
+    except Exception as e:
+        print(f"Server error: {e}")
+        sys.exit(1)
+    finally:
+        print("Server stopped")
+
+
+if __name__ == "__main__":
+    main()

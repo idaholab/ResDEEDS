@@ -19,10 +19,28 @@ function getBackendPath() {
   // In development, appPath is the project root, backend is now in src/backend
   // When packaged with electron-builder, backend should be included in the app
   if (is.dev) {
-    return join(appPath, 'src', 'backend')
+    return {
+      dir: join(appPath, 'src', 'backend'),
+      executable: null,
+      isDev: true
+    }
   } else {
-    // For packaged app, backend should be alongside the app.asar
-    return join(appPath, '..', 'backend')
+    // For packaged app, backend executable should be in resources/backend/
+    const resourcesPath = process.resourcesPath
+    const backendDir = join(resourcesPath, 'backend')
+    
+    // Determine executable name based on platform
+    let executableName = 'resdeeds-backend'
+    if (process.platform === 'win32') {
+      executableName += '.exe'
+    }
+    
+    const executablePath = join(backendDir, executableName)
+    return {
+      dir: backendDir,
+      executable: executablePath,
+      isDev: false
+    }
   }
 }
 
@@ -62,55 +80,86 @@ async function startAnalysisService() {
 
 async function performStartup() {
   const port = await getFreePort()
-  const backendDir = getBackendPath()
+  const backendInfo = getBackendPath()
 
-  // Prefer 'uvx' for ephemeral tool runs with extra deps
-  // Fallback to 'uv run' and then plain python if not available
-  const argsByVariant = [
-    {
-      cmd: process.platform === 'win32' ? 'uvx.exe' : 'uvx',
-      args: [
-        '--with', 'fastapi',
-        '--with', 'uvicorn',
-        '--with', 'pypsa',
-        'uvicorn',
-        'app:app',
-        '--host', '127.0.0.1',
-        '--port', String(port)
-      ]
-    },
-    {
-      cmd: process.platform === 'win32' ? 'uv.exe' : 'uv',
-      args: [
-        'run',
-        '--with', 'fastapi',
-        '--with', 'uvicorn',
-        '--with', 'pypsa',
-        '--', 'python', '-m', 'uvicorn',
-        'app:app',
-        '--host', '127.0.0.1', '--port', String(port)
-      ]
-    },
-    {
-      cmd: process.platform === 'win32' ? 'python.exe' : 'python3',
-      args: ['-m', 'uvicorn', 'app:app', '--host', '127.0.0.1', '--port', String(port)]
-    }
-  ]
+  let argsByVariant = []
+  
+  // In production, try bundled executable first
+  if (!backendInfo.isDev && backendInfo.executable) {
+    console.log(`Using bundled backend executable: ${backendInfo.executable}`)
+    argsByVariant.push({
+      cmd: backendInfo.executable,
+      args: ['--host', '127.0.0.1', '--port', String(port)],
+      cwd: backendInfo.dir
+    })
+  }
+  
+  // Development mode or fallback: use Python runtime
+  if (backendInfo.isDev) {
+    // Prefer 'uvx' for ephemeral tool runs with extra deps
+    // Fallback to 'uv run' and then plain python if not available
+    argsByVariant = [
+      {
+        cmd: process.platform === 'win32' ? 'uvx.exe' : 'uvx',
+        args: [
+          '--with', 'fastapi',
+          '--with', 'uvicorn',
+          '--with', 'pypsa',
+          'uvicorn',
+          'app:app',
+          '--host', '127.0.0.1',
+          '--port', String(port)
+        ],
+        cwd: backendInfo.dir
+      },
+      {
+        cmd: process.platform === 'win32' ? 'uv.exe' : 'uv',
+        args: [
+          'run',
+          '--with', 'fastapi',
+          '--with', 'uvicorn',
+          '--with', 'pypsa',
+          '--', 'python', '-m', 'uvicorn',
+          'app:app',
+          '--host', '127.0.0.1', '--port', String(port)
+        ],
+        cwd: backendInfo.dir
+      },
+      {
+        cmd: process.platform === 'win32' ? 'python.exe' : 'python3',
+        args: ['-m', 'uvicorn', 'app:app', '--host', '127.0.0.1', '--port', String(port)],
+        cwd: backendInfo.dir
+      }
+    ]
+  }
 
   let proc = null
   let lastError = null
   
-  console.log(`Starting analysis service in: ${backendDir}`)
+  console.log(`Starting analysis service in: ${backendInfo.dir}`)
   
   for (const variant of argsByVariant) {
     try {
       console.log(`Attempting to start with: ${variant.cmd} ${variant.args.join(' ')}`)
       proc = spawn(variant.cmd, variant.args, {
-        cwd: backendDir,
+        cwd: variant.cwd,
         stdio: ['ignore', 'pipe', 'pipe'],
         env: process.env,
         windowsHide: true,
       })
+      // Pipe backend output for diagnostics
+      if (proc.stdout) {
+        proc.stdout.setEncoding('utf8')
+        proc.stdout.on('data', (chunk) => {
+          console.log(`[backend stdout] ${chunk.toString().trim()}`)
+        })
+      }
+      if (proc.stderr) {
+        proc.stderr.setEncoding('utf8')
+        proc.stderr.on('data', (chunk) => {
+          console.error(`[backend stderr] ${chunk.toString().trim()}`)
+        })
+      }
       
       // Handle process errors
       proc.on('error', (err) => {
@@ -140,8 +189,8 @@ async function performStartup() {
 
   if (!proc || proc.killed) {
     const errorMsg = lastError ? 
-      `Failed to start Python analysis service: ${lastError.message}` :
-      'Failed to start Python analysis service (uv/uvx/python not found or backend directory missing).'
+      `Failed to start analysis service: ${lastError.message}` :
+      'Failed to start analysis service (backend executable not found or invalid).'
     throw new Error(errorMsg)
   }
 

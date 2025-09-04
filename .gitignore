@@ -36,3 +36,11 @@ coverage/
 dist/
 node_modules/
 out/
+
+# PyInstaller artifacts
+src/backend/build/
+src/backend/dist/
+src/backend/*.spec.bak
+src/backend/__pycache__/
+src/backend/.mypy_cache/
+src/backend/.pytest_cache/
