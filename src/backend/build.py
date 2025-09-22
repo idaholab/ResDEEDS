@@ -49,19 +49,29 @@ def check_dependencies():
     """Check if required build dependencies are available."""
     # Check if uv is available for dependency management
     uv_available = shutil.which('uv') is not None
+
+    # If not in PATH, try python -m uv
     if not uv_available:
-        print("✗ uv not found. Please install uv first: https://docs.astral.sh/uv/getting-started/installation/")
+        try:
+            subprocess.check_call([sys.executable, "-m", "uv", "--version"],
+                                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            uv_available = True
+        except (subprocess.CalledProcessError, FileNotFoundError):
+            pass
+
+    if not uv_available:
+        print("uv not found. Please install uv first: https://docs.astral.sh/uv/getting-started/installation/")
         sys.exit(1)
     
-    print("✓ uv found - using for dependency management")
+    print("uv found - using for dependency management")
     
     try:
         import PyInstaller
-        print(f"✓ PyInstaller {PyInstaller.__version__} found")
+        print(f"PyInstaller {PyInstaller.__version__} found")
     except ImportError:
-        print("✗ PyInstaller not found. Installing with uv...")
-        subprocess.check_call(["uv", "add", "pyinstaller"])
-        print("✓ PyInstaller installed")
+        print("PyInstaller not found. Installing with uv...")
+        subprocess.check_call([sys.executable, "-m", "uv", "add", "pyinstaller"])
+        print("PyInstaller installed")
     
     return uv_available
 
@@ -72,7 +82,7 @@ def install_dependencies(use_uv=True):
     
     if use_uv:
         # Use uv for faster dependency installation
-        subprocess.check_call(["uv", "sync"])
+        subprocess.check_call([sys.executable, "-m", "uv", "sync"])
     else:
         # Fallback to pip (should not happen with updated check_dependencies)
         if Path("requirements.txt").exists():
@@ -80,7 +90,7 @@ def install_dependencies(use_uv=True):
         else:
             subprocess.check_call([sys.executable, "-m", "pip", "install", "-e", "."])
     
-    print("✓ Dependencies installed")
+    print("Dependencies installed")
 
 
 def clean_build_artifacts():
@@ -94,16 +104,16 @@ def clean_build_artifacts():
             for path in glob.glob(artifact):
                 if os.path.isfile(path):
                     os.remove(path)
-                    print(f"✓ Removed {path}")
+                    print(f"Removed {path}")
         else:
             path = Path(artifact)
             if path.exists():
                 if path.is_dir():
                     shutil.rmtree(path)
-                    print(f"✓ Removed directory {path}")
+                    print(f"Removed directory {path}")
                 else:
                     path.unlink()
-                    print(f"✓ Removed file {path}")
+                    print(f"Removed file {path}")
 
 
 def build_executable(platform_info, debug=False, clean=True):
@@ -117,13 +127,13 @@ def build_executable(platform_info, debug=False, clean=True):
     # Check if spec file exists, create if missing
     spec_file = Path("resdeeds-backend.spec")
     if not spec_file.exists():
-        print("✗ PyInstaller spec file not found. Please create resdeeds-backend.spec first.")
+        print("PyInstaller spec file not found. Please create resdeeds-backend.spec first.")
         print("You can generate one with: uv run python -m PyInstaller --name resdeeds-backend __main__.py")
         sys.exit(1)
     
     # PyInstaller command using uv run for proper environment
     cmd = [
-        "uv", "run", "python", "-m", "PyInstaller",
+        sys.executable, "-m", "uv", "run", "python", "-m", "PyInstaller",
         str(spec_file),
         "--noconfirm",  # Overwrite output directory
     ]
@@ -137,11 +147,11 @@ def build_executable(platform_info, debug=False, clean=True):
     # Run PyInstaller
     try:
         result = subprocess.run(cmd, check=True, capture_output=True, text=True)
-        print("✓ PyInstaller build completed successfully")
+        print("PyInstaller build completed successfully")
         if result.stdout:
             print("Build output:", result.stdout)
     except subprocess.CalledProcessError as e:
-        print("✗ PyInstaller build failed")
+        print("PyInstaller build failed")
         print("Error output:", e.stderr)
         if e.stdout:
             print("Standard output:", e.stdout)
@@ -162,7 +172,7 @@ def verify_build(platform_info):
     exe_path = Path('dist') / exe_name
     
     if not exe_path.exists():
-        print(f"✗ Executable not found at {exe_path}")
+        print(f"Executable not found at {exe_path}")
         return False
     
     # Check file size (should be substantial for a PyPSA bundle)
@@ -172,12 +182,12 @@ def verify_build(platform_info):
     if size_mb < 10:  # Expect at least 10MB for a PyPSA bundle
         print(f"⚠ Warning: Executable size is only {size_mb:.1f}MB, which seems small")
     else:
-        print(f"✓ Executable created: {exe_path} ({size_mb:.1f}MB)")
+        print(f"Executable created: {exe_path} ({size_mb:.1f}MB)")
     
     # Make executable on Unix systems
     if system != 'windows':
         exe_path.chmod(0o755)
-        print("✓ Executable permissions set")
+        print("Executable permissions set")
     
     return True
 
@@ -202,7 +212,7 @@ def create_version_file(platform_info):
     with open(version_file, 'w') as f:
         json.dump(version_info, f, indent=2)
     
-    print(f"✓ Version file created: {version_file}")
+    print(f"Version file created: {version_file}")
 
 
 def main():
@@ -252,13 +262,13 @@ def main():
             # Create version file
             create_version_file(platform_info)
             print()
-            print("🎉 Backend build completed successfully!")
+            print("Backend build completed successfully!")
             print(f"Executable available in: {Path('dist').absolute()}")
         else:
-            print("✗ Build verification failed")
+            print("Build verification failed")
             sys.exit(1)
     else:
-        print("✗ Build failed")
+        print("Build failed")
         sys.exit(1)
 
 
