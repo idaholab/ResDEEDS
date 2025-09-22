@@ -20,11 +20,32 @@ try:
 except Exception as e:  # pragma: no cover - diagnostics only
     pd = None  # type: ignore
     pandas_import_error = f"{type(e).__name__}: {e}"
+
+# PyPSA import with optional dependency handling
 try:
-    import pypsa  # type: ignore
+    # Temporarily suppress warnings during import
+    import warnings
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        import pypsa  # type: ignore
+
+    # Check if we can create a basic network (this will test core functionality)
+    try:
+        test_network = pypsa.Network()
+        test_network.add("Bus", "test_bus", v_nom=110)
+        pypsa_working = True
+        pypsa_import_error = None
+        print("PyPSA core functionality verified")
+    except Exception as network_error:
+        pypsa_working = False
+        pypsa_import_error = f"PyPSA network creation failed: {network_error}"
+        print(f"PyPSA network creation failed: {network_error}")
+
 except Exception as e:  # pragma: no cover - diagnostics only
     pypsa = None  # type: ignore
+    pypsa_working = False
     pypsa_import_error = f"{type(e).__name__}: {e}"
+    print(f"PyPSA import failed: {e}")
 
 
 class AnalyzeRequest(BaseModel):
@@ -43,7 +64,7 @@ app = FastAPI(title="ResDEEDS Analysis Service", version="0.1.0")
 def health() -> Dict[str, Any]:
     return {
         "status": "ok",
-        "pypsa": bool(pypsa),
+        "pypsa": bool(pypsa) and pypsa_working,
         "pandas": bool(pd),
         "pypsa_error": pypsa_import_error,
         "pandas_error": pandas_import_error,
@@ -161,6 +182,21 @@ def build_pypsa_network(payload: AnalyzeRequest):
 @app.post("/api/analyze")
 def analyze(payload: AnalyzeRequest) -> Dict[str, Any]:
     try:
+        # Check dependencies first
+        if not pypsa or not pd or not pypsa_working:
+            details = []
+            if not pypsa and pypsa_import_error:
+                details.append(f"pypsa import error: {pypsa_import_error}")
+            if not pd and pandas_import_error:
+                details.append(f"pandas import error: {pandas_import_error}")
+            if pypsa and not pypsa_working and pypsa_import_error:
+                details.append(f"pypsa functionality error: {pypsa_import_error}")
+
+            msg = "Python dependencies missing or not working. Ensure 'pypsa' and 'pandas' are properly installed."
+            if details:
+                msg = f"{msg} (" + "; ".join(details) + ")"
+            return {"status": "error", "error": msg}
+
         n = build_pypsa_network(payload)
 
         # Validate minimal completeness
@@ -169,8 +205,20 @@ def analyze(payload: AnalyzeRequest) -> Dict[str, Any]:
         if n.loads.empty and n.generators.empty and n.storage_units.empty:
             raise HTTPException(status_code=400, detail="Network must contain at least one component (load/generator/storage)")
 
-        # Run linear optimization (LOPF)
-        n.optimize()
+        print(f"Running optimization for network with {len(n.buses)} buses, {len(n.generators)} generators, {len(n.loads)} loads")
+
+        # Run linear optimization (LOPF) with timeout handling
+        try:
+            # For basic networks, we can skip optimization if PyPSA's solver isn't fully configured
+            # and just return the network structure
+            n.optimize()
+            print("Optimization completed successfully")
+        except Exception as opt_error:
+            print(f"Optimization failed: {opt_error}")
+            return {
+                "status": "error",
+                "error": f"PyPSA optimization failed: {opt_error}. This usually indicates missing solver dependencies or network configuration issues."
+            }
 
         # Gather results
         objective = getattr(n, "objective", None)

@@ -96,9 +96,23 @@ async function performStartup() {
   
   // Development mode or fallback: use Python runtime
   if (backendInfo.isDev) {
-    // Prefer 'uvx' for ephemeral tool runs with extra deps
-    // Fallback to 'uv run' and then plain python if not available
+    // Try uv run first (uses local virtual environment), then fallback to other methods
     argsByVariant = [
+      {
+        cmd: process.platform === 'win32' ? 'python.exe' : 'python',
+        args: ['start-backend.py', '--host', '127.0.0.1', '--port', String(port)],
+        cwd: backendInfo.dir
+      },
+      {
+        cmd: process.platform === 'win32' ? 'python.exe' : 'python',
+        args: ['-m', 'uv', 'run', 'python', 'app.py', '--host', '127.0.0.1', '--port', String(port)],
+        cwd: backendInfo.dir
+      },
+      {
+        cmd: process.platform === 'win32' ? 'python.exe' : 'python',
+        args: ['-m', 'uv', 'run', 'python', '-m', 'uvicorn', 'app:app', '--host', '127.0.0.1', '--port', String(port)],
+        cwd: backendInfo.dir
+      },
       {
         cmd: process.platform === 'win32' ? 'uvx.exe' : 'uvx',
         args: [
@@ -530,19 +544,33 @@ ipcMain.handle('db:exists', async () => {
 ipcMain.handle('analysis:health', async () => {
   try {
     await startAnalysisService()
-    
+
     console.log(`Checking health at http://127.0.0.1:${analysisService.port}/api/health`)
-    
-    const res = await fetch(`http://127.0.0.1:${analysisService.port}/api/health`)
-    
+
+    // Create AbortController for timeout
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 10000) // 10 second timeout
+
+    const res = await fetch(`http://127.0.0.1:${analysisService.port}/api/health`, {
+      signal: controller.signal
+    })
+
+    clearTimeout(timeoutId)
+
     if (!res.ok) {
       throw new Error(`Health check failed with status ${res.status}: ${res.statusText}`)
     }
-    
+
     const body = await res.json()
+    console.log('Health check response:', body)
     return { success: true, port: analysisService.port, body }
   } catch (error) {
     console.error('Health check failed:', error.message)
+
+    if (error.name === 'AbortError') {
+      return { success: false, error: 'Health check timed out after 10 seconds' }
+    }
+
     return { success: false, error: error.message }
   }
 })
@@ -550,23 +578,38 @@ ipcMain.handle('analysis:health', async () => {
 ipcMain.handle('analysis:run', async (_evt, networkJson) => {
   try {
     await startAnalysisService()
-    
+
     console.log(`Making analysis request to http://127.0.0.1:${analysisService.port}/api/analyze`)
-    
+    console.log('Network data:', JSON.stringify(networkJson, null, 2))
+
+    // Create AbortController for timeout
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 30000) // 30 second timeout
+
     const res = await fetch(`http://127.0.0.1:${analysisService.port}/api/analyze`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(networkJson)
+      body: JSON.stringify(networkJson),
+      signal: controller.signal
     })
-    
+
+    clearTimeout(timeoutId)
+
     if (!res.ok) {
-      throw new Error(`Analysis service returned status ${res.status}: ${res.statusText}`)
+      const errorText = await res.text()
+      throw new Error(`Analysis service returned status ${res.status}: ${res.statusText} - ${errorText}`)
     }
-    
+
     const body = await res.json()
+    console.log('Analysis response:', body)
     return { success: true, body }
   } catch (error) {
     console.error('Analysis request failed:', error.message)
+
+    if (error.name === 'AbortError') {
+      return { success: false, error: 'Analysis request timed out after 30 seconds' }
+    }
+
     return { success: false, error: error.message }
   }
 })

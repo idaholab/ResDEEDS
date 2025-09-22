@@ -20,6 +20,8 @@ function AnalysisModal({ isOpen, nodes, edges, onClose }: AnalysisModalProps) {
 
   const run = async () => {
     setError(null)
+    setResult(null)
+
     const v = validatePypsaNetwork(pypsaNetwork)
     if (!v.valid) {
       setError(v.message || 'Invalid network configuration')
@@ -27,15 +29,22 @@ function AnalysisModal({ isOpen, nodes, edges, onClose }: AnalysisModalProps) {
     }
     setLoading(true)
     try {
+      console.log('Running network analysis...', pypsaNetwork)
       const res = await runNetworkAnalysis(pypsaNetwork)
-      if (res.status !== 'ok') {
-        setError(res.error || 'Analysis failed')
-        setResult(null)
-      } else {
+      console.log('Analysis result:', res)
+
+      if (res.status === 'ok' || res.status === 'warning') {
         setResult(res)
         setLastRunAt(new Date().toLocaleString())
+        if (res.status === 'warning') {
+          setError(`Warning: ${res.error || 'Partial analysis completed'}`)
+        }
+      } else {
+        setError(res.error || 'Analysis failed')
+        setResult(null)
       }
     } catch (e: any) {
+      console.error('Analysis error:', e)
       setError(e?.message || 'Unexpected error running analysis')
       setResult(null)
     } finally {
