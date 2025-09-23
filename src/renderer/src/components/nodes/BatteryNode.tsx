@@ -5,9 +5,10 @@ import './NodeStyles.scss'
 interface BatteryNodeProps {
   data: BatteryNodeData
   selected: boolean
+  onDelete?: () => void
 }
 
-function BatteryNode({ data, selected }: BatteryNodeProps) {
+function BatteryNode({ data, selected, onDelete }: BatteryNodeProps) {
   const getNodeColorClass = (): string => {
     if (data.p_nom === 0) {
       return 'battery-node-zero'
@@ -22,6 +23,19 @@ function BatteryNode({ data, selected }: BatteryNodeProps) {
     <div className={`custom-node ${getNodeColorClass()} ${selected ? 'selected' : ''}`}>
       <Handle type="target" position={Position.Top} id="charge" />
       <Handle type="source" position={Position.Bottom} id="discharge" />
+
+      {onDelete && (
+        <button
+          className="node-delete-btn"
+          onClick={(e) => {
+            e.stopPropagation()
+            onDelete()
+          }}
+          title="Delete node"
+        >
+          ×
+        </button>
+      )}
 
       <div className="node-icon">🔋</div>
       <div className="node-label">Battery</div>
