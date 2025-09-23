@@ -584,7 +584,7 @@ ipcMain.handle('analysis:run', async (_evt, networkJson) => {
 
     // Create AbortController for timeout
     const controller = new AbortController()
-    const timeoutId = setTimeout(() => controller.abort(), 30000) // 30 second timeout
+    const timeoutId = setTimeout(() => controller.abort(), 600000) // 10 minute timeout
 
     const res = await fetch(`http://127.0.0.1:${analysisService.port}/api/analyze`, {
       method: 'POST',
