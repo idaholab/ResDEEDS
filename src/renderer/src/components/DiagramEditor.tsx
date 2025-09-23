@@ -22,11 +22,13 @@ import AnimatedEdge from './edges/AnimatedEdge'
 import type { PyPSANode, PyPSAEdge, PyPSAComponentData } from '../types'
 import './DiagramEditor.scss'
 
-const nodeTypes: NodeTypes = {
-  busNode: BusNode,
-  generatorNode: GeneratorNode,
-  loadNode: LoadNode,
-  batteryNode: BatteryNode,
+function createNodeTypes(onDeleteNode: (nodeId: string) => void): NodeTypes {
+  return {
+    busNode: (props) => <BusNode {...props} onDelete={() => onDeleteNode(props.id)} />,
+    generatorNode: (props) => <GeneratorNode {...props} onDelete={() => onDeleteNode(props.id)} />,
+    loadNode: (props) => <LoadNode {...props} onDelete={() => onDeleteNode(props.id)} />,
+    batteryNode: (props) => <BatteryNode {...props} onDelete={() => onDeleteNode(props.id)} />,
+  }
 }
 
 const edgeTypes: EdgeTypes = {
@@ -48,6 +50,11 @@ interface FlowProps {
 function Flow({ nodes, edges, setNodes, setEdges, onNodeSelect, onEdgeSelect }: FlowProps) {
   const reactFlowWrapper = useRef<HTMLDivElement>(null)
   const { screenToFlowPosition } = useReactFlow()
+
+  const onDeleteNode = useCallback((nodeId: string) => {
+    setNodes((nds) => nds.filter(node => node.id !== nodeId))
+    setEdges((eds) => eds.filter(edge => edge.source !== nodeId && edge.target !== nodeId))
+  }, [setNodes, setEdges])
 
   const onConnect = useCallback(
     (params: Connection) => setEdges((eds) => addEdge({
@@ -187,7 +194,7 @@ function Flow({ nodes, edges, setNodes, setEdges, onNodeSelect, onEdgeSelect }: 
         onDragOver={onDragOver}
         onNodeDoubleClick={onNodeDoubleClick}
         onEdgeDoubleClick={onEdgeDoubleClick}
-        nodeTypes={nodeTypes}
+        nodeTypes={createNodeTypes(onDeleteNode)}
         edgeTypes={edgeTypes}
         snapToGrid={true}
         snapGrid={[10, 10]}
