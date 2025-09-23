@@ -5,10 +5,9 @@ import './NodeStyles.scss'
 interface GeneratorNodeProps {
   data: GeneratorNodeData
   selected: boolean
-  onDelete?: () => void
 }
 
-function GeneratorNode({ data, selected, onDelete }: GeneratorNodeProps) {
+function GeneratorNode({ data, selected }: GeneratorNodeProps) {
   const getGeneratorIcon = (): string => {
     switch (data.carrier) {
       case 'solar': return '☀️'
@@ -33,18 +32,6 @@ function GeneratorNode({ data, selected, onDelete }: GeneratorNodeProps) {
     <div className={`custom-node ${getNodeColorClass()} ${selected ? 'selected' : ''}`}>
       <Handle type="source" position={Position.Bottom} id="power" />
 
-      {onDelete && (
-        <button
-          className="node-delete-btn"
-          onClick={(e) => {
-            e.stopPropagation()
-            onDelete()
-          }}
-          title="Delete node"
-        >
-          ×
-        </button>
-      )}
 
       <div className="node-icon">{getGeneratorIcon()}</div>
       <div className="node-label">Generator</div>

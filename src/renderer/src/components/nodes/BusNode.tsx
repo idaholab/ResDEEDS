@@ -5,10 +5,9 @@ import './NodeStyles.scss'
 interface BusNodeProps {
   data: BusNodeData
   selected: boolean
-  onDelete?: () => void
 }
 
-function BusNode({ data, selected, onDelete }: BusNodeProps) {
+function BusNode({ data, selected }: BusNodeProps) {
   const getNodeColorClass = (): string => {
     if (data.v_nom === 0) {
       return 'bus-node-zero'
@@ -25,20 +24,7 @@ function BusNode({ data, selected, onDelete }: BusNodeProps) {
       <Handle type="source" position={Position.Bottom} id="bottom" />
       <Handle type="target" position={Position.Left} id="left" />
       <Handle type="source" position={Position.Right} id="right" />
-
-      {onDelete && (
-        <button
-          className="node-delete-btn"
-          onClick={(e) => {
-            e.stopPropagation()
-            onDelete()
-          }}
-          title="Delete node"
-        >
-          ×
-        </button>
-      )}
-
+      
       <div className="node-icon">⚡</div>
       <div className="node-label">Bus</div>
       <div className="node-info">
