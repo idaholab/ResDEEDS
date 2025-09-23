@@ -213,7 +213,7 @@ async function performStartup() {
   analysisService.port = port
 
   // Wait for health endpoint
-  await waitForService(port, 12000)
+  await waitForService(port, 60000)
   
   return analysisService
 }
@@ -549,7 +549,7 @@ ipcMain.handle('analysis:health', async () => {
 
     // Create AbortController for timeout
     const controller = new AbortController()
-    const timeoutId = setTimeout(() => controller.abort(), 10000) // 10 second timeout
+    const timeoutId = setTimeout(() => controller.abort(), 60000) // 1 minute timeout
 
     const res = await fetch(`http://127.0.0.1:${analysisService.port}/api/health`, {
       signal: controller.signal
