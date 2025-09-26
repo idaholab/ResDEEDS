@@ -1,4 +1,5 @@
 import { Handle, Position } from '@xyflow/react'
+import { usePowerUnits } from '../../contexts/PowerUnitsContext'
 import type { GeneratorNodeData } from '../../types'
 import './NodeStyles.scss'
 
@@ -9,6 +10,8 @@ interface GeneratorNodeProps {
 }
 
 function GeneratorNode({ data, selected, onDelete }: GeneratorNodeProps) {
+  const { formatPowerValue } = usePowerUnits()
+
   const getGeneratorIcon = (): string => {
     switch (data.carrier) {
       case 'solar': return '☀️'
@@ -49,7 +52,7 @@ function GeneratorNode({ data, selected, onDelete }: GeneratorNodeProps) {
       <div className="node-icon">{getGeneratorIcon()}</div>
       <div className="node-label">Generator</div>
       <div className="node-info">
-        {data.p_nom ? <span>{data.p_nom} MW</span> : <span>0 MW</span>}
+        {data.p_nom ? <span>{formatPowerValue(data.p_nom)}</span> : <span>{formatPowerValue(0)}</span>}
         {data.carrier && <span>{data.carrier}</span>}
       </div>
     </div>

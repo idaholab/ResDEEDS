@@ -4,6 +4,7 @@ import DiagramEditor from './DiagramEditor'
 import ComponentPalette from './ComponentPalette'
 import PropertyEditModal from './modals/PropertyEditModal'
 import ThemeToggle from './ThemeToggle'
+import PowerUnitToggle from './PowerUnitToggle'
 import EditableProjectName from './EditableProjectName'
 import CaseTabManager from './CaseTabManager'
 import { exportDiagramAsJSON, exportDiagramAsPython } from '../utils/pypsa-exporter'
@@ -214,19 +215,19 @@ function ProjectEditor() {
     }
   }
 
-  const handleNewCase = async (hazardType: HazardType) => {
+  const handleNewCase = async (hazardType: HazardType, customName?: string) => {
     if (!project || !projectId) return
-    
+
     // Save current case first
     await updateCaseDiagram(projectId, project.activeCase, nodes, edges)
-    
+
     // Create new case
-    const newCaseId = await addCaseToProject(projectId, hazardType)
+    const newCaseId = await addCaseToProject(projectId, hazardType, customName)
     if (newCaseId) {
       const updatedProject = await getProject(projectId)
       if (updatedProject) {
         setProject(updatedProject)
-        
+
         // Load the new case data
         const newCase = updatedProject.cases.find(c => c.id === newCaseId)
         if (newCase) {
@@ -293,6 +294,7 @@ function ProjectEditor() {
           />
         </div>
         <div className="export-buttons">
+          <PowerUnitToggle />
           <ThemeToggle />
           <button
             className="export-button"

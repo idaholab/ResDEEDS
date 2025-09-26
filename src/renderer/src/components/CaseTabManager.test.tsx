@@ -101,7 +101,7 @@ describe('CaseTabManager', () => {
     // Submit
     fireEvent.click(screen.getByText('Create Case'))
     
-    expect(onNewCase).toHaveBeenCalledWith('Wildfire')
+    expect(onNewCase).toHaveBeenCalledWith('Wildfire', undefined)
   })
 
   it('calls onDeleteCase when confirming delete', () => {

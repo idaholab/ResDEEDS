@@ -134,11 +134,11 @@ export const createBaseCase = (nodes?: PyPSANode[], edges?: PyPSAEdge[]): Case =
   }
 }
 
-export const createHazardCase = (hazardType: HazardType, templateNodes: PyPSANode[], templateEdges: PyPSAEdge[]): Case => {
+export const createHazardCase = (hazardType: HazardType, templateNodes: PyPSANode[], templateEdges: PyPSAEdge[], customName?: string): Case => {
   const now = new Date().toISOString()
   return {
     id: generateCaseId(),
-    name: hazardType,
+    name: hazardType === 'Custom' && customName ? customName : hazardType,
     nodes: JSON.parse(JSON.stringify(templateNodes)), // Deep clone
     edges: JSON.parse(JSON.stringify(templateEdges)), // Deep clone
     metadata: {
@@ -311,7 +311,7 @@ export const duplicateProject = async (originalProjectId: string, newName?: stri
 // Case Management Operations
 // ============================================================================
 
-export const addCaseToProject = async (projectId: string, hazardType: HazardType): Promise<string | null> => {
+export const addCaseToProject = async (projectId: string, hazardType: HazardType, customName?: string): Promise<string | null> => {
   try {
     const database = await readProjectDatabase()
     const project = database.projects[projectId]
@@ -329,7 +329,7 @@ export const addCaseToProject = async (projectId: string, hazardType: HazardType
     }
     
     // Create new case with base case data
-    const newCase = createHazardCase(hazardType, baseCase.nodes, baseCase.edges)
+    const newCase = createHazardCase(hazardType, baseCase.nodes, baseCase.edges, customName)
     project.cases.push(newCase)
     project.activeCase = newCase.id
     project.metadata.lastModified = new Date().toISOString()

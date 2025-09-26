@@ -1,4 +1,5 @@
 import { Handle, Position } from '@xyflow/react'
+import { usePowerUnits } from '../../contexts/PowerUnitsContext'
 import type { LoadNodeData } from '../../types'
 import './NodeStyles.scss'
 
@@ -9,6 +10,8 @@ interface LoadNodeProps {
 }
 
 function LoadNode({ data, selected, onDelete }: LoadNodeProps) {
+  const { formatPowerValue } = usePowerUnits()
+
   const getNodeColorClass = (): string => {
     if (data.p_set === 0) {
       return 'load-node-zero'
@@ -39,7 +42,7 @@ function LoadNode({ data, selected, onDelete }: LoadNodeProps) {
       <div className="node-icon">🏭</div>
       <div className="node-label">Load</div>
       <div className="node-info">
-        {data.p_set && <span>{data.p_set} MW</span>}
+        {data.p_set && <span>{formatPowerValue(data.p_set)}</span>}
       </div>
     </div>
   )

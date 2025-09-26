@@ -24,9 +24,9 @@ describe('NewCaseModal', () => {
     expect(select).toHaveValue('Heat')
     
     const options = screen.getAllByRole('option')
-    expect(options).toHaveLength(6)
-    
-    const hazardTypes = ['Heat', 'Freeze', 'Hurricane', 'Wildfire', 'Tornado', 'Earthquake']
+    expect(options).toHaveLength(7)
+
+    const hazardTypes = ['Heat', 'Freeze', 'Hurricane', 'Wildfire', 'Tornado', 'Earthquake', 'Custom']
     hazardTypes.forEach(hazard => {
       expect(screen.getByRole('option', { name: hazard })).toBeInTheDocument()
     })
@@ -57,7 +57,7 @@ describe('NewCaseModal', () => {
     
     fireEvent.click(screen.getByText('Create Case'))
     
-    expect(onSubmit).toHaveBeenCalledWith('Earthquake')
+    expect(onSubmit).toHaveBeenCalledWith('Earthquake', undefined)
   })
 
   it('calls onCancel when cancel button is clicked', () => {
@@ -99,14 +99,39 @@ describe('NewCaseModal', () => {
     
     fireEvent.click(screen.getByText('Create Case'))
     
-    expect(onSubmit).toHaveBeenCalledWith('Heat')
+    expect(onSubmit).toHaveBeenCalledWith('Heat', undefined)
   })
 
   it('renders with correct accessibility attributes', () => {
     render(<NewCaseModal {...defaultProps} />)
-    
+
     expect(screen.getByLabelText('Close')).toHaveAttribute('aria-label', 'Close')
     expect(screen.getByLabelText('Select Hazard Type:')).toHaveAttribute('required')
     expect(screen.getByText('Create New Case')).toBeInTheDocument()
+  })
+
+  it('shows custom name input when Custom is selected', () => {
+    render(<NewCaseModal {...defaultProps} />)
+
+    const select = screen.getByLabelText('Select Hazard Type:')
+    fireEvent.change(select, { target: { value: 'Custom' } })
+
+    expect(screen.getByLabelText('Case Name:')).toBeInTheDocument()
+    expect(screen.getByPlaceholderText('Enter custom case name')).toBeInTheDocument()
+  })
+
+  it('calls onSubmit with custom name when Custom is selected', () => {
+    const onSubmit = vi.fn()
+    render(<NewCaseModal {...defaultProps} onSubmit={onSubmit} />)
+
+    const select = screen.getByLabelText('Select Hazard Type:')
+    fireEvent.change(select, { target: { value: 'Custom' } })
+
+    const customNameInput = screen.getByLabelText('Case Name:')
+    fireEvent.change(customNameInput, { target: { value: 'My Custom Case' } })
+
+    fireEvent.click(screen.getByText('Create Case'))
+
+    expect(onSubmit).toHaveBeenCalledWith('Custom', 'My Custom Case')
   })
 })
