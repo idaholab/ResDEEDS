@@ -43,6 +43,9 @@ export function PowerUnitsProvider({ children }: PowerUnitsProviderProps) {
     if (baseLabel.includes('MVA') || baseLabel.includes('kVA')) {
       return baseLabel.replace(/[Mk]VA/g, powerUnit === 'kW' ? 'kVA' : 'MVA')
     }
+    if (baseLabel.includes('MV') || baseLabel.includes('kV')) {
+      return baseLabel.replace(/[Mk]V/g, powerUnit === 'kW' ? 'kV' : 'MV')
+    }
     return baseLabel
   }
 
@@ -67,7 +70,11 @@ export function PowerUnitsProvider({ children }: PowerUnitsProviderProps) {
   // Format power value with unit
   const formatPowerValue = (kwValue: number) => {
     const displayValue = convertToDisplayValue(kwValue)
-    return `${displayValue} ${powerUnit}`
+    // Format with appropriate decimal places for readability
+    const formattedValue = powerUnit === 'MW'
+      ? displayValue.toFixed(displayValue < 1 ? 3 : displayValue < 10 ? 2 : 1)
+      : displayValue.toFixed(displayValue < 1000 ? 0 : 0)
+    return `${formattedValue} ${powerUnit}`
   }
 
   const value: PowerUnitsContextType = {

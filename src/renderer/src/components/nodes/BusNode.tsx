@@ -1,4 +1,5 @@
 import { Handle, Position } from '@xyflow/react'
+import { usePowerUnits } from '../../contexts/PowerUnitsContext'
 import type { BusNodeData } from '../../types'
 import './NodeStyles.scss'
 
@@ -9,6 +10,8 @@ interface BusNodeProps {
 }
 
 function BusNode({ data, selected, onDelete }: BusNodeProps) {
+  const { convertToDisplayValue, powerUnit } = usePowerUnits()
+
   const getNodeColorClass = (): string => {
     if (data.v_nom === 0) {
       return 'bus-node-zero'
@@ -42,7 +45,11 @@ function BusNode({ data, selected, onDelete }: BusNodeProps) {
       <div className="node-icon">⚡</div>
       <div className="node-label">Bus</div>
       <div className="node-info">
-        {data.v_nom && <span>{data.v_nom} kV</span>}
+        {data.v_nom && (
+          <span>
+            {convertToDisplayValue(data.v_nom).toFixed(powerUnit === 'MW' ? 3 : 0)} {powerUnit === 'kW' ? 'kV' : 'MV'}
+          </span>
+        )}
       </div>
     </div>
   )
