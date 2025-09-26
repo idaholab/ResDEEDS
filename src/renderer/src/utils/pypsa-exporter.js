@@ -62,6 +62,15 @@ export async function exportDiagramAsPython(nodes, edges) {
   }
 }
 
+// Utility functions for unit conversion (always converts kW to MW for PyPSA)
+function kwToMw(kwValue) {
+  return kwValue / 1000
+}
+
+function kwhToMwh(kwhValue) {
+  return kwhValue / 1000
+}
+
 export function exportToPyPSA(nodes, edges) {
   // Create a mapping of node IDs to their types and data
   const nodeMap = new Map()
@@ -100,10 +109,10 @@ export function exportToPyPSA(nodes, edges) {
         pypsaNetwork.generators.push({
           name: node.id,
           bus: genBus || nodeData.bus || '',
-          p_nom: nodeData.p_nom || 100,
+          p_nom: kwToMw(nodeData.p_nom || 100000),
           carrier: nodeData.carrier || 'solar',
-          marginal_cost: nodeData.marginal_cost || 0,
-          capital_cost: nodeData.capital_cost || 0,
+          marginal_cost: kwhToMwh(nodeData.marginal_cost || 0.001),
+          capital_cost: kwToMw(nodeData.capital_cost || 0),
           p_nom_extendable: nodeData.p_nom_extendable || false,
           control: nodeData.control || 'PQ',
         })
@@ -116,8 +125,8 @@ export function exportToPyPSA(nodes, edges) {
         pypsaNetwork.loads.push({
           name: node.id,
           bus: loadBus || nodeData.bus || '',
-          p_set: nodeData.p_set || 50,
-          q_set: nodeData.q_set || 0,
+          p_set: kwToMw(nodeData.p_set || 50000),
+          q_set: kwToMw(nodeData.q_set || 0),
         })
         break
       }
@@ -130,11 +139,11 @@ export function exportToPyPSA(nodes, edges) {
         pypsaNetwork.storage_units.push({
           name: node.id,
           bus: batteryBus || nodeData.bus || '',
-          p_nom: nodeData.p_nom || 10,
+          p_nom: kwToMw(nodeData.p_nom || 10000),
           max_hours: nodeData.max_hours || 4,
           efficiency_store: nodeData.efficiency_store || 0.9,
           efficiency_dispatch: nodeData.efficiency_dispatch || 0.9,
-          capital_cost: nodeData.capital_cost || 0,
+          capital_cost: kwToMw(nodeData.capital_cost || 0),
           cyclic_state_of_charge: nodeData.cyclic_state_of_charge !== false,
         })
         break
@@ -163,7 +172,7 @@ export function exportToPyPSA(nodes, edges) {
           bus1: edge.target,
           x: edgeData.x !== undefined ? edgeData.x : 0.1,
           r: edgeData.r !== undefined ? edgeData.r : 0.01,
-          s_nom: edgeData.s_nom !== undefined ? edgeData.s_nom : 100,
+          s_nom: kwToMw(edgeData.s_nom !== undefined ? edgeData.s_nom : 100000),
         }
         
         // Add optional attributes if they exist
@@ -174,7 +183,7 @@ export function exportToPyPSA(nodes, edges) {
           line.s_nom_extendable = edgeData.s_nom_extendable
         }
         if (edgeData.capital_cost !== undefined) {
-          line.capital_cost = edgeData.capital_cost
+          line.capital_cost = kwToMw(edgeData.capital_cost)
         }
         if (edgeData.s_max_pu !== undefined) {
           line.s_max_pu = edgeData.s_max_pu

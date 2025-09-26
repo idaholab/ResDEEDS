@@ -4,6 +4,7 @@ import DiagramEditor from './DiagramEditor'
 import ComponentPalette from './ComponentPalette'
 import PropertyEditModal from './modals/PropertyEditModal'
 import ThemeToggle from './ThemeToggle'
+import PowerUnitToggle from './PowerUnitToggle'
 import EditableProjectName from './EditableProjectName'
 import CaseTabManager from './CaseTabManager'
 import { exportDiagramAsJSON, exportDiagramAsPython } from '../utils/pypsa-exporter'
@@ -293,6 +294,7 @@ function ProjectEditor() {
           />
         </div>
         <div className="export-buttons">
+          <PowerUnitToggle />
           <ThemeToggle />
           <button
             className="export-button"

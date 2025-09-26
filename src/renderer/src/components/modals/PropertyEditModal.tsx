@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { usePowerUnits } from '../../contexts/PowerUnitsContext'
 import type { PyPSANode, PyPSAEdge, NodeType, PyPSAComponentData, PyPSAEdgeData } from '../../types'
 
 interface PropertyDefinition {
@@ -24,30 +25,30 @@ const nodeProperties: NodePropertiesConfig = {
     // { name: 'y', label: 'Y Coordinate', type: 'number', default: 0 },
   ],
   generatorNode: [
-    { name: 'p_nom', label: 'Nominal Power (MW)', type: 'number', default: 100 },
+    { name: 'p_nom', label: 'Nominal Power (kW)', type: 'number', default: 100000 },
     { name: 'carrier', label: 'Carrier', type: 'select', options: ['Solar', 'Wind', 'Diesel', 'Utility source'], default: 'solar' },
-    { name: 'marginal_cost', label: 'Marginal Cost ($/MWh) - Use to Prioritize Dispatch or Leave Default', type: 'number', default: 1 },
-    // { name: 'capital_cost', label: 'Capital Cost ($/MW)', type: 'number', default: 0 },
+    { name: 'marginal_cost', label: 'Marginal Cost ($/kWh) - Use to Prioritize Dispatch or Leave Default', type: 'number', default: 0.001 },
+    // { name: 'capital_cost', label: 'Capital Cost ($/kW)', type: 'number', default: 0 },
     { name: 'p_nom_extendable', label: 'Dispatch over normal if required', type: 'checkbox', default: false },
     { name: 'control', label: 'Control', type: 'select', options: ['PQ', 'PV', 'Slack'], default: 'PQ' },
   ],
   loadNode: [
-    { name: 'p_set', label: 'Active Power (MW)', type: 'number', default: 50 },
-    // { name: 'q_set', label: 'Reactive Power (MVAR)', type: 'number', default: 0 },
+    { name: 'p_set', label: 'Active Power (kW)', type: 'number', default: 50000 },
+    // { name: 'q_set', label: 'Reactive Power (kVAR)', type: 'number', default: 0 },
   ],
   batteryNode: [
-    { name: 'p_nom', label: 'Nominal Power (MW)', type: 'number', default: 10 },
+    { name: 'p_nom', label: 'Nominal Power (kW)', type: 'number', default: 10000 },
     { name: 'max_hours', label: 'Max Hours', type: 'number', default: 4 },
     { name: 'efficiency_store', label: 'Storage Efficiency', type: 'number', default: 0.9, min: 0, max: 1, step: 0.01 },
     { name: 'efficiency_dispatch', label: 'Dispatch Efficiency', type: 'number', default: 0.9, min: 0, max: 1, step: 0.01 },
-    { name: 'capital_cost', label: 'Capital Cost ($/MW)', type: 'number', default: 0 },
+    { name: 'capital_cost', label: 'Capital Cost ($/kW)', type: 'number', default: 0 },
     { name: 'cyclic_state_of_charge', label: 'Cyclic State of Charge', type: 'checkbox', default: true },
   ],
   lineEdge: [
     { name: 'length', label: 'Length (km)', type: 'number', default: 10 },
     { name: 'r', label: 'Resistance (Ω)', type: 'number', default: 0.1 },
     { name: 'x', label: 'Reactance (Ω)', type: 'number', default: 0.1 },
-    { name: 's_nom', label: 'Nominal Power (MVA)', type: 'number', default: 100 },
+    { name: 's_nom', label: 'Nominal Power (kVA)', type: 'number', default: 100000 },
   ],
 }
 
@@ -61,18 +62,47 @@ type FormData = Record<string, string | number | boolean>
 
 function PropertyEditModal({ node, onSave, onClose }: PropertyEditModalProps) {
   const [formData, setFormData] = useState<FormData>({})
-  const properties = nodeProperties[node.type as keyof NodePropertiesConfig] || []
+  const { getPowerLabel, getEnergyLabel, convertToDisplayValue, convertFromDisplayValue } = usePowerUnits()
+
+  // Get dynamic property definitions based on current power unit
+  const getDynamicProperties = (): PropertyDefinition[] => {
+    const baseProperties = nodeProperties[node.type as keyof NodePropertiesConfig] || []
+    return baseProperties.map(prop => ({
+      ...prop,
+      label: getEnergyLabel(getPowerLabel(prop.label)),
+      default: typeof prop.default === 'number' &&
+        (prop.name === 'p_nom' || prop.name === 'p_set' || prop.name === 's_nom' || prop.name === 'capital_cost')
+        ? convertToDisplayValue(prop.default as number)
+        : prop.name === 'marginal_cost'
+        ? convertToDisplayValue((prop.default as number) * 1000) // Convert $/kWh back to proper scale
+        : prop.default
+    }))
+  }
+
+  const properties = getDynamicProperties()
 
   useEffect(() => {
     const initialData: FormData = {}
     properties.forEach(prop => {
       const nodeData = node.data as PyPSAComponentData | PyPSAEdgeData
-      initialData[prop.name] = (nodeData as Record<string, unknown>)[prop.name] !== undefined
+      let value = (nodeData as Record<string, unknown>)[prop.name] !== undefined
         ? (nodeData as Record<string, unknown>)[prop.name] as string | number | boolean
         : prop.default
+
+      // Convert stored kW values to display units
+      if (typeof value === 'number') {
+        if (prop.name === 'p_nom' || prop.name === 'p_set' || prop.name === 's_nom' || prop.name === 'capital_cost') {
+          value = convertToDisplayValue(value)
+        } else if (prop.name === 'marginal_cost') {
+          // Convert marginal cost from $/kWh to display units
+          value = convertToDisplayValue(value * 1000)
+        }
+      }
+
+      initialData[prop.name] = value
     })
     setFormData(initialData)
-  }, [node, properties])
+  }, [node, properties, convertToDisplayValue])
 
   const handleChange = (name: string, value: string | boolean, type: string): void => {
     setFormData(prev => ({
@@ -83,7 +113,21 @@ function PropertyEditModal({ node, onSave, onClose }: PropertyEditModalProps) {
 
   const handleSubmit = (e: React.FormEvent): void => {
     e.preventDefault()
-    onSave(node.id, formData)
+
+    // Convert power/energy values from display units back to internal kW values
+    const convertedData = { ...formData }
+    properties.forEach(prop => {
+      if (typeof formData[prop.name] === 'number') {
+        if (prop.name === 'p_nom' || prop.name === 'p_set' || prop.name === 's_nom' || prop.name === 'capital_cost') {
+          convertedData[prop.name] = convertFromDisplayValue(formData[prop.name] as number)
+        } else if (prop.name === 'marginal_cost') {
+          // Convert marginal cost: display value to $/kWh (internal format)
+          convertedData[prop.name] = convertFromDisplayValue(formData[prop.name] as number) / 1000
+        }
+      }
+    })
+
+    onSave(node.id, convertedData)
   }
 
   const getNodeTypeName = (): string => {

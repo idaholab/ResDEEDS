@@ -4,6 +4,7 @@ import { getAllProjects, createProject, deleteProject, duplicateProject } from '
 import CreateProjectModal from './modals/CreateProjectModal'
 import DeleteProjectModal from './modals/DeleteProjectModal'
 import ThemeToggle from './ThemeToggle'
+import PowerUnitToggle from './PowerUnitToggle'
 import type { Project } from '../types'
 import './HomePage.scss'
 
@@ -170,8 +171,9 @@ const handleDuplicateProject = async (projectId: string) => {
       <header className="home-header d-flex justify-content-between align-items-center p-3 border-bottom shadow-sm">
         <h1 className="mb-0 text-primary fs-4">ResDEEDS</h1>
         <div className="d-flex gap-2 align-items-center">
+          <PowerUnitToggle />
           <ThemeToggle />
-          <button 
+          <button
             className="btn btn-primary"
             onClick={handleCreateProject}
             disabled={loading}

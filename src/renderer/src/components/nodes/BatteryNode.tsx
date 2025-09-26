@@ -1,4 +1,5 @@
 import { Handle, Position } from '@xyflow/react'
+import { usePowerUnits } from '../../contexts/PowerUnitsContext'
 import type { BatteryNodeData } from '../../types'
 import './NodeStyles.scss'
 
@@ -9,6 +10,8 @@ interface BatteryNodeProps {
 }
 
 function BatteryNode({ data, selected, onDelete }: BatteryNodeProps) {
+  const { formatPowerValue } = usePowerUnits()
+
   const getNodeColorClass = (): string => {
     if (data.p_nom === 0) {
       return 'battery-node-zero'
@@ -40,7 +43,7 @@ function BatteryNode({ data, selected, onDelete }: BatteryNodeProps) {
       <div className="node-icon">🔋</div>
       <div className="node-label">Battery</div>
       <div className="node-info">
-        {data.p_nom ? <span>{data.p_nom} MW</span> : <span>0 MW</span>}
+        {data.p_nom ? <span>{formatPowerValue(data.p_nom)}</span> : <span>{formatPowerValue(0)}</span>}
         {data.max_hours ? <span>{data.max_hours} hrs</span> : <span>0 hrs</span>}
       </div>
     </div>
