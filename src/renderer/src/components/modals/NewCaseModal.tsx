@@ -2,18 +2,22 @@ import React from 'react'
 import type { HazardType } from '../../types'
 
 interface NewCaseModalProps {
-  onSubmit: (hazardType: HazardType) => void
+  onSubmit: (hazardType: HazardType, customName?: string) => void
   onCancel: () => void
 }
 
 const NewCaseModal: React.FC<NewCaseModalProps> = ({ onSubmit, onCancel }) => {
   const [selectedHazard, setSelectedHazard] = React.useState<HazardType>('Heat')
+  const [customName, setCustomName] = React.useState('')
 
-  const hazardTypes: HazardType[] = ['Heat', 'Freeze', 'Hurricane', 'Wildfire', 'Tornado', 'Earthquake']
+  const hazardTypes: HazardType[] = ['Heat', 'Freeze', 'Hurricane', 'Wildfire', 'Tornado', 'Earthquake', 'Custom']
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    onSubmit(selectedHazard)
+    if (selectedHazard === 'Custom' && !customName.trim()) {
+      return // Don't submit if Custom is selected but no name provided
+    }
+    onSubmit(selectedHazard, selectedHazard === 'Custom' ? customName.trim() : undefined)
   }
 
   return (
@@ -52,6 +56,27 @@ const NewCaseModal: React.FC<NewCaseModalProps> = ({ onSubmit, onCancel }) => {
                   This will create a new case with the selected hazard type, copying the current Base case as a starting point.
                 </div>
               </div>
+
+              {selectedHazard === 'Custom' && (
+                <div className="mb-3">
+                  <label htmlFor="customName" className="form-label">
+                    Case Name:
+                  </label>
+                  <input
+                    type="text"
+                    id="customName"
+                    className="form-control"
+                    value={customName}
+                    onChange={(e) => setCustomName(e.target.value)}
+                    placeholder="Enter custom case name"
+                    required
+                    maxLength={50}
+                  />
+                  <div className="form-text">
+                    Enter a name for your custom case (up to 50 characters).
+                  </div>
+                </div>
+              )}
             </div>
             <div className="modal-footer">
               <button

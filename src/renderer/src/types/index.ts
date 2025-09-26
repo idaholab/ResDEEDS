@@ -174,7 +174,7 @@ export interface ReactFlowInstance {
 // Case Management Types
 // ============================================================================
 
-export type HazardType = 'Heat' | 'Freeze' | 'Hurricane' | 'Wildfire' | 'Tornado' | 'Earthquake'
+export type HazardType = 'Heat' | 'Freeze' | 'Hurricane' | 'Wildfire' | 'Tornado' | 'Earthquake' | 'Custom'
 
 export interface Case {
   id: string

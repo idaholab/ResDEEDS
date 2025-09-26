@@ -19,21 +19,21 @@ type NodePropertiesConfig = {
 const nodeProperties: NodePropertiesConfig = {
   busNode: [
     { name: 'v_nom', label: 'Nominal Voltage (kV)', type: 'number', default: 110 },
-    { name: 'carrier', label: 'Carrier', type: 'text', default: 'AC' },
-    { name: 'x', label: 'X Coordinate', type: 'number', default: 0 },
-    { name: 'y', label: 'Y Coordinate', type: 'number', default: 0 },
+    // { name: 'carrier', label: 'Carrier', type: 'text', default: 'AC' },
+    // { name: 'x', label: 'X Coordinate', type: 'number', default: 0 },
+    // { name: 'y', label: 'Y Coordinate', type: 'number', default: 0 },
   ],
   generatorNode: [
     { name: 'p_nom', label: 'Nominal Power (MW)', type: 'number', default: 100 },
-    { name: 'carrier', label: 'Carrier', type: 'select', options: ['solar', 'wind', 'diesel', 'utility source'], default: 'solar' },
-    { name: 'marginal_cost', label: 'Marginal Cost ($/MWh)', type: 'number', default: 0 },
-    { name: 'capital_cost', label: 'Capital Cost ($/MW)', type: 'number', default: 0 },
-    { name: 'p_nom_extendable', label: 'Extendable', type: 'checkbox', default: false },
+    { name: 'carrier', label: 'Carrier', type: 'select', options: ['Solar', 'Wind', 'Diesel', 'Utility source'], default: 'solar' },
+    { name: 'marginal_cost', label: 'Marginal Cost ($/MWh) - Use to Prioritize Dispatch or Leave Default', type: 'number', default: 1 },
+    // { name: 'capital_cost', label: 'Capital Cost ($/MW)', type: 'number', default: 0 },
+    { name: 'p_nom_extendable', label: 'Dispatch over normal if required', type: 'checkbox', default: false },
     { name: 'control', label: 'Control', type: 'select', options: ['PQ', 'PV', 'Slack'], default: 'PQ' },
   ],
   loadNode: [
     { name: 'p_set', label: 'Active Power (MW)', type: 'number', default: 50 },
-    { name: 'q_set', label: 'Reactive Power (MVAr)', type: 'number', default: 0 },
+    // { name: 'q_set', label: 'Reactive Power (MVAR)', type: 'number', default: 0 },
   ],
   batteryNode: [
     { name: 'p_nom', label: 'Nominal Power (MW)', type: 'number', default: 10 },

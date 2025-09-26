@@ -8,7 +8,7 @@ interface CaseTabManagerProps {
   cases: Case[]
   activeCase: string
   onCaseSelect: (caseId: string) => void
-  onNewCase: (hazardType: HazardType) => void
+  onNewCase: (hazardType: HazardType, customName?: string) => void
   onDeleteCase: (caseId: string) => void
 }
 
@@ -40,8 +40,8 @@ const CaseTabManager: React.FC<CaseTabManagerProps> = ({
     }
   }
 
-  const handleNewCaseSubmit = (hazardType: HazardType) => {
-    onNewCase(hazardType)
+  const handleNewCaseSubmit = (hazardType: HazardType, customName?: string) => {
+    onNewCase(hazardType, customName)
     setShowNewCaseModal(false)
   }
 
