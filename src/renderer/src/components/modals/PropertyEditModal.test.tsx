@@ -30,7 +30,7 @@ describe('PropertyEditModal', () => {
       label: 'Test Generator',
       p_nom: 100,
       carrier: 'solar',
-      marginal_cost: 0
+      marginal_cost: 0.001
     }
   })
 

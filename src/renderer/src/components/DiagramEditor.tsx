@@ -92,7 +92,7 @@ function Flow({ nodes, edges, setNodes, setEdges, onNodeSelect, onEdgeSelect }: 
           defaultData = { label: 'Bus', v_nom: 110 }
           break
         case 'generatorNode':
-          defaultData = { label: 'Generator', p_nom: 100, carrier: 'solar', marginal_cost: 0 }
+          defaultData = { label: 'Generator', p_nom: 100, carrier: 'solar', marginal_cost: 0.001 }
           break
         case 'loadNode':
           defaultData = { label: 'Load', p_set: 50, q_set: 0 }

@@ -14,7 +14,7 @@ describe('Diagram Storage', () => {
         id: 'gen-1',
         type: 'generatorNode',
         position: { x: 50, y: 100 },
-        data: { label: 'Solar Gen', p_nom: 100, carrier: 'solar', marginal_cost: 0 }
+        data: { label: 'Solar Gen', p_nom: 100, carrier: 'solar', marginal_cost: 0.001 }
       }
     ],
     edges: [

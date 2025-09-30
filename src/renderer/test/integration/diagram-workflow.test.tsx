@@ -42,7 +42,7 @@ describe('Diagram Workflow Integration Tests', () => {
         id: 'gen-1', 
         type: 'generatorNode' as const,
         position: { x: 50, y: 50 },
-        data: { label: 'Generator 1', p_nom: 100, carrier: 'solar', marginal_cost: 0 }
+        data: { label: 'Generator 1', p_nom: 100, carrier: 'solar', marginal_cost: 0.001 }
       }
     ]
 

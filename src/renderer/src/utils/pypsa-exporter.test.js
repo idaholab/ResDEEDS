@@ -123,7 +123,7 @@ describe('PyPSA Exporter', () => {
       expect(result.generators[0]).toEqual({
         name: 'gen-1',
         bus: 'bus-1',
-        p_nom: 100,
+        p_nom: 0.1, // 100 kW converted to MW
         carrier: 'solar',
         marginal_cost: 0,
         capital_cost: 0,
@@ -139,8 +139,8 @@ describe('PyPSA Exporter', () => {
       expect(result.loads[0]).toEqual({
         name: 'load-1',
         bus: 'bus-2',
-        p_set: 50,
-        q_set: 10
+        p_set: 0.05, // 50 kW converted to MW
+        q_set: 0.01 // 10 kW converted to MW
       })
     })
 
@@ -151,7 +151,7 @@ describe('PyPSA Exporter', () => {
       expect(result.storage_units[0]).toEqual({
         name: 'battery-1',
         bus: 'bus-1',
-        p_nom: 25,
+        p_nom: 0.025, // 25 kW converted to MW
         max_hours: 4,
         efficiency_store: 0.95,
         efficiency_dispatch: 0.95,
@@ -170,7 +170,7 @@ describe('PyPSA Exporter', () => {
         bus1: 'bus-2',
         x: 0.1,
         r: 0.1,
-        s_nom: 100,
+        s_nom: 0.1, // 100 kW converted to MW
         length: 10
       })
     })
@@ -212,8 +212,9 @@ describe('PyPSA Exporter', () => {
       
       expect(result.buses[0].v_nom).toBe(110)
       expect(result.buses[0].carrier).toBe('AC')
-      expect(result.generators[0].p_nom).toBe(100)
+      expect(result.generators[0].p_nom).toBe(100) // 100000 kW default converted to MW
       expect(result.generators[0].carrier).toBe('solar')
+      expect(result.generators[0].marginal_cost).toBe(1) // 0.001 $/kWh default converted to $/MWh
     })
   })
 
@@ -244,7 +245,7 @@ describe('PyPSA Exporter', () => {
       
       expect(pythonCode).toContain('network.add("Generator", "gen-1"')
       expect(pythonCode).toContain('bus="bus-1"')
-      expect(pythonCode).toContain('p_nom=100')
+      expect(pythonCode).toContain('p_nom=0.1')
       expect(pythonCode).toContain('carrier="solar"')
     })
 
@@ -253,8 +254,8 @@ describe('PyPSA Exporter', () => {
       const pythonCode = generatePythonCode(pypsaNetwork)
       
       expect(pythonCode).toContain('network.add("Load", "load-1"')
-      expect(pythonCode).toContain('p_set=50')
-      expect(pythonCode).toContain('q_set=10')
+      expect(pythonCode).toContain('p_set=0.05')
+      expect(pythonCode).toContain('q_set=0.01')
     })
 
     it('should include all storage units in Python code', () => {
@@ -262,7 +263,7 @@ describe('PyPSA Exporter', () => {
       const pythonCode = generatePythonCode(pypsaNetwork)
       
       expect(pythonCode).toContain('network.add("StorageUnit", "battery-1"')
-      expect(pythonCode).toContain('p_nom=25')
+      expect(pythonCode).toContain('p_nom=0.025')
       expect(pythonCode).toContain('max_hours=4')
       expect(pythonCode).toContain('efficiency_store=0.95')
     })
