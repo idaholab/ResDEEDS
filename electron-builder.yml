@@ -11,12 +11,18 @@ files:
   - "!{tsconfig.json,tsconfig.node.json,tsconfig.web.json}"
 asarUnpack:
   - resources/**
+  - "**/resdeeds-backend*"
+  - "**/python*"
+  - "**/*.so"
+  - "**/*.dylib"
 extraResources:
   - from: "src/backend/dist/"
     to: "backend/"
     filter:
       - "resdeeds-backend*"
       - "version.json"
+      - "!**/.DS_Store"
+      - "!**/python*"
 win:
   executableName: ResDEEDS
   target:
@@ -40,6 +46,11 @@ mac:
   target:
     - dmg
     - zip
+  asarUnpack:
+    - "**/resdeeds-backend*"
+    - "**/python*"
+    - "**/*.so"
+    - "**/*.dylib"
 dmg:
   artifactName: ${name}-${version}.${ext}
 linux:

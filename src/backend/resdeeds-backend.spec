@@ -200,3 +200,17 @@ exe = EXE(
     codesign_identity=None,
     entitlements_file=None,
 )
+
+# Create a BUNDLE for macOS to avoid asar conflicts
+import platform
+if platform.system() == 'Darwin':  # macOS
+    app = BUNDLE(
+        exe,
+        name='resdeeds-backend.app',
+        icon=None,
+        bundle_identifier='com.inl.resdeeds.backend',
+        info_plist={
+            'NSHighResolutionCapable': True,
+            'CFBundleShortVersionString': '0.1.0',
+        },
+    )
