@@ -5,16 +5,29 @@ directories:
 files:
   - "!**/.vscode/*"
   - "!src/*"
+  - "!.venv"
+  - "!.venv/**"
+  - "!**/.venv/**"
+  - "!**/__pycache__/**"
+  - "!**/*.pyc"
+  - "!**/*.pyo"
+  - "!**/*.pyd"
+  - "!**/python"
+  - "!**/python3"
+  - "!**/python3.*"
+  - "!**/Python"
+  - "!**/Python3"
+  - "!**/site-packages/**"
+  - "!**/.python-version"
+  - "!**/pip"
+  - "!**/pip3"
+  - "!**/pip3.*"
   - "!electron.vite.config.{js,ts,mjs,cjs}"
   - "!{.eslintignore,.eslintrc.cjs,.prettierignore,.prettierrc.yaml,dev-app-update.yml,CHANGELOG.md,README.md}"
   - "!{.env,.env.*,.npmrc,pnpm-lock.yaml}"
   - "!{tsconfig.json,tsconfig.node.json,tsconfig.web.json}"
 asarUnpack:
   - resources/**
-  - "**/resdeeds-backend*"
-  - "**/python*"
-  - "**/*.so"
-  - "**/*.dylib"
 extraResources:
   - from: "src/backend/dist/"
     to: "backend/"
@@ -46,11 +59,6 @@ mac:
   target:
     - dmg
     - zip
-  asarUnpack:
-    - "**/resdeeds-backend*"
-    - "**/python*"
-    - "**/*.so"
-    - "**/*.dylib"
 dmg:
   artifactName: ${name}-${version}.${ext}
 linux:
