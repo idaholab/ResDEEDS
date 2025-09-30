@@ -115,8 +115,8 @@ def build_pypsa_network(payload: AnalyzeRequest):
         n.add(
             "Bus",
             bus.get("name") or bus.get("id") or str(len(n.buses)),
-            v_nom=bus.get("v_nom", 110),
-            carrier=bus.get("carrier", "AC"),
+            v_nom=bus.get("v_nom") if bus.get("v_nom") is not None else 110,
+            carrier=bus.get("carrier") if bus.get("carrier") is not None else "AC",
             x=bus.get("x"),
             y=bus.get("y"),
         )
@@ -126,13 +126,13 @@ def build_pypsa_network(payload: AnalyzeRequest):
         n.add(
             "Generator",
             gen.get("name") or gen.get("id") or f"gen_{len(n.generators)}",
-            bus=gen.get("bus", ""),
-            p_nom=gen.get("p_nom", 0),
-            p_nom_extendable=bool(gen.get("p_nom_extendable", False)),
-            carrier=gen.get("carrier", "generic"),
-            marginal_cost=gen.get("marginal_cost", 0),
-            capital_cost=gen.get("capital_cost", 0),
-            control=gen.get("control", "PQ"),
+            bus=gen.get("bus") if gen.get("bus") is not None else "",
+            p_nom=gen.get("p_nom") if gen.get("p_nom") is not None else 0,
+            p_nom_extendable=bool(gen.get("p_nom_extendable") if gen.get("p_nom_extendable") is not None else False),
+            carrier=gen.get("carrier") if gen.get("carrier") is not None else "generic",
+            marginal_cost=gen.get("marginal_cost") if gen.get("marginal_cost") is not None else 1,  # 0.001 $/kWh converted to $/MWh
+            capital_cost=gen.get("capital_cost") if gen.get("capital_cost") is not None else 0,
+            control=gen.get("control") if gen.get("control") is not None else "PQ",
         )
 
     # Loads
@@ -140,9 +140,9 @@ def build_pypsa_network(payload: AnalyzeRequest):
         n.add(
             "Load",
             load.get("name") or load.get("id") or f"load_{len(n.loads)}",
-            bus=load.get("bus", ""),
-            p_set=load.get("p_set", 0),
-            q_set=load.get("q_set", 0),
+            bus=load.get("bus") if load.get("bus") is not None else "",
+            p_set=load.get("p_set") if load.get("p_set") is not None else 0,
+            q_set=load.get("q_set") if load.get("q_set") is not None else 0,
         )
 
     # Lines
@@ -152,10 +152,10 @@ def build_pypsa_network(payload: AnalyzeRequest):
             line.get("name") or line.get("id") or f"line_{len(n.lines)}",
             bus0=line.get("bus0"),
             bus1=line.get("bus1"),
-            r=line.get("r", 0.01),
-            x=line.get("x", 0.1),
-            s_nom=line.get("s_nom", 0),
-            s_nom_extendable=bool(line.get("s_nom_extendable", False)),
+            r=line.get("r") if line.get("r") is not None else 0.01,
+            x=line.get("x") if line.get("x") is not None else 0.1,
+            s_nom=line.get("s_nom") if line.get("s_nom") is not None else 0,
+            s_nom_extendable=bool(line.get("s_nom_extendable") if line.get("s_nom_extendable") is not None else False),
             length=line.get("length"),
             capital_cost=line.get("capital_cost"),
             s_max_pu=line.get("s_max_pu"),
@@ -166,14 +166,14 @@ def build_pypsa_network(payload: AnalyzeRequest):
         n.add(
             "StorageUnit",
             su.get("name") or su.get("id") or f"storage_{len(n.storage_units)}",
-            bus=su.get("bus", ""),
-            p_nom=su.get("p_nom", 0),
-            p_nom_extendable=bool(su.get("p_nom_extendable", False)),
-            max_hours=su.get("max_hours", 4),
-            efficiency_store=su.get("efficiency_store", su.get("efficiency", 0.9)),
-            efficiency_dispatch=su.get("efficiency_dispatch", su.get("efficiency", 0.9)),
-            capital_cost=su.get("capital_cost", 0),
-            cyclic_state_of_charge=bool(su.get("cyclic_state_of_charge", True)),
+            bus=su.get("bus") if su.get("bus") is not None else "",
+            p_nom=su.get("p_nom") if su.get("p_nom") is not None else 0,
+            p_nom_extendable=bool(su.get("p_nom_extendable") if su.get("p_nom_extendable") is not None else False),
+            max_hours=su.get("max_hours") if su.get("max_hours") is not None else 4,
+            efficiency_store=su.get("efficiency_store") if su.get("efficiency_store") is not None else (su.get("efficiency") if su.get("efficiency") is not None else 0.9),
+            efficiency_dispatch=su.get("efficiency_dispatch") if su.get("efficiency_dispatch") is not None else (su.get("efficiency") if su.get("efficiency") is not None else 0.9),
+            capital_cost=su.get("capital_cost") if su.get("capital_cost") is not None else 0,
+            cyclic_state_of_charge=bool(su.get("cyclic_state_of_charge") if su.get("cyclic_state_of_charge") is not None else True),
         )
 
     return n

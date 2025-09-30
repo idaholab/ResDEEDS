@@ -68,7 +68,7 @@ function kwToMw(kwValue) {
 }
 
 function kwhToMwh(kwhValue) {
-  return kwhValue / 1000
+  return kwhValue * 1000  // $/kWh to $/MWh: multiply by 1000
 }
 
 export function exportToPyPSA(nodes, edges) {
@@ -96,8 +96,8 @@ export function exportToPyPSA(nodes, edges) {
       case 'busNode':
         pypsaNetwork.buses.push({
           name: node.id,
-          v_nom: nodeData.v_nom || 110,
-          carrier: nodeData.carrier || 'AC',
+          v_nom: nodeData.v_nom ?? 110,
+          carrier: nodeData.carrier ?? 'AC',
           x: node.position.x,
           y: node.position.y,
         })
@@ -108,13 +108,13 @@ export function exportToPyPSA(nodes, edges) {
         const genBus = findConnectedBus(node.id, edges, 'source')
         pypsaNetwork.generators.push({
           name: node.id,
-          bus: genBus || nodeData.bus || '',
-          p_nom: kwToMw(nodeData.p_nom || 100000),
-          carrier: nodeData.carrier || 'solar',
-          marginal_cost: kwhToMwh(nodeData.marginal_cost || 0.001),
-          capital_cost: kwToMw(nodeData.capital_cost || 0),
-          p_nom_extendable: nodeData.p_nom_extendable || false,
-          control: nodeData.control || 'PQ',
+          bus: genBus ?? nodeData.bus ?? '',
+          p_nom: kwToMw(nodeData.p_nom ?? 100000),
+          carrier: nodeData.carrier ?? 'solar',
+          marginal_cost: kwhToMwh(nodeData.marginal_cost ?? 0.001),
+          capital_cost: kwToMw(nodeData.capital_cost ?? 0),
+          p_nom_extendable: nodeData.p_nom_extendable ?? false,
+          control: nodeData.control ?? 'PQ',
         })
         break
       }
@@ -124,9 +124,9 @@ export function exportToPyPSA(nodes, edges) {
         const loadBus = findConnectedBus(node.id, edges, 'target')
         pypsaNetwork.loads.push({
           name: node.id,
-          bus: loadBus || nodeData.bus || '',
-          p_set: kwToMw(nodeData.p_set || 50000),
-          q_set: kwToMw(nodeData.q_set || 0),
+          bus: loadBus ?? nodeData.bus ?? '',
+          p_set: kwToMw(nodeData.p_set ?? 50000),
+          q_set: kwToMw(nodeData.q_set ?? 0),
         })
         break
       }
@@ -138,12 +138,12 @@ export function exportToPyPSA(nodes, edges) {
         const batteryBus = batteryBusDischarge || batteryBusCharge
         pypsaNetwork.storage_units.push({
           name: node.id,
-          bus: batteryBus || nodeData.bus || '',
-          p_nom: kwToMw(nodeData.p_nom || 10000),
-          max_hours: nodeData.max_hours || 4,
-          efficiency_store: nodeData.efficiency_store || 0.9,
-          efficiency_dispatch: nodeData.efficiency_dispatch || 0.9,
-          capital_cost: kwToMw(nodeData.capital_cost || 0),
+          bus: batteryBus ?? nodeData.bus ?? '',
+          p_nom: kwToMw(nodeData.p_nom ?? 10000),
+          max_hours: nodeData.max_hours ?? 4,
+          efficiency_store: nodeData.efficiency_store ?? 0.9,
+          efficiency_dispatch: nodeData.efficiency_dispatch ?? 0.9,
+          capital_cost: kwToMw(nodeData.capital_cost ?? 0),
           cyclic_state_of_charge: nodeData.cyclic_state_of_charge !== false,
         })
         break
@@ -170,9 +170,9 @@ export function exportToPyPSA(nodes, edges) {
           name: edge.id || `line_${edge.source}_${edge.target}`,
           bus0: edge.source,
           bus1: edge.target,
-          x: edgeData.x !== undefined ? edgeData.x : 0.1,
-          r: edgeData.r !== undefined ? edgeData.r : 0.01,
-          s_nom: kwToMw(edgeData.s_nom !== undefined ? edgeData.s_nom : 100000),
+          x: edgeData.x ?? 0.1,
+          r: edgeData.r ?? 0.01,
+          s_nom: kwToMw(edgeData.s_nom ?? 100000),
         }
         
         // Add optional attributes if they exist
